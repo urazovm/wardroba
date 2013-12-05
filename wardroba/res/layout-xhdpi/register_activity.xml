@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/bg_1"
+    android:orientation="vertical" 
+    >
+        <LinearLayout 
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:orientation="vertical">
+	  <ImageView 
+	                android:id="@+id/btnBack"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:src="@drawable/arrow"
+	                android:layout_marginLeft="5dp"
+	                android:layout_marginTop="5dp"/>	    
+	</LinearLayout> 
+	
+ 	<LinearLayout 
+		    android:layout_width="fill_parent"
+		    android:layout_height="fill_parent"	
+		    android:orientation="vertical"
+		    android:gravity="center_vertical">
+
+ 	    	<LinearLayout
+				    android:layout_width="fill_parent"
+				    android:layout_height="wrap_content"
+				    android:layout_marginTop="10dp"
+				    android:gravity="center_horizontal"
+				    android:orientation="vertical" >
+
+				    	<ImageView
+				            android:id="@+id/imbt_advance_search"
+				            android:layout_width="wrap_content"
+				            android:layout_height="wrap_content"
+				           
+				            android:background="@drawable/login_logo"
+				            android:paddingLeft="2dp"
+				            android:paddingRight="2dp"
+				             />
+
+				</LinearLayout>
+ 	    
+		<LinearLayout
+		    android:layout_width="fill_parent"
+		    android:layout_height="wrap_content"
+		    android:layout_gravity="center_horizontal"
+		    android:orientation="vertical" 
+		    android:layout_marginTop="40dp">
+	 	
+		   <LinearLayout
+			    android:layout_width="@dimen/login_bg_width"
+			    android:layout_height="wrap_content"
+			    android:layout_gravity="center"
+			    android:background="@drawable/register_form_bg"
+			    
+			    android:orientation="vertical" >
+
+				<EditText
+				    android:id="@+id/edt_name"
+				    android:layout_width="fill_parent"
+				    android:layout_height="35dp"
+				    android:layout_weight="1.0"
+				    android:background="#00ffffff"
+				    android:lines="1"
+				    android:singleLine="true"
+				    android:gravity="center"
+				    android:textColorHint="@color/text_hint_color"
+				    android:textColor="@color/black"
+				    android:hint="@string/register_name_hint"
+				    android:padding="5dp"
+				    android:textSize="14dp" />
+
+				<ImageView
+				    android:id="@+id/textView1"
+				    android:layout_width="wrap_content"
+				    android:layout_height="wrap_content"
+				    android:src="@drawable/login_form_line"/>
+				<EditText
+				    android:id="@+id/edt_surname"
+				    android:layout_width="fill_parent"
+				    android:layout_height="35dp"
+				    android:layout_weight="1.0"
+				    android:background="#00ffffff"
+				    android:lines="1"
+				    android:singleLine="true"
+				    android:gravity="center"
+				    android:textColorHint="@color/text_hint_color"
+				    android:textColor="@color/black"
+				    android:hint="@string/register_surname_hint"
+				    android:padding="5dp"
+				    android:textSize="14dp" />
+
+				<ImageView
+				    android:id="@+id/textView1"
+				    android:layout_width="wrap_content"
+				    android:layout_height="wrap_content"
+				    android:src="@drawable/login_form_line"/>
+								
+				<EditText
+				    android:id="@+id/edt_email"
+				    android:layout_width="fill_parent"
+				    android:layout_height="35dp"
+				    android:layout_weight="1.0"
+				    android:background="#00ffffff"
+				    android:lines="1"
+				    android:gravity="center"
+				    android:textColor="@color/black"
+				    android:textColorHint="@color/text_hint_color"
+				    android:hint="@string/login_email_hint"
+				    android:inputType="textEmailAddress"
+				    android:padding="5dp"
+				    android:textSize="14dp" />
+				
+				<ImageView
+				    android:id="@+id/textView1"
+				    android:layout_width="wrap_content"
+				    android:layout_height="wrap_content"
+				    android:src="@drawable/login_form_line"/>
+
+				<EditText
+				    android:id="@+id/edt_passward"
+				    android:layout_width="fill_parent"
+				    android:layout_height="35dp"
+				    android:layout_weight="1.0"
+				    android:background="#00ffffff"
+				    android:lines="1"
+				    android:gravity="center"
+				    android:textColor="@color/black"
+				    android:hint="@string/login_password_hint"
+				    android:textColorHint="@color/text_hint_color"
+				    android:inputType="textPassword"
+				    android:padding="5dp"
+				    android:textSize="14dp" />
+
+				</LinearLayout>
+				<Button
+				    android:id="@+id/btn_register"
+				    android:layout_width="wrap_content"
+				    android:layout_height="wrap_content"
+				    android:layout_marginTop="10dp"
+				    android:background="@drawable/register_button"
+				    android:text="@string/register_button_text"
+				    android:layout_gravity="center_horizontal"
+				    android:textColor="@color/white"
+				    android:textSize="14dp" />
+
+		<!--  	<Button
+				    android:id="@+id/btn_register_facebook"
+				    android:layout_width="fill_parent"
+				    android:layout_height="wrap_content"
+				    android:layout_marginLeft="5dp"
+				    android:layout_marginRight="5dp"
+				    android:layout_marginTop="20dp"
+				    android:background="@drawable/facebook_button"
+				    android:text="Log in with Facebook"
+				    android:textColor="#ffffff"
+				    android:textSize="14dp" /> -->
+				
+				
+				 <RelativeLayout				 
+				    android:layout_width="fill_parent"
+				    android:layout_height="wrap_content"
+				    android:layout_marginTop="20dp">
+				
+					<Button
+						    android:id="@+id/login_fb"
+						    android:layout_width="wrap_content"
+						    android:layout_height="wrap_content"
+						    android:background="@drawable/facebook_button"
+						    android:text="@string/fblogin_button_text"
+						    android:layout_centerHorizontal="true"
+						    android:textSize="16dp"
+						    android:textColor="@color/white"/>
+					
+				</RelativeLayout>
+		</LinearLayout>
+	  </LinearLayout>
+	
+</RelativeLayout>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:background="@drawable/splash" >
+  	<RelativeLayout				 
+		    android:layout_width="fill_parent"
+		    android:layout_height="fill_parent"
+		    android:gravity="center_vertical"
+		    android:orientation="horizontal"					    
+		    android:paddingRight="5dp">				  			    				    
+	      <ImageView
+	          android:id="@+id/imbt_advance_search"
+			  android:layout_width="wrap_content"
+			  android:layout_height="wrap_content"							 		  
+			  android:textStyle="bold"
+			  android:text="Terms"
+			  android:paddingLeft="2dp"
+			  android:paddingRight="2dp"
+			  android:layout_centerHorizontal="true"/> 
+	</RelativeLayout>	    
+</LinearLayout>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    <RelativeLayout android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/top_title_bg">
+        <!-- <ImageView android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+			android:layout_centerVertical="true"
+  	        android:gravity="center_horizontal"
+  	        android:layout_marginLeft="10dp"
+  	        android:src="@drawable/back"/> -->
+        <ImageView android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+  	        android:gravity="center_horizontal"
+  	        android:src="@drawable/wall_logo"/>
+    </RelativeLayout>
+	<LinearLayout android:layout_width="fill_parent"
+	    android:layout_height="50dp"
+	    android:orientation="horizontal"
+	    android:layout_marginTop="5dp"
+	    android:weightSum="1.0">
+	    <ImageView android:layout_width="40dp"
+	        android:layout_height="40dp"
+	        android:layout_marginLeft="10dp"
+	        android:src="@drawable/wall_icon"
+	        
+	        />
+	    <TextView android:layout_width="0dp"
+	        android:layout_weight="0.7"
+	        android:layout_height="40dp"
+	        android:text="Nilesh Pambhar"
+	        android:gravity="center_vertical"
+	        android:paddingLeft="10dp"
+	        android:textStyle="bold"
+	        android:textSize="16dp"
+	        android:textColor="@color/textcolor"/>
+	    <TextView android:layout_width="0dp"
+	        android:layout_height="40dp"
+	        android:layout_weight="0.3"
+	        android:text="Jul 1st"
+	        android:textColor="@color/textcolor2"
+	        android:gravity="center_vertical|right"
+	        android:paddingRight="10dp"/>
+	</LinearLayout>
+	<ListView 
+	    android:id="@+id/product_list"
+	    android:layout_width="fill_parent"
+	    android:layout_height="fill_parent"/>
+</LinearLayout>
