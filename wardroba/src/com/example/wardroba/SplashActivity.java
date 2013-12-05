@@ -14,7 +14,7 @@ import android.view.Window;
 public class SplashActivity extends Activity 
 {
 	 protected boolean _active = true;
-	 protected int _splashTime = 3000;
+	 protected int _splashTime = 2000;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) 
