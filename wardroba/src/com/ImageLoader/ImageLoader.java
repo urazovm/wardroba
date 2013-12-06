@@ -13,6 +13,9 @@ import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import com.example.wardroba.R;
+
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -32,7 +35,7 @@ public class ImageLoader {
         executorService=Executors.newFixedThreadPool(5);
     }
     
-    //final int stub_id=R.drawable.ic_launcher;
+    final int stub_id=R.drawable.progrss;
     public void DisplayImage(String url, ImageView imageView)
     {
         imageViews.put(imageView, url);
@@ -45,17 +48,16 @@ public class ImageLoader {
         		imageView.setScaleType(ScaleType.CENTER_INSIDE);
         		imageView.setImageBitmap(bitmap);
         		
-        	}
+        	}	
         	else
         	{
-        		
         		imageView.setImageBitmap(bitmap);
         	}
         }
         else
         {
             queuePhoto(url, imageView);
-            //imageView.setImageResource(stub_id);
+            imageView.setImageResource(stub_id);
         }
     }
         
@@ -152,7 +154,8 @@ public class ImageLoader {
         }
     }
     
-    boolean imageViewReused(PhotoToLoad photoToLoad){
+    boolean imageViewReused(PhotoToLoad photoToLoad)
+    {
         String tag=imageViews.get(photoToLoad.imageView);
         if(tag==null || !tag.equals(photoToLoad.url))
             return true;

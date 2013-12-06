@@ -6,7 +6,6 @@ import java.util.List;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-
 import com.example.wardroba.HomeActivity;
 import com.example.wardroba.ProductGalleryGridFragment;
 import com.example.wardroba.ProfileEditActivity;
@@ -16,6 +15,7 @@ import com.example.wardroba.ProfileActivity;
 import com.example.wardroba.RegisterActivity;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -28,13 +28,16 @@ public class WebAPIHelper extends AsyncTask<String, Integer, Long>
 	private ProfileActivity profile_activity;
 	private ProfileEditActivity edit_profile_activity;
 	private ProductGallery product_activity;
+
 	private ProductGalleryGridFragment productGalleryGridFragment;
+
 	private HomeActivity  home_activity;
-	
 	private Dialogs mainActivity;
 	private Document response;
 	private int requestNumber;
 	private String loadingMessage;
+	Context myContext;
+	
 	private WebAPIRequest webAPIRequest = new WebAPIRequest();
 
 	public WebAPIHelper(int requestNumber, ProfileActivity activity, String msg) 
@@ -91,6 +94,7 @@ public class WebAPIHelper extends AsyncTask<String, Integer, Long>
 		this.requestNumber = requestNumber;
 		loadingMessage = msg;
 	}
+
 	public WebAPIHelper(int requestNumber, ProductGalleryGridFragment activity, String msg) 
 	{
 		this.productGalleryGridFragment = activity;
@@ -98,6 +102,17 @@ public class WebAPIHelper extends AsyncTask<String, Integer, Long>
 		this.requestNumber = requestNumber;
 		loadingMessage = msg;
 	}
+
+	
+	public WebAPIHelper(int requestNumber, Context context, String msg) 
+	{
+		this.requestNumber = requestNumber;
+		this.myContext=context;
+		progressDlg = new ProgressDialog(context);
+		loadingMessage = msg;
+	}
+	
+
 	protected void onPreExecute() 
 	{
 		progressDlg.setMessage(loadingMessage);
@@ -267,10 +282,7 @@ public class WebAPIHelper extends AsyncTask<String, Integer, Long>
 				NodeList nlist =  node.getElementsByTagName("result");				
 				Element result = (Element) nlist.item(0);
 
-                
-
-
-                NodeList cloth =  result.getElementsByTagName("cloth");
+				NodeList cloth =  result.getElementsByTagName("cloth");
 
                 for(int j=0; j<cloth.getLength(); j++)
                 {
@@ -297,10 +309,28 @@ public class WebAPIHelper extends AsyncTask<String, Integer, Long>
                         productlist.add(Product_list);
                 	}
 				}
+
 				productGalleryGridFragment.setResponseFromRequest(productlist);
 			
 		}
-		
+		else if(requestNumber==Constants.product_like)
+		{
+			if(response != null)
+			{
+				Element node = (Element) response.getElementsByTagName("root").item(0);
+				NodeList nlist =  node.getElementsByTagName("result");				
+				Element childNode = (Element)nlist.item(0);
+				
+				Constants.LIKE_STATUS = getValueFromNode(childNode,"status");
+				Constants.LIKE_COUNT = parseIntValue(getValueFromNode(childNode,"like_count"));
+			}
+			else
+			{
+				Constants.LOGIN_USERID = 0;
+			}
+			((HomeActivity)myContext).setResponseFromRequest1(requestNumber);
+				//product_activity.setResponseFromRequest(productlist);
+		}
 		progressDlg.dismiss();
 	}
 		

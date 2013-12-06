@@ -54,7 +54,20 @@ public class HomeActivity extends Activity
   			Toast.makeText(getApplicationContext(), "No Record Found !", 5000).show();
   		}
   	} 	
-
+  	@SuppressWarnings("unchecked")
+  	public void setResponseFromRequest1(int requestNumber) 
+  	{	
+  			String status=Constants.LIKE_STATUS.toString().trim();
+  			if(status.equals("LIKE"))
+  			{
+  				arr_ProductList.get(Constants.SELECTED_ID).PLikeStatus="UNLIKE";
+  	  			arr_ProductList.get(Constants.SELECTED_ID).PLikeCount=Constants.LIKE_COUNT;
+  			}else
+  			{
+  				arr_ProductList.get(Constants.SELECTED_ID).PLikeStatus="LIKE";
+  	  			arr_ProductList.get(Constants.SELECTED_ID).PLikeCount=Constants.LIKE_COUNT;
+  			}
+  	} 	
     public void onCreate(Bundle savedInstanceState) 
     {
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
