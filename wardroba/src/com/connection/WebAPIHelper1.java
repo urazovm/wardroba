@@ -1,23 +1,12 @@
 package com.connection;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import com.example.wardroba.HomeActivity;
-import com.example.wardroba.ProductListFragment;
-import com.example.wardroba.ProfileEditActivity;
-import com.example.wardroba.LoginActivity;
-import com.example.wardroba.ProductGallery;
-import com.example.wardroba.ProfileActivity;
-import com.example.wardroba.RegisterActivity;
-
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
 
 
 public class WebAPIHelper1 extends AsyncTask<String, Integer, Long>
