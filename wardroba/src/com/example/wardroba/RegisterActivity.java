@@ -34,6 +34,7 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -100,9 +101,10 @@ public class RegisterActivity extends Activity
   	 {
   		 if(Constants.LOGIN_USERID!=0)
   		 {
-  			 Intent intent=new Intent(RegisterActivity.this,HomeActivity.class);
+  			 savePrefrences();
+  			 Intent intent=new Intent(RegisterActivity.this,HomeTabActivity.class);
   			 startActivity(intent);
-  			 
+  			 finish();
   			 
   		 }
   	 }
@@ -299,6 +301,8 @@ public class RegisterActivity extends Activity
 		{
 			public void onClick(View v) 
 			{
+				 InputMethodManager inputManager = (InputMethodManager)getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE); 
+				 inputManager.hideSoftInputFromWindow(RegisterActivity.this.getCurrentFocus().getWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
 				name1 = Edt_name.getText().toString();
 				surname1= Edt_Surname.getText().toString();
 				emailid1=Edt_email.getText().toString();
@@ -449,9 +453,11 @@ public class RegisterActivity extends Activity
 		                {
 		                    public void onClick(DialogInterface dialog, int id) 
 		                    {
-		                    	Intent ii = new Intent(RegisterActivity.this,HomeActivity.class);
-		    		        	startActivity(ii); 
-		                    }
+		                    	savePrefrences();
+		                    	Intent ii = new Intent(RegisterActivity.this,HomeTabActivity.class);
+		    		        	startActivity(ii);
+		    		        	finish();
+		                    }	
 		                });
 		         AlertDialog alert = builder.create();
 		         alert.show();
@@ -521,5 +527,12 @@ public class RegisterActivity extends Activity
 	       });
 		AlertDialog alert = builder.create();
 		alert.show();
+	}
+	
+	private void savePrefrences()
+	{
+		SharedPreferences.Editor editor = preferences.edit();
+		editor.putInt(Constants.KEY_LOGIN_ID, Constants.LOGIN_USERID);
+		editor.commit();
 	}
 }

@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">wardroba</string>
+    <string name="app_name">Wardroba</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_product_list_new">ProductList_new</string>
-	<string name="login_email_hint">Email</string>
-	<string name="login_password_hint">Password</string>
-	<string name="login_button_text">LOG IN</string>
-	<string name="fblogin_button_text">Log in with Facebook</string>
-	<string name="register_name_hint">Name</string>
-	<string name="register_surname_hint">Surname</string>
-	<string name="register_button_text">REGISTER</string>
+    <string name="login_email_hint">Email</string>
+    <string name="login_password_hint">Password</string>
+    <string name="login_button_text">LOG IN</string>
+    <string name="fblogin_button_text">Log in with Facebook</string>
+    <string name="register_name_hint">Name</string>
+    <string name="register_surname_hint">Surname</string>
+    <string name="register_button_text">REGISTER</string>
+    <string name="title_activity_product_detail">ProductDetailActivity</string>
+
 </resources>

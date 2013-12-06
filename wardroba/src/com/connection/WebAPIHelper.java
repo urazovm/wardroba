@@ -1,10 +1,14 @@
 package com.connection;
 
 import java.util.ArrayList;
+import java.util.List;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import com.example.wardroba.HomeActivity;
+import com.example.wardroba.ProductListFragment;
 import com.example.wardroba.ProfileEditActivity;
 import com.example.wardroba.LoginActivity;
 import com.example.wardroba.ProductGallery;
@@ -25,7 +29,7 @@ public class WebAPIHelper extends AsyncTask<String, Integer, Long>
 	private ProfileEditActivity edit_profile_activity;
 	private ProductGallery product_activity;
 	
-
+	private HomeActivity  home_activity;
 	
 	private Dialogs mainActivity;
 	private Document response;
@@ -71,11 +75,19 @@ public class WebAPIHelper extends AsyncTask<String, Integer, Long>
 		this.requestNumber = requestNumber;
 		loadingMessage = msg;
 	}		
-
+	
 	public WebAPIHelper(int requestNumber, Dialogs activity, String msg) 
 	{
 		this.mainActivity = activity;
 		progressDlg = new ProgressDialog(mainActivity);
+		this.requestNumber = requestNumber;
+		loadingMessage = msg;
+	}
+	
+	public WebAPIHelper(int requestNumber, HomeActivity activity, String msg) 
+	{
+		this.home_activity = activity;
+		progressDlg = new ProgressDialog(home_activity);
 		this.requestNumber = requestNumber;
 		loadingMessage = msg;
 	}
@@ -191,6 +203,97 @@ public class WebAPIHelper extends AsyncTask<String, Integer, Long>
 			}
 			register_activity.setResponseFromRequest2(requestNumber);
 		}
+		else if (requestNumber == Constants.product_list)
+		{		
+			ArrayList<Constants> arr_ProductList = null;
+			if(response != null)
+			{				
+				Element node = (Element) response.getElementsByTagName("root").item(0);
+				NodeList noderesult=  node.getElementsByTagName("result");
+				Element result = (Element) noderesult.item(0);
+				
+				Constants.USER_NAME = getValueFromNode(result,"username");
+				Constants.USER_IMAGE = getValueFromNode(result,"user_image");
+				Constants.USER_DATE = getValueFromNode(result,"date");
+				
+				
+				NodeList cloth =  result.getElementsByTagName("cloth");
+				
+				for(int j=0; j<cloth.getLength(); j++)
+				{
+					if(arr_ProductList == null)
+					{
+						arr_ProductList = new ArrayList<Constants>();
+					}					
+					Constants Product_list=new Constants();
+					Element optionchildNode = (Element) cloth.item(j);
+
+					Product_list.PIdCloth = parseIntValue(getValueFromNode(optionchildNode,"id_cloth"));
+					Product_list.PUserId = parseIntValue(getValueFromNode(optionchildNode,"user_id"));
+					Product_list.PObjectId = parseIntValue(getValueFromNode(optionchildNode,"object_id"));
+					Product_list.PLikeCount = parseIntValue(getValueFromNode(optionchildNode,"like_count"));
+					Product_list.PCommentCount = parseIntValue(getValueFromNode(optionchildNode,"comment_count"));
+					Product_list.PViewCount = parseIntValue(getValueFromNode(optionchildNode,"view_count"));
+					Product_list.PProductRange = getValueFromNode(optionchildNode,"price_range");
+					Product_list.PPrice = getValueFromNode(optionchildNode,"price");
+					Product_list.PDescription = getValueFromNode(optionchildNode,"description");
+					Product_list.PCategoryname = getValueFromNode(optionchildNode,"category_name");
+					Product_list.PDiscountedPrice = getValueFromNode(optionchildNode,"discounted_price");
+					Product_list.PDiscpontPerc = getValueFromNode(optionchildNode,"discount_perc");
+					Product_list.PSeasonName = getValueFromNode(optionchildNode,"season_name");
+					Product_list.PDesigner = getValueFromNode(optionchildNode,"designer");
+					Product_list.PShortDescription = getValueFromNode(optionchildNode,"Shortdescription");
+					Product_list.PImageUrl = getValueFromNode(optionchildNode,"img_url");
+					Product_list.PLikeStatus = getValueFromNode(optionchildNode,"like_statue");
+					
+					arr_ProductList.add(Product_list);
+				}
+			}
+			home_activity.setResponseFromRequest(requestNumber,arr_ProductList);
+		}
+		else if(requestNumber==Constants.search_list)
+		{
+			List<Constants> productlist=null;
+			if(response != null)
+			{
+				Element node = (Element) response.getElementsByTagName("root").item(0);
+				NodeList nlist =  node.getElementsByTagName("result");				
+				Element result = (Element) nlist.item(0);
+
+                
+
+
+                NodeList cloth =  result.getElementsByTagName("cloth");
+
+                for(int j=0; j<cloth.getLength(); j++)
+                {
+                        if(productlist == null)
+                        {
+                                productlist = new ArrayList<Constants>();
+                        }
+                        Constants Product_list=new Constants();
+                        Element optionchildNode = (Element) cloth.item(j);
+
+                        Product_list.GIdCloth =parseIntValue(getValueFromNode(optionchildNode,"id_cloth"));
+                        Product_list.GUserId =parseIntValue(getValueFromNode(optionchildNode,"user_id"));
+                        
+                        Product_list.GLikeCount =parseIntValue(getValueFromNode(optionchildNode,"like_count"));
+                        Product_list.GCommentCount =parseIntValue(getValueFromNode(optionchildNode,"comment_count"));
+                        Product_list.GViewCount =parseIntValue(getValueFromNode(optionchildNode,"view_count"));
+                        Product_list.GProductRange = getValueFromNode(optionchildNode,"price_range");
+                        Product_list.GPrice = getValueFromNode(optionchildNode,"price");
+                        Product_list.GDescription =getValueFromNode(optionchildNode,"description");
+                        
+                        Product_list.GImageUrl = getValueFromNode(optionchildNode,"img_url");
+                        Product_list.GLikeStatus = getValueFromNode(optionchildNode,"like_statue");
+                        Log.d("Product", "Image:"+Product_list.GImageUrl);
+                        productlist.add(Product_list);
+                	}
+				}
+				product_activity.setResponseFromRequest(productlist);
+			
+		}
+		
 		progressDlg.dismiss();
 	}
 		

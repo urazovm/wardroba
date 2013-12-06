@@ -1,20 +1,26 @@
 package com.example.wardroba;
 
+import com.connection.Constants;
+
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.view.Menu;
 import android.view.Window;
 
 public class SplashActivity extends Activity 
 {
 	 protected boolean _active = true;
-	 protected int _splashTime = 5000;
+	 protected int _splashTime = 2000;
+	 
+	 SharedPreferences preferences;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) 
@@ -22,8 +28,8 @@ public class SplashActivity extends Activity
    	this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.splash_activity);
-		
-		
+		preferences = PreferenceManager.getDefaultSharedPreferences(this);
+		loadPrefrences();
 	      if(isOnline()==true)
 	       {                 
 	        Thread splashTread = new Thread()  
@@ -49,11 +55,20 @@ public class SplashActivity extends Activity
 	                } 
 	                finally 
 	                {
+	                	if(Constants.LOGIN_USERID==0)
+	                	{
 
 						Intent splace=new Intent(SplashActivity.this,WardrobaDashboardActivity.class);
 						startActivity(splace);
 						finish();
-						
+	                	}
+	                	else
+	                	{
+	                		Intent splace=new Intent(SplashActivity.this,HomeTabActivity.class);
+							startActivity(splace);
+							finish();
+	                	}
+	                	
 	                }
 	            }
 	        };
@@ -95,4 +110,10 @@ public class SplashActivity extends Activity
 	// TODO Auto-generated method stub
 	super.onPause();	
   } 
+  
+  private void loadPrefrences()
+	{
+		Constants.LOGIN_USERID=preferences.getInt(Constants.KEY_LOGIN_ID, 0);
+		
+	}
 }

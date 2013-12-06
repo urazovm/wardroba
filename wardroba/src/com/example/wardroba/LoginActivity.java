@@ -4,12 +4,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URLEncoder;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
 import java.util.regex.Pattern;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -17,16 +13,11 @@ import com.connection.Constants;
 import com.connection.JSONfunctions;
 import com.connection.WebAPIHelper;
 import com.facebook.Session;
-import com.facebook.SessionState;
 import com.facebook.android.AsyncFacebookRunner;
 import com.facebook.android.AsyncFacebookRunner.RequestListener;
 import com.facebook.android.DialogError;
 import com.facebook.android.Facebook;
 import com.facebook.android.FacebookError;
-import com.facebook.android.Util;
-import com.facebook.internal.Utility;
-import com.facebook.widget.LoginButton;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -42,6 +33,7 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -93,9 +85,10 @@ public class LoginActivity extends Activity
    	 {
    		 if(Constants.LOGIN_USERID!=0)
    		 {
-   			 Intent intent=new Intent(LoginActivity.this,HomeActivity.class);
+   			savePrefrences();
+   			 Intent intent=new Intent(LoginActivity.this,HomeTabActivity.class);
    			 startActivity(intent);
-   			 
+   			 finish();
    			 
    		 }
    	 }
@@ -109,7 +102,8 @@ public class LoginActivity extends Activity
 		typeface = Typeface.createFromAsset(getAssets(),"fonts/GOTHIC.TTF");
 		Edt_email = (EditText)findViewById(R.id.edt_email);
 		Edt_passward = (EditText)findViewById(R.id.edt_passward);
-		
+		Edt_email.setText("jalpesh@amphee.com");
+		Edt_passward.setText("jalpesh");
 		Btn_login = (Button)findViewById(R.id.btn_login);
 		//btnFacebook=(LoginButton)findViewById(R.id.login_fb);
 		fb_login=(Button)findViewById(R.id.login_fb);
@@ -129,6 +123,8 @@ public class LoginActivity extends Activity
 			@Override
 			public void onClick(View v) 
 			{
+				 InputMethodManager inputManager = (InputMethodManager)getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE); 
+				 inputManager.hideSoftInputFromWindow(LoginActivity.this.getCurrentFocus().getWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
 				LOGINBUTTON();
 			}
 		});
@@ -190,7 +186,7 @@ public class LoginActivity extends Activity
 						@Override
 						public void onComplete(Bundle values) {
 							// TODO Auto-generated method stub
-							Toast.makeText(getApplicationContext(), "Success", Toast.LENGTH_SHORT).show();
+							//Toast.makeText(getApplicationContext(), "Success", Toast.LENGTH_SHORT).show();
 							SharedPreferences.Editor editor = preferences.edit();
 	                        editor.putString("access_token",facebook.getAccessToken());
 	                        editor.putLong("access_expires",facebook.getAccessExpires());
@@ -429,9 +425,10 @@ public class LoginActivity extends Activity
 	   			if(success.equals("true"))
 	   			{
 		   			Constants.LOGIN_USERID=Integer.valueOf(json.getString("id").toString());
-		   			
-	   				Intent ii = new Intent(LoginActivity.this,HomeActivity.class);
+		   			savePrefrences();
+	   				Intent ii = new Intent(LoginActivity.this,HomeTabActivity.class);
 		        	startActivity(ii); 
+		        	finish();
 	   			}else
 	   			{
 	   				MSG="Please enter valid email or password.";
@@ -513,6 +510,13 @@ public class LoginActivity extends Activity
 			}
 		});
  	    
+	}
+	
+	private void savePrefrences()
+	{
+		SharedPreferences.Editor editor = preferences.edit();
+		editor.putInt(Constants.KEY_LOGIN_ID, Constants.LOGIN_USERID);
+		editor.commit();
 	}
 
 }

@@ -18,6 +18,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.widget.ImageView;
+import android.widget.ImageView.ScaleType;
 
 public class ImageLoader {
     
@@ -36,8 +37,21 @@ public class ImageLoader {
     {
         imageViews.put(imageView, url);
         Bitmap bitmap=memoryCache.get(url);
+        
         if(bitmap!=null)
-            imageView.setImageBitmap(bitmap);
+        {
+        	if(bitmap.getWidth()>300 || bitmap.getHeight()>230)
+        	{
+        		imageView.setScaleType(ScaleType.CENTER_INSIDE);
+        		imageView.setImageBitmap(bitmap);
+        		
+        	}
+        	else
+        	{
+        		
+        		imageView.setImageBitmap(bitmap);
+        	}
+        }
         else
         {
             queuePhoto(url, imageView);
@@ -157,8 +171,17 @@ public class ImageLoader {
                 return;
             if(bitmap!=null)
             {
-                photoToLoad.imageView.setImageBitmap(bitmap);
-            
+            	if(bitmap.getWidth()>300 || bitmap.getHeight()>230)
+            	{
+            	
+            		photoToLoad.imageView.setScaleType(ScaleType.CENTER_INSIDE);
+            		photoToLoad.imageView.setImageBitmap(bitmap);
+            	}
+            	else
+            	{
+            		
+            		photoToLoad.imageView.setImageBitmap(bitmap);
+            	}
             }//else
                // photoToLoad.imageView.setImageResource(stub_id);
         }

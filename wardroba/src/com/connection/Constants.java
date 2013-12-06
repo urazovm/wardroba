@@ -37,13 +37,13 @@ public class Constants implements Serializable
 	public final static int profile_list = 52;
 	public final static int editprofile_list = 53;
 	public final static int editprofile_list2 = 54;
-	public final static int productlike_list = 55;
 	public final static int search_list = 56;
-	public final static int product_detail_list = 57;
 	public final static int login_request = 58;
 	public final static int change_password_request = 59;
 	public final static int fblogin_request = 60;
 	public final static int fblogin_request1 = 61;
+	
+	public final static int product_list = 62;
  	public static String USERNAME,MSG_LOGIN;
  	public static int REGISTER_USERID;
  	public static String MSG_REGISTER;	
@@ -65,37 +65,15 @@ public class Constants implements Serializable
  	public static String PRODUCT_LIKE_MSG;
 
 
-	//http://www.lisaci.com/iphone/product.php?id_product=117
-	public String PDId,PDName,PDDescription,PDPrice,PDshipping,PDApproximatelyprice,PDImageUrl,PDUrl,PDBigUrl;
 
-//	//http://www.lisaci.com/iphone/wishlistview.php?id_member=95
-//	public String WishId,WishImage,WishProductId,WishProductName,WishBrand,WishPrice;
-
+ 	 public int GIdCloth,GUserId,GObjectId,GLikeCount,GCommentCount,GViewCount;
+     public String GProductRange,GPrice,GDescription,GCategoryname,GDiscountedPrice,GDiscpontPerc,GSeasonName,GDesigner,GShortDescription,GImageUrl,GLikeStatus;
+     
+     public static String USER_NAME,USER_IMAGE,USER_DATE;
+ 	public int PIdCloth,PUserId,PObjectId,PLikeCount,PCommentCount,PViewCount;
+ 	public String PProductRange,PPrice,PDescription,PCategoryname,PDiscountedPrice,PDiscpontPerc,PSeasonName,PDesigner,PShortDescription,PImageUrl,PLikeStatus;
 	
-//	//http://www.lisaci.com/iphone/addtocart.php?addtocart=154&id_member=95&qty=1
-//	public String CartDeleteId,CartImage,CartProductName,CartPostage,CartQty,CartUnit_Price,CartTotal;
-//	public int CartProductId;
-
-	//http://www.lisaci.com/iphone/searchproduct.php?search_qry=te
-	public String SProductId,SPName,SPDescription,SPPrice,SPImage;
-
-//	//http://www.lisaci.com/iphone/checkout_1.php?id_member=95
-//	public String AAddressID,AName,AAddress,ACountry,ACountry_Id,ARegion,ARegion_Id,ACity,AMobileNo;
-
-//	//http://www.lisaci.com/iphone/checkout_2.php?id_member=95&id_country=99&id_region=1485&id_address=1
-//	public String APProductID,APImage,APProductName,APPostage,APQty,APUnitPrice,APTotal;
-	
-//	//http://www.lisaci.com/iphone/checkout_3.php?
-//	public String CardAttributeValue,CardValue;
-//	public String MonthAttributeValue,MonthValue;
-//	public String YearAttributeValue,YearValue;
-	
-//	//http://www.lisaci.com/iphone/product.php?id_product=118
-//	public String TotalReview,UserName,UserImage,Comment,Date,Location;
-	
-	//http://www.lisaci.com/iphone/changepassword.php?
-	
-	//http://www.lisaci.com/iphone/contactus.php?
-
+ 	// login session variable
+ 	public static String KEY_LOGIN_ID="login_id";
 }
 

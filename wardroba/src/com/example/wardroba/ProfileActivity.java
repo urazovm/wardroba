@@ -11,9 +11,11 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -27,7 +29,7 @@ public class ProfileActivity extends Activity
     public TextView Txt_name, Txt_city ,Txt_email , Txt_pass;
     public Button Btn_edit_profile , Btn_logout;
     public ImageView Btn_back;
-	
+	SharedPreferences preferences;
 	public void setResponseFromRequest(int requestNumber) 
 	{
 		Txt_name.setText(Constants.USEREMAIL);
@@ -41,11 +43,8 @@ public class ProfileActivity extends Activity
     	this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);       
         
-        tabProvider = new TabbarView(this);
-		tabView = tabProvider.getTabHost();
-		tabView.setCurrentView(R.layout.profile_view_activity);
-		setContentView(tabView.render(3)); 
-
+        setContentView(R.layout.profile_view_activity); 
+        preferences = PreferenceManager.getDefaultSharedPreferences(this);
 		Txt_name = (TextView)findViewById(R.id.txt_name);
 		Txt_city = (TextView)findViewById(R.id.txt_city);
 		Txt_email = (TextView)findViewById(R.id.txt_email);
@@ -82,6 +81,12 @@ public class ProfileActivity extends Activity
 			@Override
 			public void onClick(View v) 
 			{
+				SharedPreferences.Editor editor = preferences.edit();
+				 editor.putString("access_token",null);
+                editor.putLong("access_expires",0);
+                editor.putInt(Constants.KEY_LOGIN_ID, 0);
+               editor.commit();
+               editor.clear();
 				LOGOUTALERT();
 			}
 		});
