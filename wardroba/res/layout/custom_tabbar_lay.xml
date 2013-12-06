@@ -1,0 +1,46 @@
+ 
+<TabHost xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@android:id/tabhost" android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+	
+    <LinearLayout
+		android:orientation="vertical"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent">
+         <FrameLayout android:id="@android:id/tabcontent"
+            android:layout_width="fill_parent" android:layout_height="wrap_content"
+            android:layout_weight="1"
+             />
+        <TabWidget android:id="@android:id/tabs"
+            android:layout_width="fill_parent" android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:layout_weight="0"
+             />
+
+        <LinearLayout android:id="@+id/tabbar"
+            android:orientation="horizontal" android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/menu_bg">
+            <Button android:id="@+id/firstButton"
+                 android:background="@drawable/menu_icon_1_h"
+                 
+                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:clickable="true"/>
+            <Button android:id="@+id/secondButton"
+                 android:background="@drawable/menu_icon_2"
+                android:layout_height="wrap_content" android:layout_width="wrap_content"
+                android:clickable="true"></Button>
+            <Button android:id="@+id/thirdButton"
+                 android:background="@drawable/menu_icon_3"
+                android:layout_height="wrap_content" android:layout_width="wrap_content"
+                android:clickable="true"></Button>
+            <Button android:id="@+id/forthButton"
+                android:layout_alignParentTop="true" android:background="@drawable/menu_icon_4"
+                android:layout_height="wrap_content" android:layout_width="wrap_content"
+                android:clickable="true"></Button>
+        </LinearLayout>
+
+	</LinearLayout>
+
+    
+</TabHost>

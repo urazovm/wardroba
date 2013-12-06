@@ -1,0 +1,29 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+     >
+	
+    <LinearLayout android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp">
+        <ImageView android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/search_icon"/>
+        <EditText android:layout_width="fill_parent"
+            android:layout_height="40dp"
+            android:background="#FFFFFF"
+            android:hint="Search for items and tags"
+            android:paddingLeft="5dp"
+            android:textColorHint="@color/text_hint_color"
+            />
+    </LinearLayout>
+    <GridView android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/product_grid"
+        android:layout_margin="5dp">
+        
+    </GridView>
+
+</LinearLayout>
