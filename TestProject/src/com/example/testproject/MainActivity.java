@@ -6,7 +6,7 @@ import android.view.Menu;
 
 public class MainActivity extends Activity {
 
-	String str;
+	String stristesting;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
