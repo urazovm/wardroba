@@ -42,6 +42,7 @@ public class HomeActivity extends Activity
   			txtDate.setText(Constants.USER_DATE.toString());
   			HomeProductBaseAdapter adapter=new HomeProductBaseAdapter(arr_ProductList,HomeActivity.this);
  	    	lsvProductList.setAdapter(adapter);
+ 	    	
   		}
   		else
   		{

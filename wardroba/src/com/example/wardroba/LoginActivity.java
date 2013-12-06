@@ -96,6 +96,7 @@ public class LoginActivity extends Activity
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.login_activity);
+		Log.d("hello","hello");
 		progressDialog=new ProgressDialog(this);
 		preferences = PreferenceManager.getDefaultSharedPreferences(this);
 		initFacebook();
