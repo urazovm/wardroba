@@ -26,8 +26,8 @@
 	    android:id="@+id/product_list"
 	    android:layout_width="fill_parent"
 	    android:layout_height="fill_parent"
-	    android:divider="@null"
-		
-		android:listSelector="@android:color/transparent"
-		android:cacheColorHint="@android:color/transparent"/>
+	    android:smoothScrollbar="true"
+	    android:scrollingCache="false"
+	    android:listSelector="@android:color/transparent"
+		/>
 </LinearLayout>

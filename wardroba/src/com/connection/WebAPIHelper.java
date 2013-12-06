@@ -8,7 +8,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import com.example.wardroba.HomeActivity;
-import com.example.wardroba.ProductListFragment;
+import com.example.wardroba.ProductGalleryGridFragment;
 import com.example.wardroba.ProfileEditActivity;
 import com.example.wardroba.LoginActivity;
 import com.example.wardroba.ProductGallery;
@@ -28,7 +28,7 @@ public class WebAPIHelper extends AsyncTask<String, Integer, Long>
 	private ProfileActivity profile_activity;
 	private ProfileEditActivity edit_profile_activity;
 	private ProductGallery product_activity;
-	
+	private ProductGalleryGridFragment productGalleryGridFragment;
 	private HomeActivity  home_activity;
 	
 	private Dialogs mainActivity;
@@ -88,6 +88,13 @@ public class WebAPIHelper extends AsyncTask<String, Integer, Long>
 	{
 		this.home_activity = activity;
 		progressDlg = new ProgressDialog(home_activity);
+		this.requestNumber = requestNumber;
+		loadingMessage = msg;
+	}
+	public WebAPIHelper(int requestNumber, ProductGalleryGridFragment activity, String msg) 
+	{
+		this.productGalleryGridFragment = activity;
+		progressDlg = new ProgressDialog(productGalleryGridFragment.getActivity());
 		this.requestNumber = requestNumber;
 		loadingMessage = msg;
 	}
@@ -290,7 +297,7 @@ public class WebAPIHelper extends AsyncTask<String, Integer, Long>
                         productlist.add(Product_list);
                 	}
 				}
-				product_activity.setResponseFromRequest(productlist);
+				productGalleryGridFragment.setResponseFromRequest(productlist);
 			
 		}
 		
