@@ -42,8 +42,9 @@ public class Constants implements Serializable
 	public final static int change_password_request = 59;
 	public final static int fblogin_request = 60;
 	public final static int fblogin_request1 = 61;
-	
 	public final static int product_list = 62;
+	public final static int product_like = 63;
+	
  	public static String USERNAME,MSG_LOGIN;
  	public static int REGISTER_USERID;
  	public static String MSG_REGISTER;	
@@ -61,8 +62,8 @@ public class Constants implements Serializable
  	public static String EDITUSEREMSG;
  	public static int EDITEDUSERID;
 
- 	public static int PRODUCTID;
- 	public static String PRODUCT_LIKE_MSG;
+ 	public static String LIKE_STATUS;
+ 	public static int LIKE_COUNT,SELECTED_ID;
 
 
 
