@@ -55,35 +55,45 @@ public class HomeProductBaseAdapter extends BaseAdapter
 	}
 	class GroupItem
 	{
-		public TextView txtLikeCount,txtCommentCount,txtShortDiscription;
-		public ImageView imgProductImage;
-		public ProgressBar progressBar;
-		public ImageView btnLike,btnComment,btnShare;
+		
+		public ImageView imgUserPhoto;
+		public TextView txtNameSurname,txtDate;
 	}
 	
 	public View getView(final int position, View convertView, ViewGroup parent) 
 	{
+		 TextView txtLikeCount,txtCommentCount,txtShortDiscription;
+		 final ImageView imgProductImage;
+		 final ProgressBar progressBar;
+		 ImageView btnLike,btnComment,btnShare;
 		View vi=null;
 			item =new GroupItem();
 			 	
 			vi=mInflater.inflate(R.layout.home_activity_lay, null);
+			item.imgUserPhoto=(ImageView)vi.findViewById(R.id.img_user_photo);
+		    item.txtNameSurname=(TextView)vi.findViewById(R.id.txt_name_surname);
+		    item.txtDate=(TextView)vi.findViewById(R.id.txt_date);
+			vi.setTag(item);
+			item.txtNameSurname.setText(Constants.USER_NAME.toString());
+			item.txtDate.setText(Constants.USER_DATE.toString());
 			
-			item.txtLikeCount =(TextView) vi.findViewById(R.id.txt_like);
-			item.txtCommentCount =(TextView) vi.findViewById(R.id.txt_comment);
-			item.txtShortDiscription =(TextView) vi.findViewById(R.id.txt_short_description);
-			item.imgProductImage =(ImageView) vi.findViewById(R.id.img_product_photo);
-			item.progressBar=(ProgressBar)vi.findViewById(R.id.progressBar1);
-			item.btnLike =(ImageView) vi.findViewById(R.id.img_like);
-			item.btnComment =(ImageView) vi.findViewById(R.id.img_comment);
-			item.btnShare =(ImageView) vi.findViewById(R.id.img_share);
 			
-			item.txtLikeCount.setTypeface(tf);
-			item.txtCommentCount.setTypeface(tf);
-			item.txtShortDiscription.setTypeface(tf);
+			txtLikeCount =(TextView) vi.findViewById(R.id.txt_like);
+			txtCommentCount =(TextView) vi.findViewById(R.id.txt_comment);
+			txtShortDiscription =(TextView) vi.findViewById(R.id.txt_short_description);
+			imgProductImage =(ImageView) vi.findViewById(R.id.img_product_photo);
+			progressBar=(ProgressBar)vi.findViewById(R.id.progressBar1);
+			btnLike =(ImageView) vi.findViewById(R.id.img_like);
+			btnComment =(ImageView) vi.findViewById(R.id.img_comment);
+			btnShare =(ImageView) vi.findViewById(R.id.img_share);
 			
-			item.txtLikeCount.setText(String.valueOf(arr_ProductList.get(position).PLikeCount));
-			item.txtCommentCount.setText(String.valueOf(arr_ProductList.get(position).PCommentCount));
-			item.txtShortDiscription.setText(arr_ProductList.get(position).PShortDescription.toString().trim());
+			txtLikeCount.setTypeface(tf);
+			txtCommentCount.setTypeface(tf);
+			txtShortDiscription.setTypeface(tf);
+			
+			txtLikeCount.setText(String.valueOf(arr_ProductList.get(position).PLikeCount));
+			txtCommentCount.setText(String.valueOf(arr_ProductList.get(position).PCommentCount));
+			txtShortDiscription.setText(arr_ProductList.get(position).PShortDescription.toString().trim());
 
 			
 			//item.imgProductImage.setScaleType(ImageView.ScaleType.FIT_XY);
@@ -98,12 +108,12 @@ public class HomeProductBaseAdapter extends BaseAdapter
 					{
 						try 
 						{
-							item.imgProductImage.post(new Runnable()
+							imgProductImage.post(new Runnable()
 							{
 								public void run() 
 								{
-									item.progressBar.setVisibility(View.GONE);		
-								    imageLoader.DisplayImage(url, item.imgProductImage);								 
+									progressBar.setVisibility(View.GONE);		
+								    imageLoader.DisplayImage(url,imgProductImage);								 
 								}
 							}); 
 						} 
@@ -116,11 +126,11 @@ public class HomeProductBaseAdapter extends BaseAdapter
 			}
 			else
 			{
-				item.progressBar.setVisibility(View.GONE);
+				progressBar.setVisibility(View.GONE);
 				//item.imgProductImage.setImageResource(R.drawable.noimageavailable);
 			}			
 			
-			item.btnLike.setOnClickListener(new View.OnClickListener() 
+			btnLike.setOnClickListener(new View.OnClickListener() 
 			{
 				public void onClick(View v) 
 				{
@@ -130,7 +140,7 @@ public class HomeProductBaseAdapter extends BaseAdapter
 		
 		
 
-			item.btnComment.setOnClickListener(new View.OnClickListener() 
+			btnComment.setOnClickListener(new View.OnClickListener() 
 			{
 				public void onClick(View v) 
 				{
@@ -139,7 +149,7 @@ public class HomeProductBaseAdapter extends BaseAdapter
 			});
 		
 
-			item.btnShare.setOnClickListener(new View.OnClickListener() 
+			btnShare.setOnClickListener(new View.OnClickListener() 
 			{
 				public void onClick(View v) 
 				{
@@ -150,6 +160,12 @@ public class HomeProductBaseAdapter extends BaseAdapter
 		return vi;	
 	}	
 	
+	
+	private static class ViewHolder 
+	{
+		TextView header;
+		int previousTop = 0;
+	}
 
 		
 }

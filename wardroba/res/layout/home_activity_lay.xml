@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical" >
 
-
+<LinearLayout 
+        
+    	
+        android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_marginTop="50dp"
+	    android:orientation="vertical">
     <LinearLayout 
         android:layout_width="fill_parent"
 	    android:layout_height="230dp"
@@ -149,4 +155,41 @@
 	      android:layout_width="fill_parent" 
 	      android:background="@color/grey"  
 	      android:layout_height="0.5dip"/>  
-</LinearLayout>
+	      </LinearLayout>
+	      <LinearLayout 
+    	android:id="@+id/header"
+    	android:background="#AAFFFFFF"
+    	android:layout_width="fill_parent"
+	    android:layout_height="50dp"
+	    android:orientation="horizontal"
+	    android:gravity="center_vertical"
+	    android:weightSum="1.0">
+	    <ImageView 
+	        android:id="@+id/img_user_photo"
+	        android:layout_width="40dp"
+	        android:layout_height="40dp"
+	        android:layout_marginLeft="10dp"
+	        android:src="@drawable/wall_icon"/>
+	    
+	    <TextView
+	        android:id="@+id/txt_name_surname" 
+	        android:layout_width="0dp"
+	        android:layout_weight="0.7"
+	        android:layout_height="40dp"
+	        android:text="Nilesh Pambhar"
+	        android:gravity="center_vertical"
+	        android:paddingLeft="10dp"
+	        android:textSize="16dp"
+	        android:textColor="@color/textcolor"/>
+	    <TextView 
+	        android:id="@+id/txt_date"
+	        android:layout_width="0dp"
+	        android:layout_height="40dp"
+	        android:layout_weight="0.3"
+	        android:text="Date"
+	        android:textColor="@color/textcolor2"
+	        android:gravity="center_vertical|right"
+	        android:paddingRight="10dp"/>
+	</LinearLayout>
+
+</RelativeLayout>

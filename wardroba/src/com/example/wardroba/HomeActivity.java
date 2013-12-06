@@ -5,7 +5,6 @@ import java.util.ArrayList;
 
 import com.connection.Constants;
 import com.connection.WebAPIHelper;
-
 import BaseAdapter.HomeProductBaseAdapter;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -16,11 +15,16 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.AbsListView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.AbsListView.OnScrollListener;
 
 public class HomeActivity extends Activity
 {
@@ -38,8 +42,8 @@ public class HomeActivity extends Activity
   		arr_ProductList =(ArrayList<Constants>) obj;
   		if(arr_ProductList != null)
   		{  			 
-  			txtNameSurname.setText(Constants.USER_NAME.toString());
-  			txtDate.setText(Constants.USER_DATE.toString());
+//  			txtNameSurname.setText(Constants.USER_NAME.toString());
+//  			txtDate.setText(Constants.USER_DATE.toString());
   			HomeProductBaseAdapter adapter=new HomeProductBaseAdapter(arr_ProductList,HomeActivity.this);
  	    	lsvProductList.setAdapter(adapter);
  	    	
@@ -58,14 +62,59 @@ public class HomeActivity extends Activity
 	    setContentView(R.layout.home_activity);
 	 	 
 	    lsvProductList=(ListView)findViewById(R.id.product_list);
-	    imgUserPhoto=(ImageView)findViewById(R.id.img_user_photo);
-	    txtNameSurname=(TextView)findViewById(R.id.txt_name_surname);
-	    txtDate=(TextView)findViewById(R.id.txt_date);
+//	    imgUserPhoto=(ImageView)findViewById(R.id.img_user_photo);
+//	    txtNameSurname=(TextView)findViewById(R.id.txt_name_surname);
+//	    txtDate=(TextView)findViewById(R.id.txt_date);
 		
 	    tf= Typeface.createFromAsset(getAssets(),"fonts/GOTHIC.TTF");
-	    txtNameSurname.setTypeface(tf);
-	    txtDate.setTypeface(tf);
+//	    txtNameSurname.setTypeface(tf);
+//	    txtDate.setTypeface(tf);
+	    lsvProductList.setOnScrollListener(new OnScrollListener() 
+		{
+	        int mScrollState = OnScrollListener.SCROLL_STATE_IDLE;
+	        public void onScrollStateChanged(AbsListView view, int scrollState) 
+	        {
+	            // Store the state to avoid re-laying out in IDLE state.
+	            mScrollState = scrollState;
+	        }
 
+	        @Override
+	        public void onScroll(AbsListView list, int firstItem, int visibleCount, int totalCount) 
+	        {
+	            // Nothing to do in IDLE state.
+	            if (mScrollState == OnScrollListener.SCROLL_STATE_IDLE)
+	                return;
+
+	            for (int i=0; i < visibleCount; i++) 
+	            {
+	                View listItem = list.getChildAt(i);
+	                if (listItem == null)
+	                    break;
+
+	                LinearLayout title = (LinearLayout) listItem.findViewById(R.id.header);
+
+	                int topMargin = 0;
+	                if (i == 0) {
+	                    int top = listItem.getTop();
+	                    int height = listItem.getHeight();
+
+	                    // if top is negative, the list item has scrolled up.
+	                    // if the title view falls within the container's visible portion,
+	                    //     set the top margin to be the (inverse) scrolled amount of the container.
+	                    // else
+	                    //     set the top margin to be the difference between the heights.
+	                    if (top < 0)
+	                        topMargin = title.getHeight() < (top + height) ? -top : (height - title.getHeight());
+	                }
+
+	                // set the margin.
+	                ((ViewGroup.MarginLayoutParams) title.getLayoutParams()).topMargin = topMargin;
+
+	                // request Android to layout again.
+	                listItem.requestLayout();
+	            }
+	        }
+	     });
 	    if(isOnline()==true)
 		{
 			try
