@@ -95,7 +95,7 @@ public class WebAPIHelper extends AsyncTask<String, Integer, Long>
 		this.requestNumber = requestNumber;
 		loadingMessage = msg;
 	}
-
+	
 	public WebAPIHelper(int requestNumber, ProductGalleryGridFragment activity, String msg) 
 	{
 		this.productGalleryGridFragment = activity;
@@ -103,7 +103,6 @@ public class WebAPIHelper extends AsyncTask<String, Integer, Long>
 		this.requestNumber = requestNumber;
 		loadingMessage = msg;
 	}
-
 	
 	public WebAPIHelper(int requestNumber, Context context, String msg) 
 	{
@@ -114,7 +113,7 @@ public class WebAPIHelper extends AsyncTask<String, Integer, Long>
 	}
 	
 
-	protected void onPreExecute() 
+	protected void onPreExecute() 	
 	{
 		progressDlg.setMessage(loadingMessage);
 		progressDlg.show();
@@ -131,7 +130,6 @@ public class WebAPIHelper extends AsyncTask<String, Integer, Long>
 		{			 
 			if(response != null)
 			{
-				
 				Element node = (Element) response.getElementsByTagName("root").item(0);
 				NodeList nlist =  node.getElementsByTagName("result");				
 				Element childNode = (Element)nlist.item(0);
