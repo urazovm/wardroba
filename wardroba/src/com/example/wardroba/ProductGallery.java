@@ -67,7 +67,7 @@ public class ProductGallery extends FragmentActivity implements OnProductSelectL
 	            getSupportFragmentManager().beginTransaction()
 	                    .add(R.id.fragment_container, firstFragment).commit();
 	    
-		 Toast.makeText(getApplicationContext(), "Hello", Toast.LENGTH_SHORT).show();
+		// Toast.makeText(getApplicationContext(), "Hello", Toast.LENGTH_SHORT).show();
 	}
     
     public class ProductGalleryAdapter extends BaseAdapter
@@ -126,10 +126,12 @@ public class ProductGallery extends FragmentActivity implements OnProductSelectL
 
             // Create fragment and give it an argument for the selected article
 			ProductDetailFragment secondFragment=new ProductDetailFragment();
+			secondFragment.setProductArray(position, arrProducts);
             Bundle args = new Bundle();
             args.putString("image_url", arrProducts.get(position).GImageUrl);
             args.putInt("like_count", arrProducts.get(position).GLikeCount);
             args.putInt("comment_count", arrProducts.get(position).GCommentCount);
+            args.putString("short_description", arrProducts.get(position).GDescription);
             Log.d("Image path", "Image:"+arrProducts.get(position).GImageUrl);
             Log.d("Like", "like:"+arrProducts.get(position).GLikeCount);
             Log.d("Comment", "Comment:"+arrProducts.get(position).GCommentCount);

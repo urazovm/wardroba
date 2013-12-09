@@ -13,5 +13,11 @@
     <string name="register_surname_hint">Surname</string>
     <string name="register_button_text">REGISTER</string>
     <string name="title_activity_product_detail">ProductDetailActivity</string>
-	<string name="titile_header_text">my wardrobe</string>
+	<string name="title_mywardrobe">my wardrobe</string>
+	<string name="title_profile">profile</string>
+	<string name="button_edit_profile">EDIT PROFILE</string>
+	<string name="button_logout">LOGOUT</string>
+	<string name="edit_profile_items">items</string>
+	<string name="edit_profile_followers">followers</string>
+	<string name="edit_profile_following">following</string>
 </resources>

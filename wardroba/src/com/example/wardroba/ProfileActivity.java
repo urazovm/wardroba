@@ -1,5 +1,6 @@
 package com.example.wardroba;
 
+import com.ImageLoader.ImageLoader;
 import com.TabBar.TabHostProvider;
 import com.TabBar.TabView;
 import com.TabBar.TabbarView;
@@ -12,6 +13,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -20,21 +22,30 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ImageView.ScaleType;
 import android.widget.TextView;
 
 public class ProfileActivity extends Activity
 {
 	public TabHostProvider tabProvider;
     public TabView tabView;
-    public TextView Txt_name, Txt_city ,Txt_email , Txt_pass;
+    public TextView txtName, txtCityAddress ,txtEmail,txtItems,txtFollower,txtFollowing,txtItemLabel,txtFollowerLabel,txtFollowingLabel,txtProfileLable;
     public Button Btn_edit_profile , Btn_logout;
-    public ImageView Btn_back;
+    public ImageView Btn_back,imgProfilePhoto;
 	SharedPreferences preferences;
-	public void setResponseFromRequest(int requestNumber) 
+	ImageLoader imageLoader;
+	Typeface tf;
+	public void setResponseFromRequest(int requestNumber,WardrobaProfile profile) 
 	{
-		Txt_name.setText(Constants.USEREMAIL);
-		Txt_city.setText(Constants.USERGENDER);
-		Txt_email.setText(Constants.USEREMAIL);
+		WardrobaProfile myProfile=(WardrobaProfile)profile;
+		txtName.setText(myProfile.getName()+" "+myProfile.getLastname());
+		txtCityAddress.setText(myProfile.getAddress()+" "+myProfile.getCity());
+		txtEmail.setText(myProfile.getEmail());
+		txtItems.setText(String.valueOf(myProfile.getItems()));
+		txtFollower.setText(String.valueOf(myProfile.getFollower()));
+		txtFollowing.setText(String.valueOf(myProfile.getFollowing()));
+		imageLoader.DisplayImage("http://images.desimartini.com/media/versions/salman_khan_6._gallery_image_100_100.jpg", imgProfilePhoto);
+		
 //		Txt_pass.setText(Constants.USERID);
 	}
  
@@ -42,16 +53,41 @@ public class ProfileActivity extends Activity
     {
     	this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);       
-        
-        setContentView(R.layout.profile_view_activity); 
+        setContentView(R.layout.profile_view_activity);
+        tf= Typeface.createFromAsset(getAssets(),"fonts/GOTHIC.TTF");
+        imageLoader=new ImageLoader(getApplicationContext());
         preferences = PreferenceManager.getDefaultSharedPreferences(this);
-		Txt_name = (TextView)findViewById(R.id.txt_name);
-		Txt_city = (TextView)findViewById(R.id.txt_city);
-		Txt_email = (TextView)findViewById(R.id.txt_email);
-//		Txt_pass = (TextView)findViewById(R.id.txt_passward);
-		
+        imgProfilePhoto=(ImageView)findViewById(R.id.imgProfilePhoto);
+        
+		txtName = (TextView)findViewById(R.id.txtFullname);
+		txtCityAddress = (TextView)findViewById(R.id.txtCityAddress);
+		txtEmail = (TextView)findViewById(R.id.txtEmail);
+		txtItems=(TextView)findViewById(R.id.txtItems);
+		txtItemLabel=(TextView)findViewById(R.id.txtItemLabel);
+		txtFollower=(TextView)findViewById(R.id.txtFollowers);
+		txtFollowerLabel=(TextView)findViewById(R.id.txtFollowersLabel);
+		txtFollowing=(TextView)findViewById(R.id.txtFollowing);
+		txtFollowingLabel=(TextView)findViewById(R.id.txtFollowingLabel);
+		txtProfileLable=(TextView)findViewById(R.id.txtProfileLabel);
 		Btn_edit_profile = (Button)findViewById(R.id.btn_edit_profile);
 		Btn_logout = (Button)findViewById(R.id.btn_logout);
+		
+		txtName.setTypeface(tf);
+		txtCityAddress.setTypeface(tf);
+		txtEmail.setTypeface(tf);
+		txtItems.setTypeface(tf);
+		txtItemLabel.setTypeface(tf);
+		txtFollower.setTypeface(tf);
+		txtFollowerLabel.setTypeface(tf);
+		txtFollowing.setTypeface(tf);
+		txtFollowingLabel.setTypeface(tf);
+		txtProfileLable.setTypeface(tf);
+		
+		Btn_edit_profile.setTypeface(tf);
+		Btn_logout.setTypeface(tf);
+//		Txt_pass = (TextView)findViewById(R.id.txt_passward);
+		
+		
 		Btn_back = (ImageView)findViewById(R.id.btn_back);
 		
 		if(isOnline()==true)
@@ -59,7 +95,7 @@ public class ProfileActivity extends Activity
 			if(Constants.LOGIN_USERID != 0)
 			{
 		    	WebAPIHelper webAPIHelper = new WebAPIHelper(Constants.profile_list,ProfileActivity.this ,"Please Wait....");
-				String url = Constants.PROFILE_VIEW_URL+"id_user="+Constants.LOGIN_USERID;		
+				String url = Constants.PROFILE_VIEW_URL+"id="+Constants.LOGIN_USERID;		
 				webAPIHelper.execute(url);  
 			}
 		}

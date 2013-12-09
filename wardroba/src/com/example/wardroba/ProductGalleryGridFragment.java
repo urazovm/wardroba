@@ -8,23 +8,35 @@ import com.connection.Constants;
 import com.connection.WebAPIHelper;
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.NotificationCompat.Action;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
+import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
 public class ProductGalleryGridFragment extends Fragment 
 {
 
 	List<Constants> arr_productGallery;
+	ProductGalleryAdapter adapter;
 	GridView gridView;
+	ImageView imgSearch;
+	EditText txtKeyward;
+	Typeface tf;
 	OnProductSelectListener callback;
 	public interface OnProductSelectListener {
         /** Called by HeadlinesFragment when a list item is selected */
@@ -35,7 +47,9 @@ public class ProductGalleryGridFragment extends Fragment
 		if(obj!=null)
 		{
 			arr_productGallery=(ArrayList<Constants>)obj;
-			gridView.setAdapter(new ProductGalleryAdapter(this.getActivity()));
+			adapter=new ProductGalleryAdapter(this.getActivity());
+			gridView.setAdapter(adapter);
+			adapter.notifyDataSetChanged();
 			gridView.setOnItemClickListener(new OnItemClickListener() 
 			{
 
@@ -48,15 +62,67 @@ public class ProductGalleryGridFragment extends Fragment
 				
 			});
 		}
+		else
+		{	
+			Toast.makeText(getActivity(), "No products found",Toast.LENGTH_SHORT).show();
+			arr_productGallery=new ArrayList<Constants>();
+			adapter=new ProductGalleryAdapter(this.getActivity());
+			gridView.setAdapter(adapter);
+			adapter.notifyDataSetChanged();
+		}
+		
 	}
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
          ViewGroup root = (ViewGroup) inflater.inflate(R.layout.product_list_activity, null);
          //init(root);
          getActivity().findViewById(R.id.btnBack).setVisibility(View.GONE);
-         Toast.makeText(getActivity(), "Hello fragment", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getActivity(), "Hello fragment", Toast.LENGTH_SHORT).show();
+         tf= Typeface.createFromAsset(getActivity().getAssets(),"fonts/GOTHIC.TTF");
          gridView=(GridView)root.findViewById(R.id.product_grid);
-    	 
+         
+    	 imgSearch=(ImageView)root.findViewById(R.id.imgSearch);
+    	 txtKeyward=(EditText)root.findViewById(R.id.txtKeyward);
+    	 txtKeyward.setTypeface(tf);
+    	 txtKeyward.setImeOptions(EditorInfo.IME_ACTION_GO);
+    	 txtKeyward.setOnEditorActionListener(new OnEditorActionListener() {
+			
+			@Override
+			public boolean onEditorAction(TextView arg0, int actionId, KeyEvent event) {
+				// TODO Auto-generated method stub
+				 if (actionId == EditorInfo.IME_ACTION_GO) {
+			            imgSearch.performClick();
+			            return true;
+			        }
+				return false;
+			}
+		});
+    	 imgSearch.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				String data=txtKeyward.getText().toString();
+				if(!data.equals(""))
+				{
+					 try {
+						 InputMethodManager inputManager = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE); 
+						 inputManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
+							WebAPIHelper webAPIHelper=new WebAPIHelper(Constants.search_list, ProductGalleryGridFragment.this, "Please wait...");
+							String url=Constants.PRODUCT_SEARCH_URL+"id="+Constants.LOGIN_USERID+"&keyword="+data;
+							webAPIHelper.execute(url);
+							
+						} catch (Exception e) {
+							// TODO: handle exception
+							
+						}
+				}
+				else
+				{
+					Toast.makeText(getActivity(), "Please enter keyword", Toast.LENGTH_SHORT).show();
+				}
+			}
+		});
     	 try {
 			WebAPIHelper webAPIHelper=new WebAPIHelper(Constants.search_list, ProductGalleryGridFragment.this, "Please wait...");
 			String url=Constants.PRODUCT_SEARCH_URL+"id="+Constants.LOGIN_USERID;

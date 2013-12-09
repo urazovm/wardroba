@@ -1,23 +1,50 @@
 package com.example.wardroba;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.ImageLoader.ImageLoader;
+import com.connection.Constants;
+import com.connection.WebAPIHelper1;
 
 import android.app.Activity;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager.OnBackStackChangedListener;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class ProductDetailFragment extends Fragment
 {
-	ImageView imgProductPhoto,imgShare;
-	TextView txtLike,txtComment;
+	ImageView imgProductPhoto,imgShare,imgLike,imgComment;
+	TextView txtLike,txtComment,textDescription;
 	ImageLoader imageLoader;
+	LinearLayout shareDialog;
+	List<Constants> arr_productList;
+	public static int SELECTED_PRODUCT=0;
+	Typeface tf;
+	@SuppressWarnings("unchecked")
+  	public void setResponseFromRequest1(int requestNumber) 
+  	{	
+  			String status=Constants.LIKE_STATUS.toString().trim();
+  			if(status.equals("LIKE"))
+  			{
+  				arr_productList.get(Constants.SELECTED_ID).GLikeStatus="UNLIKE";
+  	  			arr_productList.get(Constants.SELECTED_ID).GLikeCount=Constants.LIKE_COUNT;
+  			}else
+  			{
+  				arr_productList.get(Constants.SELECTED_ID).GLikeStatus="LIKE";
+  	  			arr_productList.get(Constants.SELECTED_ID).GLikeCount=Constants.LIKE_COUNT;
+  			}
+  	}
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -27,32 +54,121 @@ public class ProductDetailFragment extends Fragment
 		txtLike=(TextView)root.findViewById(R.id.txt_like);
 		txtComment=(TextView)root.findViewById(R.id.txt_comment);
 		imgShare=(ImageView)root.findViewById(R.id.img_share);
+		textDescription=(TextView)root.findViewById(R.id.txt_short_description);
+		imgLike=(ImageView)root.findViewById(R.id.img_like);
+		imgComment=(ImageView)root.findViewById(R.id.img_comment);
+		shareDialog=(LinearLayout)root.findViewById(R.id.dialogShare);
+		
 		imageLoader=new ImageLoader(getActivity());
+		tf= Typeface.createFromAsset(getActivity().getAssets(),"fonts/GOTHIC.TTF");
+		txtLike.setTypeface(tf);
+		txtComment.setTypeface(tf);
+		textDescription.setTypeface(tf);
+		initShareDialog(root);
 		return root;
 	}
-	
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		super.onCreate(savedInstanceState);
+		
+	}
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		// TODO Auto-generated method stub
+		super.onSaveInstanceState(outState);
+		
+	}
 	@Override
 	public void onStart() {
 		// TODO Auto-generated method stub
 		super.onStart();
-		Toast.makeText(getActivity(), "On start", Toast.LENGTH_SHORT).show();
+	//	Toast.makeText(getActivity(), "On start", Toast.LENGTH_SHORT).show();
 		 Bundle args = getArguments();
 	        if (args != null) {
 	            // Set article based on argument passed in
-	        	Toast.makeText(getActivity(), "get argument", Toast.LENGTH_SHORT).show();
+	        	//Toast.makeText(getActivity(), "get argument", Toast.LENGTH_SHORT).show();
 	            updateProductDetail(args);
 	        }
 	}
 	private void updateProductDetail(Bundle args)
 	{
-		String imageUrl;
+		String imageUrl,shortDesc;
 		int likeCount,commentCount;
 		imageUrl=args.getString("image_url");
 		likeCount=args.getInt("like_count");
 		commentCount=args.getInt("comment_count");
+		shortDesc=args.getString("short_description");
 		imageLoader.DisplayImage(imageUrl, imgProductPhoto);
 		txtLike.setText(String.valueOf(likeCount));
 		txtComment.setText(String.valueOf(commentCount));
+		textDescription.setText(shortDesc);
+		shareDialog.setVisibility(View.GONE);
+		
+		imgLike.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+				String url;
+				String Cloth_Id,User_Id,ObjectId1,LikeStatus;
+				Cloth_Id = String.valueOf( arr_productList.get(SELECTED_PRODUCT).GIdCloth);
+				User_Id = String.valueOf(arr_productList.get(SELECTED_PRODUCT).GUserId);
+				ObjectId1 = String.valueOf(arr_productList.get(SELECTED_PRODUCT).GObjectId);
+				LikeStatus = arr_productList.get(SELECTED_PRODUCT).GLikeStatus.toString().trim();
+				
+				int count_like = (arr_productList.get(SELECTED_PRODUCT).GLikeCount);
+		
+				if(LikeStatus.equals("LIKE"))
+		        {
+					
+					txtLike.setText(String.valueOf(count_like=count_like+1));
+					imgLike.setBackgroundResource(R.drawable.like_h);
+					url = Constants.PRODUCT_LIKE_URL+"&id_cloth="+Cloth_Id+"&user_id="+User_Id+"&object_id="+ObjectId1+"&status="+"LIKE";
+		        }else
+		        {
+		        	txtLike.setText(String.valueOf(count_like=count_like-1));
+		        	imgLike.setBackgroundResource(R.drawable.like);
+		        	url = Constants.PRODUCT_LIKE_URL+"&id_cloth="+Cloth_Id+"&user_id="+User_Id+"&object_id="+ObjectId1+"&status="+"UNLIKE";
+		        }
+				try
+				{
+					WebAPIHelper1 webAPIHelper = new WebAPIHelper1(Constants.product_like,getActivity());
+					Log.d("Like URL= ",url.toString());
+					webAPIHelper.execute(url);    	
+				}
+				catch(Exception e)
+				{
+					
+				}
+			}
+		});
+		imgComment.setOnClickListener(new View.OnClickListener() 
+		{
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		imgShare.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				shareDialog.setVisibility(View.VISIBLE);
+				Animation anim=AnimationUtils.loadAnimation(getActivity(), R.anim.slide_up_anim);
+				anim.setFillAfter(true);
+				shareDialog.startAnimation(anim);
+			}
+		});
+	
+	}
+	public void setProductArray(int position,List<Constants> arr_products)
+	{
+		this.arr_productList=arr_products;
+		SELECTED_PRODUCT=position;
 	}
 	@Override
 	public void onAttach(Activity activity) {
@@ -72,4 +188,26 @@ public class ProductDetailFragment extends Fragment
 		super.onAttach(activity);
 	}
 	
+	public void initShareDialog(View root)
+	{
+		ImageView fb,twt,pint,tmb,gplus;
+		Button btnCancel;
+		fb=(ImageView)root.findViewById(R.id.btnFB);
+		twt=(ImageView)root.findViewById(R.id.btnTwitter);
+		pint=(ImageView)root.findViewById(R.id.btnPinterest);
+		tmb=(ImageView)root.findViewById(R.id.btnTumbler);
+		gplus=(ImageView)root.findViewById(R.id.btnGplus);
+		btnCancel=(Button)root.findViewById(R.id.btnCancel);
+		btnCancel.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+				shareDialog.setVisibility(View.GONE);
+				Animation anim=AnimationUtils.loadAnimation(getActivity(), R.anim.slide_down_anim);
+				anim.setFillBefore(true);
+				shareDialog.startAnimation(anim);
+			}
+		});
+	}
 }

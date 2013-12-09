@@ -4,6 +4,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import com.example.wardroba.HomeActivity;
+import com.example.wardroba.ProductDetailFragment;
+
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
@@ -69,6 +71,7 @@ public class WebAPIHelper1 extends AsyncTask<String, Integer, Long>
 			((HomeActivity)myContext).setResponseFromRequest1(requestNumber);
 				//product_activity.setResponseFromRequest(productlist);
 		}
+		
 		//progressDlg.dismiss();
 	}
 		

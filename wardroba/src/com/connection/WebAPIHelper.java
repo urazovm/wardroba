@@ -13,6 +13,7 @@ import com.example.wardroba.LoginActivity;
 import com.example.wardroba.ProductGallery;
 import com.example.wardroba.ProfileActivity;
 import com.example.wardroba.RegisterActivity;
+import com.example.wardroba.WardrobaProfile;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -147,18 +148,28 @@ public class WebAPIHelper extends AsyncTask<String, Integer, Long>
 		}
 		
 		else if (requestNumber == Constants.profile_list)
-		{			 
+		{		
+			WardrobaProfile myProfile=new WardrobaProfile();
 			if(response != null)
 			{
+				
 				Element node = (Element) response.getElementsByTagName("root").item(0);
 				NodeList nlist =  node.getElementsByTagName("result");				
 				Element childNode = (Element)nlist.item(0);
 
-				Constants.USERID = parseIntValue(getValueFromNode(childNode,"id_user"));
-				Constants.USEREMAIL = getValueFromNode(childNode,"email");
-				Constants.USERGENDER = getValueFromNode(childNode,"gender");
+				myProfile.setId(parseIntValue(getValueFromNode(childNode,"id")));
+				myProfile.setName(getValueFromNode(childNode,"name"));
+				myProfile.setLastname(getValueFromNode(childNode,"lastname"));
+				myProfile.setUsername(getValueFromNode(childNode,"username"));
+				myProfile.setCity(getValueFromNode(childNode,"city"));
+				myProfile.setAddress(getValueFromNode(childNode,"address"));
+				myProfile.setEmail(getValueFromNode(childNode,"email"));
+				myProfile.setUser_image(getValueFromNode(childNode,"user_image"));
+				myProfile.setItems(parseIntValue(getValueFromNode(childNode,"items")));
+				myProfile.setFollower(parseIntValue(getValueFromNode(childNode,"followers")));
+				myProfile.setFollowing(parseIntValue(getValueFromNode(childNode,"following")));
 			}	
-			profile_activity.setResponseFromRequest(requestNumber);
+			profile_activity.setResponseFromRequest(requestNumber,myProfile);
 		}
 		else if (requestNumber == Constants.editprofile_list)
 		{			 
@@ -295,16 +306,22 @@ public class WebAPIHelper extends AsyncTask<String, Integer, Long>
 
                         Product_list.GIdCloth =parseIntValue(getValueFromNode(optionchildNode,"id_cloth"));
                         Product_list.GUserId =parseIntValue(getValueFromNode(optionchildNode,"user_id"));
-                        
+                        Product_list.GObjectId =parseIntValue(getValueFromNode(optionchildNode,"object_id"));
                         Product_list.GLikeCount =parseIntValue(getValueFromNode(optionchildNode,"like_count"));
                         Product_list.GCommentCount =parseIntValue(getValueFromNode(optionchildNode,"comment_count"));
                         Product_list.GViewCount =parseIntValue(getValueFromNode(optionchildNode,"view_count"));
                         Product_list.GProductRange = getValueFromNode(optionchildNode,"price_range");
                         Product_list.GPrice = getValueFromNode(optionchildNode,"price");
                         Product_list.GDescription =getValueFromNode(optionchildNode,"description");
-                        
+                        Product_list.GShortDescription =getValueFromNode(optionchildNode,"Shortdescription");
                         Product_list.GImageUrl = getValueFromNode(optionchildNode,"img_url");
                         Product_list.GLikeStatus = getValueFromNode(optionchildNode,"like_statue");
+                        Product_list.GCategoryname=getValueFromNode(optionchildNode,"category_name");
+                        Product_list.GDiscountedPrice=getValueFromNode(optionchildNode,"discounted_price");
+                        Product_list.GSeasonName=getValueFromNode(optionchildNode,"season_name");
+                        Product_list.GDesigner=getValueFromNode(optionchildNode,"designer");
+                        
+                        
                         Log.d("Product", "Image:"+Product_list.GImageUrl);
                         productlist.add(Product_list);
                 	}

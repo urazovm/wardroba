@@ -23,7 +23,7 @@
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
   	        android:gravity="center_horizontal"
-  	        android:text="@string/titile_header_text"
+  	        android:text="@string/title_mywardrobe"
   	        android:textColor="@color/white"
   	        android:textSize="24dp"
   	        />

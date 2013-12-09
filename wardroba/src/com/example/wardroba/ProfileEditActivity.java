@@ -91,10 +91,9 @@ public class ProfileEditActivity extends Activity
     	this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);       
         
-        tabProvider = new TabbarView(this);
-		tabView = tabProvider.getTabHost();
-		tabView.setCurrentView(R.layout.profile_edit_activity);
-		setContentView(tabView.render(3)); 
+        
+		
+		setContentView(R.layout.profile_edit_activity); 
 		
 		img_profile = (ImageView)findViewById(R.id.img_profile);
 		

@@ -18,8 +18,18 @@ import com.example.wardroba.R;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.AvoidXfermode.Mode;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.RectF;
+import android.graphics.Xfermode;
+import android.graphics.drawable.BitmapDrawable;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 
@@ -43,9 +53,9 @@ public class ImageLoader {
         
         if(bitmap!=null)
         {
-        	if(bitmap.getWidth()>300 || bitmap.getHeight()>230)
+        	if(bitmap.getWidth()>300 || bitmap.getHeight()>400)
         	{
-        		imageView.setScaleType(ScaleType.CENTER_INSIDE);
+        		imageView.setScaleType(ScaleType.FIT_CENTER);
         		imageView.setImageBitmap(bitmap);
         		
         	}	
@@ -174,16 +184,22 @@ public class ImageLoader {
                 return;
             if(bitmap!=null)
             {
-            	if(bitmap.getWidth()>300 || bitmap.getHeight()>230)
+            	
+            	if(bitmap.getWidth()>300 || bitmap.getHeight()>400)
             	{
             	
-            		photoToLoad.imageView.setScaleType(ScaleType.CENTER_INSIDE);
+            		photoToLoad.imageView.setScaleType(ScaleType.FIT_CENTER);
             		photoToLoad.imageView.setImageBitmap(bitmap);
+            	
+            		
             	}
             	else
             	{
             		
-            		photoToLoad.imageView.setImageBitmap(bitmap);
+            		
+            		photoToLoad.imageView.setImageBitmap(getRoundedCornerBitmap(bitmap, 3));
+            		
+            		
             	}
             }//else
                // photoToLoad.imageView.setImageResource(stub_id);
@@ -194,5 +210,26 @@ public class ImageLoader {
         memoryCache.clear();
         fileCache.clear();
     }
+    public static Bitmap getRoundedCornerBitmap(Bitmap bitmap, int pixels) {
+        Bitmap output = Bitmap.createBitmap(bitmap.getWidth(), bitmap
+                .getHeight(), Config.ARGB_8888);
+        Canvas canvas = new Canvas(output);
 
+        final int color = 0xff424242;
+        final Paint paint = new Paint();
+        final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+        final RectF rectF = new RectF(rect);
+        final float roundPx = pixels;
+
+        paint.setAntiAlias(true);
+        canvas.drawARGB(0, 0, 0, 0);
+        paint.setColor(color);
+        canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
+
+        paint.setDither(true);
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN)); 
+        canvas.drawBitmap(bitmap, rect, rect, paint);
+
+        return output;
+    }
 }
