@@ -83,6 +83,10 @@
             android:screenOrientation="portrait">
             
         </activity>
+        <activity android:name="com.example.wardroba.CommentViewActivity"
+            android:screenOrientation="portrait">
+            
+        </activity>
         <activity
             android:name="com.example.wardroba.ProductList_new"
             android:label="@string/title_activity_product_list_new" 
