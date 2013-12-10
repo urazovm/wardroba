@@ -6,6 +6,9 @@ import java.util.List;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+
+import com.example.wardroba.Comment;
+import com.example.wardroba.CommentViewActivity;
 import com.example.wardroba.HomeActivity;
 import com.example.wardroba.ProductGalleryGridFragment;
 import com.example.wardroba.ProfileEditActivity;
@@ -32,6 +35,7 @@ public class WebAPIHelper extends AsyncTask<String, Integer, Long>
 	private ProfileViewFragment profileViewFragment;
 	private ProfileEditActivity edit_profile_activity;
 	private ProductGallery product_activity;
+	private CommentViewActivity comment_view_activity;
 
 	private ProductGalleryGridFragment productGalleryGridFragment;
 
@@ -88,15 +92,6 @@ public class WebAPIHelper extends AsyncTask<String, Integer, Long>
 		this.requestNumber = requestNumber;
 		loadingMessage = msg;
 	}		
-	
-	public WebAPIHelper(int requestNumber, Dialogs activity, String msg) 
-	{
-		this.mainActivity = activity;
-		progressDlg = new ProgressDialog(mainActivity);
-		this.requestNumber = requestNumber;
-		loadingMessage = msg;
-	}
-	
 	public WebAPIHelper(int requestNumber, HomeActivity activity, String msg) 
 	{
 		this.home_activity = activity;
@@ -113,6 +108,13 @@ public class WebAPIHelper extends AsyncTask<String, Integer, Long>
 		loadingMessage = msg;
 	}
 	
+	public WebAPIHelper(int requestNumber, CommentViewActivity activity, String msg) 
+	{
+		this.comment_view_activity = activity;
+		progressDlg = new ProgressDialog(comment_view_activity);
+		this.requestNumber = requestNumber;
+		loadingMessage = msg;
+	}
 	public WebAPIHelper(int requestNumber, Context context, String msg) 
 	{
 		this.requestNumber = requestNumber;
@@ -121,7 +123,13 @@ public class WebAPIHelper extends AsyncTask<String, Integer, Long>
 		loadingMessage = msg;
 	}
 	
-
+	public WebAPIHelper(int requestNumber, Dialogs activity, String msg) 
+	{
+		this.mainActivity = activity;
+		progressDlg = new ProgressDialog(mainActivity);
+		this.requestNumber = requestNumber;
+		loadingMessage = msg;
+	}
 	protected void onPreExecute() 	
 	{
 		progressDlg.setMessage(loadingMessage);
@@ -349,6 +357,39 @@ public class WebAPIHelper extends AsyncTask<String, Integer, Long>
 			}
 			((HomeActivity)myContext).setResponseFromRequest1(requestNumber);
 				//product_activity.setResponseFromRequest(productlist);
+		}
+		else if(requestNumber==Constants.comment_list)
+		{
+			ArrayList<Comment> arr_CommentList = null;
+			if(response != null)
+			{
+				Element node = (Element) response.getElementsByTagName("root").item(0);
+				NodeList nlist =  node.getElementsByTagName("result");				
+				
+                for(int j=0; j<nlist.getLength(); j++)
+                {
+                        if(arr_CommentList == null)
+                        {
+                        	arr_CommentList = new ArrayList<Comment>();
+                        }
+                        Comment comment=new Comment();
+                        Element optionchildNode = (Element) nlist.item(j);
+                        String MSG=(getValueFromNode(optionchildNode,"msg"));
+                        if(MSG.equals("Comment not found!"))
+                        	break;
+                       
+	                        comment.setComment_id(getValueFromNode(optionchildNode,"id_comment"));
+	                        comment.setStore_name(getValueFromNode(optionchildNode,"store_name"));
+	                        comment.setComment(getValueFromNode(optionchildNode,"comment"));
+	                        comment.setDate(getValueFromNode(optionchildNode,"created_at"));
+	
+	                        arr_CommentList.add(comment);
+                        
+                	}
+				}
+
+				comment_view_activity.setResponseFromRequest(requestNumber,arr_CommentList);
+			
 		}
 		progressDlg.dismiss();
 	}

@@ -216,25 +216,6 @@ public class LoginActivity extends Activity
 		asyncRunner=new AsyncFacebookRunner(facebook);
 	}
 	
-	/*private void logoutToFacebook()
-	{
-		fb_logout.setOnClickListener(new View.OnClickListener() {
-			
-			@SuppressWarnings("deprecation")
-			@Override
-			public void onClick(View arg0) {
-				// TODO Auto-generated method stub
-				
-				if(facebook!=null)
-				{
-					logoutFromFacebook();
-					
-				}		
-					
-				
-			}
-		});
-	}*/
 	@SuppressWarnings("deprecation")
 	private void requestMeProfile()
 	{

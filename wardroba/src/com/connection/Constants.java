@@ -9,13 +9,6 @@ public class Constants implements Serializable
 {	
 	private static final long serialVersionUID = 1L;
 	
-//	public static final String REGISTER_URL = "http://project.amphee.net/php/locator/xml/useradd.php?";
-//	public static final String LOGIN_URL = "http://project.amphee.net/php/locator/xml/login.php?";
-//	public static final String PROFILE_URL = "http://project.amphee.net/php/locator/xml/user.php?";
-//	public static final String EDIT_PROFILE_URL = "http://project.amphee.net/php/locator/xml/useredit.php?";
-//	public static final String LIKE_PRODUCT_URL = "http://iselectbooking.com/demo/iphone/addtofavorite.php?";
-//	public static final String SEARCH_URL = "http://www.lisaci.com/iphone/searchproduct.php?";
-//	public static final String PRODUCT_DETAIL_URL = "http://www.lisaci.com/iphone/product.php?";
    
 	public static final String LOGIN_JSON_URL="http://dev.wardroba.com/api-login?";
 	
@@ -47,7 +40,12 @@ public class Constants implements Serializable
 	public final static int fblogin_request1 = 61;
 	public final static int product_list = 62;
 	public final static int product_like = 63;
+
 	public final static int product_detail_like = 64;
+
+	public final static int comment_list = 65;
+	public final static int comment_add = 66;
+
 	
  	public static String USERNAME,MSG_LOGIN;
  	public static int REGISTER_USERID;
@@ -55,6 +53,7 @@ public class Constants implements Serializable
  	public static int LOGIN_USERID;
  	public static String LOGINFORM;
  	public static int LOGOUTID;
+ 	public static String CLOTHISID,CLOTH_USERID,OBJECT_ID;
  	
  	public static String USEREMAIL;
  	public static String USERGENDER;
@@ -68,11 +67,12 @@ public class Constants implements Serializable
 
  	public static String LIKE_STATUS;
  	public static int LIKE_COUNT,SELECTED_ID;
+ // login session variable
+ 	
 
 
-
- 	 public int GIdCloth,GUserId,GObjectId,GLikeCount,GCommentCount,GViewCount;
-     public String GProductRange,GPrice,GDescription,GCategoryname,GDiscountedPrice,GDiscpontPerc,GSeasonName,GDesigner,GShortDescription,GImageUrl,GLikeStatus;
+ 	public int GIdCloth,GUserId,GObjectId,GLikeCount,GCommentCount,GViewCount;
+    public String GProductRange,GPrice,GDescription,GCategoryname,GDiscountedPrice,GDiscpontPerc,GSeasonName,GDesigner,GShortDescription,GImageUrl,GLikeStatus;
      
      public static String USER_NAME,USER_IMAGE,USER_DATE;
  	
@@ -81,5 +81,10 @@ public class Constants implements Serializable
  	public static String KEY_LOGIN_ID="login_id";
  	public static ArrayList<WardrobaItem> all_items=new ArrayList<WardrobaItem>();
  	public static ArrayList<WardrobaItem> my_items=new ArrayList<WardrobaItem>();
+
+    
+ 	
+	
+
 }
 

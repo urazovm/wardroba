@@ -41,9 +41,7 @@ public class HomeProductBaseAdapter extends BaseAdapter
 	Animation animZoomIn;
 	Animation animFadeIn,animFadeOut;
 	Animation animZoomOut;
-	String Cloth_Id;
-	String User_Id;
-	String ObjectId1;
+
 	String LikeStatus;
 	String CommentId;
 	WardrobaItem wardrobaItem;
@@ -152,11 +150,13 @@ public class HomeProductBaseAdapter extends BaseAdapter
 				public void onClick(View v) 
 				{
 					String url;
-					Cloth_Id = String.valueOf(wardrobaItem.getPIdCloth());
-					User_Id = String.valueOf(wardrobaItem.getPUserId());
-					ObjectId1 = String.valueOf(wardrobaItem.getPObjectId());
+
+					Constants.CLOTHISID = String.valueOf(wardrobaItem.getPIdCloth());
+					Constants.CLOTH_USERID = String.valueOf(wardrobaItem.getPUserId());
+					Constants.OBJECT_ID = String.valueOf(wardrobaItem.getPObjectId());
 					LikeStatus = wardrobaItem.getPLikeStatus().toString().trim();
 					Log.d("BaseAdapter", "Like status:"+LikeStatus);
+
 					Constants.SELECTED_ID=position;
 					int count_like = (wardrobaItem.getPLikeCount());
 			
@@ -165,12 +165,12 @@ public class HomeProductBaseAdapter extends BaseAdapter
 						
 						txtLikeCount.setText(String.valueOf(count_like=count_like+1));
 						btnLike.setBackgroundResource(R.drawable.like_h);
-						url = Constants.PRODUCT_LIKE_URL+"&id_cloth="+Cloth_Id+"&user_id="+User_Id+"&object_id="+ObjectId1+"&status="+"LIKE";
+						url = Constants.PRODUCT_LIKE_URL+"&id_cloth="+Constants.CLOTHISID+"&user_id="+Constants.CLOTH_USERID+"&object_id="+Constants.OBJECT_ID+"&status="+"LIKE";
 			        }else
 			        {
 			        	txtLikeCount.setText(String.valueOf(count_like=count_like-1));
 			        	btnLike.setBackgroundResource(R.drawable.like);
-			        	url = Constants.PRODUCT_LIKE_URL+"&id_cloth="+Cloth_Id+"&user_id="+User_Id+"&object_id="+ObjectId1+"&status="+"UNLIKE";
+			        	url = Constants.PRODUCT_LIKE_URL+"&id_cloth="+Constants.CLOTHISID+"&user_id="+Constants.CLOTH_USERID+"&object_id="+Constants.OBJECT_ID+"&status="+"UNLIKE";
 			        }
 					try
 					{
@@ -190,8 +190,11 @@ public class HomeProductBaseAdapter extends BaseAdapter
 			{
 				public void onClick(View v) 
 				{
+					Constants.CLOTHISID = String.valueOf(wardrobaItem.getPIdCloth());
+					Constants.CLOTH_USERID = String.valueOf(wardrobaItem.getPUserId());
+					Constants.OBJECT_ID = String.valueOf(wardrobaItem.getPObjectId());
 					Intent intent=new Intent(activity,CommentViewActivity.class);
-		   			 activity.startActivity(intent);
+		   			activity.startActivity(intent);
 				}
 			});
 		
