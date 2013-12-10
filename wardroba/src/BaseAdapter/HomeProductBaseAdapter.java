@@ -39,9 +39,7 @@ public class HomeProductBaseAdapter extends BaseAdapter
 	Animation animZoomIn;
 	Animation animFadeIn,animFadeOut;
 	Animation animZoomOut;
-	String Cloth_Id;
-	String User_Id;
-	String ObjectId1;
+
 	String LikeStatus;
 	String CommentId;
 	
@@ -149,9 +147,9 @@ public class HomeProductBaseAdapter extends BaseAdapter
 				public void onClick(View v) 
 				{
 					String url;
-					Cloth_Id = String.valueOf(arr_ProductList.get(position).PIdCloth);
-					User_Id = String.valueOf(arr_ProductList.get(position).PUserId);
-					ObjectId1 = String.valueOf(arr_ProductList.get(position).PObjectId);
+					Constants.CLOTHISID = String.valueOf(arr_ProductList.get(position).PIdCloth);
+					Constants.CLOTH_USERID = String.valueOf(arr_ProductList.get(position).PUserId);
+					Constants.OBJECT_ID = String.valueOf(arr_ProductList.get(position).PObjectId);
 					LikeStatus = arr_ProductList.get(position).PLikeStatus.toString().trim();
 					
 					Constants.SELECTED_ID=position;
@@ -162,12 +160,12 @@ public class HomeProductBaseAdapter extends BaseAdapter
 						
 						txtLikeCount.setText(String.valueOf(count_like=count_like+1));
 						btnLike.setBackgroundResource(R.drawable.like_h);
-						url = Constants.PRODUCT_LIKE_URL+"&id_cloth="+Cloth_Id+"&user_id="+User_Id+"&object_id="+ObjectId1+"&status="+"LIKE";
+						url = Constants.PRODUCT_LIKE_URL+"&id_cloth="+Constants.CLOTHISID+"&user_id="+Constants.CLOTH_USERID+"&object_id="+Constants.OBJECT_ID+"&status="+"LIKE";
 			        }else
 			        {
 			        	txtLikeCount.setText(String.valueOf(count_like=count_like-1));
 			        	btnLike.setBackgroundResource(R.drawable.like);
-			        	url = Constants.PRODUCT_LIKE_URL+"&id_cloth="+Cloth_Id+"&user_id="+User_Id+"&object_id="+ObjectId1+"&status="+"UNLIKE";
+			        	url = Constants.PRODUCT_LIKE_URL+"&id_cloth="+Constants.CLOTHISID+"&user_id="+Constants.CLOTH_USERID+"&object_id="+Constants.OBJECT_ID+"&status="+"UNLIKE";
 			        }
 					try
 					{
@@ -187,8 +185,11 @@ public class HomeProductBaseAdapter extends BaseAdapter
 			{
 				public void onClick(View v) 
 				{
+					Constants.CLOTHISID = String.valueOf(arr_ProductList.get(position).PIdCloth);
+					Constants.CLOTH_USERID = String.valueOf(arr_ProductList.get(position).PUserId);
+					Constants.OBJECT_ID = String.valueOf(arr_ProductList.get(position).PObjectId);
 					Intent intent=new Intent(activity,CommentViewActivity.class);
-		   			 activity.startActivity(intent);
+		   			activity.startActivity(intent);
 				}
 			});
 		

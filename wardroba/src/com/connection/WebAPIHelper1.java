@@ -3,6 +3,9 @@ package com.connection;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+
+import com.example.wardroba.Comment;
+import com.example.wardroba.CommentViewActivity;
 import com.example.wardroba.HomeActivity;
 import com.example.wardroba.ProductDetailFragment;
 
@@ -23,6 +26,14 @@ public class WebAPIHelper1 extends AsyncTask<String, Integer, Long>
 	
 	private WebAPIRequest webAPIRequest = new WebAPIRequest();
 	
+//	public WebAPIHelper1(int requestNumber, Context context, String msg) 
+//	{
+//		this.requestNumber = requestNumber;
+//		this.myContext=context;
+//		//progressDlg = new ProgressDialog(context);
+//		//loadingMessage = msg;
+//	}
+	
 	public WebAPIHelper1(int requestNumber, Dialogs activity, String msg) 
 	{
 		this.mainActivity = activity;
@@ -31,7 +42,6 @@ public class WebAPIHelper1 extends AsyncTask<String, Integer, Long>
 		loadingMessage = msg;
 	}
 	
-
 	public WebAPIHelper1(int requestNumber, Context context) 
 	{
 		this.requestNumber = requestNumber;
@@ -70,6 +80,27 @@ public class WebAPIHelper1 extends AsyncTask<String, Integer, Long>
 			}
 			((HomeActivity)myContext).setResponseFromRequest1(requestNumber);
 				//product_activity.setResponseFromRequest(productlist);
+		}
+		if(requestNumber==Constants.comment_add)
+		{
+			Comment comment=new Comment();
+			if(response != null)
+			{
+				
+				Element node = (Element) response.getElementsByTagName("root").item(0);
+				NodeList nlist =  node.getElementsByTagName("result");				
+				Element childNode = (Element)nlist.item(0);
+				
+				comment.setComment_id(getValueFromNode(childNode,"id_comment"));
+                comment.setStore_name(getValueFromNode(childNode,"store_name"));
+                comment.setComment(getValueFromNode(childNode,"comment"));
+                comment.setDate(getValueFromNode(childNode,"created_at"));
+			}
+			else
+			{
+				Constants.LOGIN_USERID = 0;
+			}
+			((CommentViewActivity)myContext).setResponseFromRequest1(comment);
 		}
 		
 		//progressDlg.dismiss();

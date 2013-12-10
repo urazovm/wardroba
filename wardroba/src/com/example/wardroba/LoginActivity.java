@@ -103,8 +103,8 @@ public class LoginActivity extends Activity
 		typeface = Typeface.createFromAsset(getAssets(),"fonts/GOTHIC.TTF");
 		Edt_email = (EditText)findViewById(R.id.edt_email);
 		Edt_passward = (EditText)findViewById(R.id.edt_passward);
-		Edt_email.setText("jalpesh@amphee.com");
-		Edt_passward.setText("jalpesh");
+		Edt_email.setText("nilesh@amphee.com");
+		Edt_passward.setText("nilesh123");
 		Btn_login = (Button)findViewById(R.id.btn_login);
 		//btnFacebook=(LoginButton)findViewById(R.id.login_fb);
 		fb_login=(Button)findViewById(R.id.login_fb);
@@ -216,25 +216,6 @@ public class LoginActivity extends Activity
 		asyncRunner=new AsyncFacebookRunner(facebook);
 	}
 	
-	/*private void logoutToFacebook()
-	{
-		fb_logout.setOnClickListener(new View.OnClickListener() {
-			
-			@SuppressWarnings("deprecation")
-			@Override
-			public void onClick(View arg0) {
-				// TODO Auto-generated method stub
-				
-				if(facebook!=null)
-				{
-					logoutFromFacebook();
-					
-				}		
-					
-				
-			}
-		});
-	}*/
 	@SuppressWarnings("deprecation")
 	private void requestMeProfile()
 	{
