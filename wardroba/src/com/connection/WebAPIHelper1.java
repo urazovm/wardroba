@@ -9,6 +9,7 @@ import com.example.wardroba.ProductDetailFragment;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 
 
 public class WebAPIHelper1 extends AsyncTask<String, Integer, Long>
@@ -19,6 +20,7 @@ public class WebAPIHelper1 extends AsyncTask<String, Integer, Long>
 	private Document response;
 	private int requestNumber;
 	private String loadingMessage;
+	private ProductDetailFragment mFragment;
 	Context myContext;
 	
 	private WebAPIRequest webAPIRequest = new WebAPIRequest();
@@ -40,6 +42,13 @@ public class WebAPIHelper1 extends AsyncTask<String, Integer, Long>
 		//loadingMessage = msg;
 	}
 	
+	public WebAPIHelper1(int requestNumber, ProductDetailFragment pFragment) 
+	{
+		this.requestNumber = requestNumber;
+		this.mFragment=pFragment;
+		progressDlg = new ProgressDialog(this.mFragment.getActivity());
+		//loadingMessage = msg;
+	}
 	protected void onPreExecute() 
 	{
 		//progressDlg.setMessage(loadingMessage);
@@ -57,12 +66,21 @@ public class WebAPIHelper1 extends AsyncTask<String, Integer, Long>
 		{
 			if(response != null)
 			{
+				
 				Element node = (Element) response.getElementsByTagName("root").item(0);
 				NodeList nlist =  node.getElementsByTagName("result");				
 				Element childNode = (Element)nlist.item(0);
-				
-				Constants.LIKE_STATUS = getValueFromNode(childNode,"status");
-				Constants.LIKE_COUNT = parseIntValue(getValueFromNode(childNode,"like_count"));
+				String status=getValueFromNode(childNode,"status").trim();
+				int like_count=parseIntValue(getValueFromNode(childNode,"like_count"));
+				Log.d("WebApiHelper1", "Status:"+status);
+	  			if(status.equals("LIKE"))
+	  			{
+	  				Constants.all_items.get(Constants.SELECTED_ID).setPLikeStatus("UNLIKE");
+	  			}else
+	  			{
+	  				Constants.all_items.get(Constants.SELECTED_ID).setPLikeStatus("LIKE");
+	  			}
+	  			Constants.all_items.get(Constants.SELECTED_ID).setPLikeCount(like_count);
 			}
 			else
 			{
@@ -71,6 +89,33 @@ public class WebAPIHelper1 extends AsyncTask<String, Integer, Long>
 			((HomeActivity)myContext).setResponseFromRequest1(requestNumber);
 				//product_activity.setResponseFromRequest(productlist);
 		}
+		else if(requestNumber==Constants.product_detail_like)
+		{
+			if(response != null)
+			{
+				Element node = (Element) response.getElementsByTagName("root").item(0);
+				NodeList nlist =  node.getElementsByTagName("result");				
+				Element childNode = (Element)nlist.item(0);
+				String status=getValueFromNode(childNode,"status").trim();
+				int like_count=parseIntValue(getValueFromNode(childNode,"like_count"));
+				Log.d("WebApiHelper1", "Status:"+status);
+	  			if(status.equals("LIKE"))
+	  			{
+	  				Constants.my_items.get(Constants.SELECTED_ID).setPLikeStatus("UNLIKE");
+	  			}else
+	  			{
+	  				Constants.my_items.get(Constants.SELECTED_ID).setPLikeStatus("LIKE");
+	  			}
+	  			Constants.my_items.get(Constants.SELECTED_ID).setPLikeCount(like_count);
+			}
+			else
+			{
+				Constants.LOGIN_USERID = 0;
+			}
+			mFragment.setResponseFromRequest1(requestNumber);
+				//product_activity.setResponseFromRequest(productlist);
+		}
+			
 		
 		//progressDlg.dismiss();
 	}

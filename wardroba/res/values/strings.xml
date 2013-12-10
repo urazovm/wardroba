@@ -20,4 +20,7 @@
 	<string name="edit_profile_items">items</string>
 	<string name="edit_profile_followers">followers</string>
 	<string name="edit_profile_following">following</string>
+	<string name="edit_city_hint">City</string>
+	<string name="edit_repeat_password_hint">Repeat Password</string>
+	
 </resources>

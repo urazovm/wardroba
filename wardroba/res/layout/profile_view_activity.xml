@@ -5,45 +5,7 @@
     android:background="#ffffff"
     android:orientation="vertical" >
 
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical" >
-
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/top_title_bg"
-            android:gravity="center_vertical"
-            android:orientation="horizontal" >
-
-            <RelativeLayout
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingRight="5dp" >
-
-                <ImageView
-                    android:id="@+id/btn_back"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="5dp"
-                    android:src="@drawable/back" />
-
-                <TextView
-                    android:id="@+id/txtProfileLabel"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="2.5"
-                    android:gravity="center_horizontal"
-                    android:text="@string/title_profile"
-                    android:textColor="@color/white"
-                    android:textSize="22dp"
-                     />
-            </RelativeLayout>
-        </LinearLayout>
-    </LinearLayout>
-
+    
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" >

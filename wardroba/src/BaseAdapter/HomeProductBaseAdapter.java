@@ -11,6 +11,8 @@ import com.example.wardroba.CommentViewActivity;
 import com.example.wardroba.HomeTabActivity;
 import com.example.wardroba.LoginActivity;
 import com.example.wardroba.R;
+import com.example.wardroba.WardrobaItem;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Typeface;
@@ -32,7 +34,7 @@ public class HomeProductBaseAdapter extends BaseAdapter
 {
 	LayoutInflater mInflater;
 	Activity activity;
-	List<Constants> arr_ProductList;	
+	
 	ImageLoader imageLoader;
 	public GroupItem item ;
 	Typeface tf;
@@ -44,6 +46,7 @@ public class HomeProductBaseAdapter extends BaseAdapter
 	String ObjectId1;
 	String LikeStatus;
 	String CommentId;
+	WardrobaItem wardrobaItem;
 	
 //	String Sharing_Tag;
 //	String Sharing_URL;
@@ -53,10 +56,10 @@ public class HomeProductBaseAdapter extends BaseAdapter
 //	String UserDate;
 	
 
-  	public HomeProductBaseAdapter(ArrayList<Constants> arr_category,final Activity activity)
+  	public HomeProductBaseAdapter(Activity activity)
 	{
 		this.activity=activity;
-		this.arr_ProductList=arr_category;
+		
 		mInflater = (LayoutInflater)activity.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
 		imageLoader=new ImageLoader(activity);
 		 tf= Typeface.createFromAsset(activity.getAssets(),"fonts/GOTHIC.TTF");
@@ -69,7 +72,7 @@ public class HomeProductBaseAdapter extends BaseAdapter
 
 	public int getCount()
 	{
-		return arr_ProductList.size();
+		return Constants.all_items.size();
 	}
 
 	public Object getItem(int position)  
@@ -96,7 +99,7 @@ public class HomeProductBaseAdapter extends BaseAdapter
 		 	final ProgressBar progressBar;
 		 	final ImageView btnLike,btnComment,btnShare;
 		 	final ImageView imgLikeDil;
-		   
+		 	wardrobaItem=Constants.all_items.get(position);
 		 	View vi=null;
 			item =new GroupItem();
 
@@ -127,11 +130,11 @@ public class HomeProductBaseAdapter extends BaseAdapter
 			item.txtNameSurname.setText(Constants.USER_NAME.toString());
 			item.txtDate.setText(Constants.USER_DATE.toString());
 			
-			txtLikeCount.setText(String.valueOf(arr_ProductList.get(position).PLikeCount));
-			txtCommentCount.setText(String.valueOf(arr_ProductList.get(position).PCommentCount));
-			txtShortDiscription.setText(arr_ProductList.get(position).PShortDescription.toString().trim());
+			txtLikeCount.setText(String.valueOf(wardrobaItem.getPLikeCount()));
+			txtCommentCount.setText(String.valueOf(wardrobaItem.getPCommentCount()));
+			txtShortDiscription.setText(wardrobaItem.getPShortDescription().toString().trim());
 			
-			String Status=arr_ProductList.get(position).PLikeStatus.toString().trim();
+			String Status=wardrobaItem.getPLikeStatus().toString().trim();
 			if(Status.equals("LIKE"))
 	        {
 				btnLike.setBackgroundResource(R.drawable.like);
@@ -140,7 +143,7 @@ public class HomeProductBaseAdapter extends BaseAdapter
 	        	btnLike.setBackgroundResource(R.drawable.like_h);
 	        }
 			
-			String temp=arr_ProductList.get(position).PImageUrl;
+			String temp=wardrobaItem.getPImageUrl();
 			 imageLoader.DisplayImage(temp,imgProductImage);
 			 progressBar.setVisibility(View.GONE);
 			
@@ -149,13 +152,13 @@ public class HomeProductBaseAdapter extends BaseAdapter
 				public void onClick(View v) 
 				{
 					String url;
-					Cloth_Id = String.valueOf(arr_ProductList.get(position).PIdCloth);
-					User_Id = String.valueOf(arr_ProductList.get(position).PUserId);
-					ObjectId1 = String.valueOf(arr_ProductList.get(position).PObjectId);
-					LikeStatus = arr_ProductList.get(position).PLikeStatus.toString().trim();
-					
+					Cloth_Id = String.valueOf(wardrobaItem.getPIdCloth());
+					User_Id = String.valueOf(wardrobaItem.getPUserId());
+					ObjectId1 = String.valueOf(wardrobaItem.getPObjectId());
+					LikeStatus = wardrobaItem.getPLikeStatus().toString().trim();
+					Log.d("BaseAdapter", "Like status:"+LikeStatus);
 					Constants.SELECTED_ID=position;
-					int count_like = (arr_ProductList.get(position).PLikeCount);
+					int count_like = (wardrobaItem.getPLikeCount());
 			
 					if(LikeStatus.equals("LIKE"))
 			        {

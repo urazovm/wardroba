@@ -103,8 +103,8 @@ public class LoginActivity extends Activity
 		typeface = Typeface.createFromAsset(getAssets(),"fonts/GOTHIC.TTF");
 		Edt_email = (EditText)findViewById(R.id.edt_email);
 		Edt_passward = (EditText)findViewById(R.id.edt_passward);
-		Edt_email.setText("jalpesh@amphee.com");
-		Edt_passward.setText("jalpesh");
+		Edt_email.setText("nilesh@amphee.com");
+		Edt_passward.setText("nilesh123");
 		Btn_login = (Button)findViewById(R.id.btn_login);
 		//btnFacebook=(LoginButton)findViewById(R.id.login_fb);
 		fb_login=(Button)findViewById(R.id.login_fb);

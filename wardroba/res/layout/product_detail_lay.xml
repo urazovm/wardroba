@@ -6,19 +6,25 @@
 
 <LinearLayout 
         android:layout_width="fill_parent"
-	    android:layout_height="wrap_content"
-	    android:orientation="vertical">
+	    android:layout_height="fill_parent"
+	    android:orientation="vertical"
+	    android:weightSum="1.0"
+	    >
     <LinearLayout 
         android:layout_width="fill_parent"
-	    android:layout_height="wrap_content"
+	    android:layout_height="0dp"
 	    android:layout_margin="10dp"
-	    android:orientation="vertical">
+	    android:layout_weight="0.85"
+	    android:orientation="vertical"
+	    >
 	    <RelativeLayout android:layout_width="fill_parent"
-        	android:layout_height="fill_parent">
+        	android:layout_height="fill_parent"
+        	>
 			<ImageView 
 			    android:id="@+id/img_product_photo"
-			    android:layout_width="300dp"
-			    android:layout_height="400dp"
+			    android:layout_width="fill_parent"
+			    android:layout_margin="10dp"
+			    android:layout_height="fill_parent"
 				android:scaleType="fitCenter"
 				android:layout_centerVertical="true"
 				android:layout_centerHorizontal="true" 
@@ -27,8 +33,10 @@
 	</LinearLayout>
 	
 	<LinearLayout android:layout_width="fill_parent"
-	    android:layout_height="wrap_content"
-	    android:orientation="horizontal">
+	    android:layout_height="0dp"
+	    android:layout_weight="0.15"
+	    android:orientation="vertical"
+	    >
 	    <RelativeLayout android:layout_width="fill_parent"
         	android:layout_height="wrap_content">
         		<LinearLayout 
@@ -90,42 +98,7 @@
 				 </LinearLayout>
 	             
         </RelativeLayout>
-	    
-	   <!--   <TextView 
-	        android:id="@+id/txt_like"
-	        android:layout_width="0dp"
-	        android:layout_height="wrap_content"
-	        android:text="13"
-	        android:textColor="@color/textcolor"
-	        android:paddingLeft="5dp"
-	        android:textStyle="bold"
-	        android:layout_marginLeft="5dp"
-	        android:drawablePadding="5dp"
-	        android:layout_weight="0.4"/>
-	    <TextView 
-	        android:id="@+id/txt_view"
-	        android:layout_width="0dp"
-	        android:layout_height="wrap_content"
-	        android:layout_weight="0.35"
-	        android:text="23"
-	        android:textStyle="bold"
-	        android:layout_marginLeft="5dp"
-	        android:textColor="@color/textcolor"
-	        android:paddingLeft="5dp"
-	        android:drawablePadding="5dp"/>
-	    <TextView 
-	        android:id="@+id/txt_comment"
-	        android:layout_width="0dp"
-	        android:layout_height="wrap_content"
-	        android:layout_weight="0.25"
-	        android:layout_marginLeft="5dp"
-	        android:text="3"
-	        android:textStyle="bold"
-	        android:textColor="@color/textcolor"
-	        android:paddingLeft="5dp"
-	        android:drawablePadding="5dp"/>-->
-	</LinearLayout>
-	<LinearLayout android:layout_width="fill_parent"
+	    	<LinearLayout android:layout_width="fill_parent"
 	    android:layout_height="wrap_content"
 	    android:orientation="vertical"
 	    android:layout_marginLeft="10dp"
@@ -134,14 +107,18 @@
 	        android:id="@+id/txt_short_description"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
+	        android:text="@string/hello_world"
 	        android:textColor="@color/textcolor"
 	        />
 	</LinearLayout>
+	  
+	</LinearLayout>
+	
 	</LinearLayout>
 	      
 	<LinearLayout 
 	    android:id="@+id/dialogShare"
-	    
+	    android:visibility="gone"
 	    android:layout_width="fill_parent"
 	    android:layout_height="wrap_content"
 	    android:layout_alignParentBottom="true"

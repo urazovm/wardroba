@@ -4,46 +4,15 @@
     android:layout_height="match_parent"
     android:background="#ffffff"
     android:orientation="vertical" >	    
-    <LinearLayout 
-	    android:layout_width="fill_parent"
-	    android:layout_height="wrap_content"
-	    android:orientation="vertical">
-	  	<LinearLayout				 
-			    android:layout_width="fill_parent"
-			    android:layout_height="wrap_content"
-			    android:orientation="horizontal"
-			    android:background="@drawable/top_title_bg"
-			    android:gravity="center_vertical"> 
-			  	<RelativeLayout				 
-					    android:layout_width="fill_parent"
-					    android:layout_height="wrap_content"
-					    android:orientation="horizontal"	
-					    android:paddingTop="4dp"				    
-					    android:paddingRight="5dp">									    					    
-					   <TextView
-						    android:layout_width="fill_parent"
-						    android:layout_height="wrap_content"
-						    android:text="profile"
-						    android:layout_weight="2.5"
-						    android:textColor="@color/white"
-						    android:textSize="22dp"
-						    android:gravity="center_horizontal"
-						    android:textStyle="bold"/>	
-				</RelativeLayout>					   			       
-		</LinearLayout>    
-	</LinearLayout>       
+    		  
+	     
+	<ScrollView 
+		  android:id="@+id/scrollView1"
+		  android:layout_width="fill_parent"
+		  android:layout_height="fill_parent">    
 	<RelativeLayout				 
 	    android:layout_width="fill_parent"
 	    android:layout_height="wrap_content">
-		<ScrollView 
-		  android:id="@+id/scrollView1"
-		  android:layout_width="fill_parent"
-		  android:layout_height="fill_parent"
-		  android:fillViewport="true">
-	  	  <LinearLayout 
-		    android:layout_width="fill_parent"
-		    android:layout_height="wrap_content"
-		    android:orientation="vertical"> 	
 		    <LinearLayout 
 			    android:layout_width="fill_parent"
 			    android:layout_height="wrap_content"
@@ -53,6 +22,8 @@
 				    android:layout_width="fill_parent"
 				    android:layout_height="wrap_content"
 				    android:layout_marginTop="5dp"
+				    android:layout_marginLeft="5dp"
+				    android:layout_marginBottom="5dp"
 				    android:orientation="horizontal">
 					<RelativeLayout
 				        android:layout_width="wrap_content"
@@ -63,122 +34,150 @@
 			 		    android:id="@+id/img_background"
 			 		    android:layout_width="wrap_content"
 			 		    android:layout_height="wrap_content"
-			 		    android:layout_marginLeft="5dp"
-			 		    android:layout_marginTop="5dp"
-			 		    android:background="@drawable/profile_bg"
-			 		    android:scaleType="fitXY" />
+			 		    
+			 		    android:src="@drawable/profile_bg"
+			 		     />
 
 			 		<ImageView
 			 		    android:id="@+id/img_profile"
 			 		    android:layout_width="wrap_content"
 			 		    android:layout_height="wrap_content"
-			 		    android:layout_centerHorizontal="true"
-			 		    android:layout_centerVertical="true"
+			 		    android:layout_centerInParent="true"
 			 		    android:src="@drawable/edit_profile_image" />
 				  		        	  					  
 					</RelativeLayout>					    				    				    
 			 	</LinearLayout>
-			</LinearLayout>	
-	<ScrollView 
-		  android:id="@+id/scrollView1"
-		  android:layout_width="fill_parent"
-		  android:layout_height="fill_parent">   
-
+				
+	 
+		<LinearLayout android:layout_width="fill_parent"
+		    android:layout_height="wrap_content"
+		    android:orientation="vertical">
 	 	<LinearLayout
-	 	    android:layout_width="fill_parent"
-	 	    android:layout_height="fill_parent"
+	 	    android:layout_width="wrap_content"
+	 	    android:layout_height="wrap_content"
 	 	    android:layout_margin="5dp"
+	 	    android:layout_gravity="center_horizontal"
+	 	    android:background="@drawable/edit_profile_form_bg"
 	 	    android:orientation="vertical" >
  	
 				<EditText
 				    android:id="@+id/edt_name"
 				    android:layout_width="fill_parent"
 				    android:layout_height="35dp"
-				    android:layout_marginLeft="5dp"
-				    android:layout_marginRight="5dp"
-				    android:background="@drawable/register_form_bg"
-				    android:ems="10"
+				    android:background="#00ffffff"
 				    android:gravity="center"
-				    android:hint="Name"
+				    android:hint="@string/register_name_hint"
 				    android:padding="3dp"
 				    android:textColor="@color/textcolor2"
 				    android:textSize="14dp" />
-
+				<ImageView
+						    android:id="@+id/textView1"
+						    android:layout_width="fill_parent"
+						    android:layout_height="wrap_content"
+						    android:background="@drawable/login_form_line"/>
+				<EditText
+				    android:id="@+id/edt_surname"
+				    android:layout_width="fill_parent"
+				    android:layout_height="35dp"
+				    android:background="#00ffffff"
+				    android:gravity="center"
+				    android:hint="@string/register_surname_hint"
+				    android:padding="3dp"
+				    android:textColor="@color/textcolor2"
+				    android:textSize="14dp" />
+				<ImageView
+						    android:id="@+id/textView1"
+						    android:layout_width="fill_parent"
+						    android:layout_height="wrap_content"
+						    android:background="@drawable/login_form_line"/>
 				<EditText
 				    android:id="@+id/edt_city"
 				    android:layout_width="fill_parent"
 				    android:layout_height="35dp"
 				    android:layout_marginLeft="5dp"
 				    android:layout_marginRight="5dp"
-				    android:background="@drawable/register_form_bg"
-				    android:ems="10"
+				    android:background="#00ffffff"
 				    android:gravity="center"
-				    android:hint="City"
+				    android:hint="@string/edit_city_hint"
 				    android:padding="3dp"			 		        
 				    android:textColor="@color/textcolor2"
 				    android:textSize="14dp" />
-
+				<ImageView
+						    android:id="@+id/textView1"
+						    android:layout_width="fill_parent"
+						    android:layout_height="wrap_content"
+						    android:background="@drawable/login_form_line"/>
 				<EditText
 				    android:id="@+id/edt_email"
 				    android:layout_width="fill_parent"
 				    android:layout_height="35dp"
 				    android:layout_marginLeft="5dp"
 				    android:layout_marginRight="5dp"
-				    android:background="@drawable/register_form_bg"
+				    android:background="#00ffffff"
 				    android:ems="10"
 				    android:gravity="center"
-				    android:hint="user@amphee.com"			 		        
+				    android:hint="@string/login_email_hint"			 		        
 				    android:textColor="@color/textcolor2"
 				    android:inputType="textEmailAddress"
 				    android:padding="3dp"
 				    android:textSize="14dp" />
-
+				<ImageView
+						    android:id="@+id/textView1"
+						    android:layout_width="fill_parent"
+						    android:layout_height="wrap_content"
+						    android:background="@drawable/login_form_line"/>
 				<EditText
 				    android:id="@+id/edt_passward"
 				    android:layout_width="fill_parent"
 				    android:layout_height="35dp"
 				    android:layout_marginLeft="5dp"
 				    android:layout_marginRight="5dp"
-				    android:background="@drawable/register_form_bg"
+				    android:background="#00ffffff"
 				    android:ems="10"
 				    android:gravity="center"
-				    android:hint="*************"
+				    android:hint="@string/login_password_hint"
 				    android:inputType="textPassword"			 		        
 				    android:textColor="@color/textcolor2"
 				    android:padding="3dp"
 				    android:textSize="14dp" />
-
+				<ImageView
+						    android:id="@+id/textView1"
+						    android:layout_width="fill_parent"
+						    android:layout_height="wrap_content"
+						    android:background="@drawable/login_form_line"/>
 				<EditText
 				    android:id="@+id/edt_repeat_passward"
 				    android:layout_width="fill_parent"
 				    android:layout_height="35dp"
 				    android:layout_marginLeft="5dp"
 				    android:layout_marginRight="5dp"
-				    android:background="@drawable/register_form_bg"
+				    android:background="#00ffffff"
 				    android:ems="10"
 				    android:gravity="center"
-				    android:hint="Repeat passward"
+				    android:hint="@string/edit_repeat_password_hint"
 				    android:inputType="textPassword"
 				    android:textColor="@color/textcolor2"
 				    android:padding="3dp"
 				    android:textSize="14dp" />
 				
-				<Button
+				
+			
+			</LinearLayout>
+			<Button
 				    android:id="@+id/btn_save"
-				    android:layout_width="fill_parent"
+				    android:layout_width="wrap_content"
 				    android:layout_height="wrap_content"
 				    android:layout_marginLeft="5dp"
 				    android:layout_marginRight="5dp"
-				    android:layout_marginTop="10dp"
-				    android:background="@drawable/register_button"
+				    android:layout_marginTop="5dp"
+				    android:background="@drawable/edit_profile_save_button"
 				    android:text="Save"
 				    android:textColor="@color/white"
 				    android:textSize="14dp" />
-	
-			
 			</LinearLayout>
-		  </ScrollView>  
+		   
 	   </LinearLayout>
-	 </ScrollView>
+	 
   </RelativeLayout>
+  </ScrollView> 
 </LinearLayout>

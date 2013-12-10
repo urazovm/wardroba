@@ -1,8 +1,5 @@
 package com.example.wardroba;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.ImageLoader.ImageLoader;
 import com.connection.Constants;
 import com.connection.WebAPIHelper1;
@@ -28,22 +25,41 @@ public class ProductDetailFragment extends Fragment
 	TextView txtLike,txtComment,textDescription;
 	ImageLoader imageLoader;
 	LinearLayout shareDialog;
-	List<Constants> arr_productList;
+	WardrobaItem selected_item;
 	public static int SELECTED_PRODUCT=0;
 	Typeface tf;
 	@SuppressWarnings("unchecked")
   	public void setResponseFromRequest1(int requestNumber) 
   	{	
-  			String status=Constants.LIKE_STATUS.toString().trim();
+  			/*String status=Constants.LIKE_STATUS.toString().trim();
   			if(status.equals("LIKE"))
   			{
-  				arr_productList.get(Constants.SELECTED_ID).GLikeStatus="UNLIKE";
-  	  			arr_productList.get(Constants.SELECTED_ID).GLikeCount=Constants.LIKE_COUNT;
+  				arr_productList.get(SELECTED_PRODUCT).GLikeStatus="UNLIKE";
+  	  			arr_productList.get(SELECTED_PRODUCT).GLikeCount=Constants.LIKE_COUNT;
   			}else
   			{
-  				arr_productList.get(Constants.SELECTED_ID).GLikeStatus="LIKE";
-  	  			arr_productList.get(Constants.SELECTED_ID).GLikeCount=Constants.LIKE_COUNT;
+  				arr_productList.get(SELECTED_PRODUCT).GLikeStatus="LIKE";
+  	  			arr_productList.get(SELECTED_PRODUCT).GLikeCount=Constants.LIKE_COUNT;
+  			}*/
+			int cloth_id=Constants.my_items.get(Constants.SELECTED_ID).getPIdCloth();
+			String status=Constants.my_items.get(Constants.SELECTED_ID).getPLikeStatus();
+			int like_count=Constants.my_items.get(Constants.SELECTED_ID).getPLikeCount();
+			int count=0;
+  			if(Constants.all_items.size()>0)
+  			{
+  				for(WardrobaItem temp:Constants.all_items)
+  				{
+  					int id=temp.getPIdCloth();
+  					if(id==cloth_id)
+  						break;
+  				
+  					count++;	
+  				}
+  				
   			}
+  			Constants.all_items.get(count).setPLikeStatus(status);
+  			Constants.all_items.get(count).setPLikeCount(like_count);
+  			updateProductDetail();
   	}
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -88,36 +104,56 @@ public class ProductDetailFragment extends Fragment
 	        if (args != null) {
 	            // Set article based on argument passed in
 	        	//Toast.makeText(getActivity(), "get argument", Toast.LENGTH_SHORT).show();
-	            updateProductDetail(args);
+	            
 	        }
+	        updateProductDetail();
 	}
-	private void updateProductDetail(Bundle args)
+	@Override
+	public void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
+		
+		updateProductDetail();
+	}
+	private void updateProductDetail()
 	{
 		String imageUrl,shortDesc;
 		int likeCount,commentCount;
-		imageUrl=args.getString("image_url");
+		/*imageUrl=args.getString("image_url");
 		likeCount=args.getInt("like_count");
 		commentCount=args.getInt("comment_count");
-		shortDesc=args.getString("short_description");
+		shortDesc=args.getString("short_description");*/
+		 selected_item=Constants.my_items.get(SELECTED_PRODUCT);
+		imageUrl=selected_item.getPImageUrl();
+		likeCount=selected_item.getPLikeCount();
+		commentCount=selected_item.getPCommentCount();
+		shortDesc=selected_item.getPShortDescription();
 		imageLoader.DisplayImage(imageUrl, imgProductPhoto);
 		txtLike.setText(String.valueOf(likeCount));
 		txtComment.setText(String.valueOf(commentCount));
-		textDescription.setText(shortDesc);
+		textDescription.setText(shortDesc.trim());
 		shareDialog.setVisibility(View.GONE);
-		
+		final String LikeStatus = selected_item.getPLikeStatus().toString().trim();
+		if(LikeStatus.equals("LIKE"))
+        {
+			imgLike.setBackgroundResource(R.drawable.like);
+        }else
+        {
+        	imgLike.setBackgroundResource(R.drawable.like_h);
+        }
 		imgLike.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
 				String url;
-				String Cloth_Id,User_Id,ObjectId1,LikeStatus;
-				Cloth_Id = String.valueOf( arr_productList.get(SELECTED_PRODUCT).GIdCloth);
-				User_Id = String.valueOf(arr_productList.get(SELECTED_PRODUCT).GUserId);
-				ObjectId1 = String.valueOf(arr_productList.get(SELECTED_PRODUCT).GObjectId);
-				LikeStatus = arr_productList.get(SELECTED_PRODUCT).GLikeStatus.toString().trim();
+				String Cloth_Id,User_Id,ObjectId1;
+				Cloth_Id = String.valueOf( selected_item.getPIdCloth());
+				User_Id = String.valueOf(selected_item.getPUserId());
+				ObjectId1 = String.valueOf(selected_item.getPObjectId());
+				Constants.SELECTED_ID=SELECTED_PRODUCT;
 				
-				int count_like = (arr_productList.get(SELECTED_PRODUCT).GLikeCount);
+				int count_like = (selected_item.getPLikeCount());
 		
 				if(LikeStatus.equals("LIKE"))
 		        {
@@ -133,7 +169,7 @@ public class ProductDetailFragment extends Fragment
 		        }
 				try
 				{
-					WebAPIHelper1 webAPIHelper = new WebAPIHelper1(Constants.product_like,getActivity());
+					WebAPIHelper1 webAPIHelper = new WebAPIHelper1(Constants.product_detail_like,ProductDetailFragment.this);
 					Log.d("Like URL= ",url.toString());
 					webAPIHelper.execute(url);    	
 				}
@@ -165,9 +201,9 @@ public class ProductDetailFragment extends Fragment
 		});
 	
 	}
-	public void setProductArray(int position,List<Constants> arr_products)
+	public void setProductArray(int position)
 	{
-		this.arr_productList=arr_products;
+		
 		SELECTED_PRODUCT=position;
 	}
 	@Override

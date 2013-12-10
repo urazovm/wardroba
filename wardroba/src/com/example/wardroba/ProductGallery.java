@@ -1,6 +1,5 @@
 package com.example.wardroba;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.ImageLoader.ImageLoader;
@@ -14,7 +13,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +21,6 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class ProductGallery extends FragmentActivity implements OnProductSelectListener
 {
@@ -55,7 +52,10 @@ public class ProductGallery extends FragmentActivity implements OnProductSelectL
 	            // then we don't need to do anything and should return or else
 	            // we could end up with overlapping fragments.
 	           
-
+				if(savedInstanceState!=null)
+				{
+					return;
+				}
 	            // Create an instance of ExampleFragment
 	            ProductGalleryGridFragment firstFragment=new ProductGalleryGridFragment();
 
@@ -119,23 +119,16 @@ public class ProductGallery extends FragmentActivity implements OnProductSelectL
     }
 
 	@Override
-	public void OnProductSelected(int position, List<Constants> arrProducts) {
+	public void OnProductSelected(int position) {
 		// TODO Auto-generated method stub
 		
             // If the frag is not available, we're in the one-pane layout and must swap frags...
 
             // Create fragment and give it an argument for the selected article
 			ProductDetailFragment secondFragment=new ProductDetailFragment();
-			secondFragment.setProductArray(position, arrProducts);
-            Bundle args = new Bundle();
-            args.putString("image_url", arrProducts.get(position).GImageUrl);
-            args.putInt("like_count", arrProducts.get(position).GLikeCount);
-            args.putInt("comment_count", arrProducts.get(position).GCommentCount);
-            args.putString("short_description", arrProducts.get(position).GDescription);
-            Log.d("Image path", "Image:"+arrProducts.get(position).GImageUrl);
-            Log.d("Like", "like:"+arrProducts.get(position).GLikeCount);
-            Log.d("Comment", "Comment:"+arrProducts.get(position).GCommentCount);
-            secondFragment.setArguments(args);
+			secondFragment.setProductArray(position);
+            
+            
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
             // Replace whatever is in the fragment_container view with this fragment,

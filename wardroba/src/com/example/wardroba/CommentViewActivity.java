@@ -27,7 +27,7 @@ public class CommentViewActivity extends Activity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.comment_view_activity);
 		
-		btnBack=(ImageView)findViewById(R.id.btn_back);
+		btnBack=(ImageView)findViewById(R.id.img_back);
 		
 		lsvComment=(ListView)findViewById(R.id.list_cooment);
 		

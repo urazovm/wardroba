@@ -1,6 +1,9 @@
 package com.connection;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+
+import com.example.wardroba.WardrobaItem;
 
 public class Constants implements Serializable
 {	
@@ -21,7 +24,7 @@ public class Constants implements Serializable
 	public static final String PROFILE_VIEW_URL="http://dev.wardroba.com/serviceXml/profile.php?";
 	public static final String PROFILE_SAVE_URL="http://dev.wardroba.com/serviceXml/updateprofile.php?";
 	public static final String PROFILE_PHOTO_SAVE_URL="http://dev.wardroba.com/serviceXml/userimage.php?";
-	public static final String HOME_PRODUCT_URL="http://dev.wardroba.com/serviceXml/product_listing.php?";
+	public static final String HOME_PRODUCT_URL="http://dev.wardroba.com/serviceXml/all_items.php?";
 	public static final String PRODUCT_LIKE_URL="http://dev.wardroba.com/serviceXml/product_like.php?";
 	public static final String VIEW_COMMENT_URL="http://dev.wardroba.com/serviceXml/comment.php?";
 	public static final String ADD_COMMENT_URL="http://dev.wardroba.com/serviceXml/product_comment.php?";
@@ -44,6 +47,7 @@ public class Constants implements Serializable
 	public final static int fblogin_request1 = 61;
 	public final static int product_list = 62;
 	public final static int product_like = 63;
+	public final static int product_detail_like = 64;
 	
  	public static String USERNAME,MSG_LOGIN;
  	public static int REGISTER_USERID;
@@ -71,10 +75,11 @@ public class Constants implements Serializable
      public String GProductRange,GPrice,GDescription,GCategoryname,GDiscountedPrice,GDiscpontPerc,GSeasonName,GDesigner,GShortDescription,GImageUrl,GLikeStatus;
      
      public static String USER_NAME,USER_IMAGE,USER_DATE;
- 	public int PIdCloth,PUserId,PObjectId,PLikeCount,PCommentCount,PViewCount;
- 	public String PProductRange,PPrice,PDescription,PCategoryname,PDiscountedPrice,PDiscpontPerc,PSeasonName,PDesigner,PShortDescription,PImageUrl,PLikeStatus;
+ 	
 	
  	// login session variable
  	public static String KEY_LOGIN_ID="login_id";
+ 	public static ArrayList<WardrobaItem> all_items=new ArrayList<WardrobaItem>();
+ 	public static ArrayList<WardrobaItem> my_items=new ArrayList<WardrobaItem>();
 }
 

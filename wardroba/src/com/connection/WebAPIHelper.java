@@ -12,7 +12,9 @@ import com.example.wardroba.ProfileEditActivity;
 import com.example.wardroba.LoginActivity;
 import com.example.wardroba.ProductGallery;
 import com.example.wardroba.ProfileActivity;
+import com.example.wardroba.ProfileViewFragment;
 import com.example.wardroba.RegisterActivity;
+import com.example.wardroba.WardrobaItem;
 import com.example.wardroba.WardrobaProfile;
 
 import android.app.ProgressDialog;
@@ -27,6 +29,7 @@ public class WebAPIHelper extends AsyncTask<String, Integer, Long>
 	private LoginActivity login_activity;
 	private RegisterActivity register_activity;
 	private ProfileActivity profile_activity;
+	private ProfileViewFragment profileViewFragment;
 	private ProfileEditActivity edit_profile_activity;
 	private ProductGallery product_activity;
 
@@ -48,7 +51,13 @@ public class WebAPIHelper extends AsyncTask<String, Integer, Long>
 		this.requestNumber = requestNumber;
 		loadingMessage = msg;
 	}
-	
+	public WebAPIHelper(int requestNumber, ProfileViewFragment activity, String msg) 
+	{
+		this.profileViewFragment = activity;
+		progressDlg = new ProgressDialog(profileViewFragment.getActivity());
+		this.requestNumber = requestNumber;
+		loadingMessage = msg;
+	}
 	public WebAPIHelper(int requestNumber, ProductGallery activity, String msg) 
 	{
 		this.product_activity = activity;
@@ -57,13 +66,13 @@ public class WebAPIHelper extends AsyncTask<String, Integer, Long>
 		loadingMessage = msg;
 	}
 	
-	public WebAPIHelper(int requestNumber, ProfileEditActivity activity, String msg) 
+	/*public WebAPIHelper(int requestNumber, ProfileEditActivity activity, String msg) 
 	{
 		this.edit_profile_activity = activity;
 		progressDlg = new ProgressDialog(edit_profile_activity);
 		this.requestNumber = requestNumber;
 		loadingMessage = msg;
-	}
+	}*/
 	public WebAPIHelper(int requestNumber, LoginActivity activity, String msg) 
 	{
 		this.login_activity = activity;
@@ -167,9 +176,9 @@ public class WebAPIHelper extends AsyncTask<String, Integer, Long>
 				myProfile.setFollower(parseIntValue(getValueFromNode(childNode,"followers")));
 				myProfile.setFollowing(parseIntValue(getValueFromNode(childNode,"following")));
 			}	
-			profile_activity.setResponseFromRequest(requestNumber,myProfile);
+			profileViewFragment.setResponseFromRequest(requestNumber,myProfile);
 		}
-		else if (requestNumber == Constants.editprofile_list)
+/*		else if (requestNumber == Constants.editprofile_list)
 		{			 
 			if(response != null)
 			{
@@ -182,8 +191,8 @@ public class WebAPIHelper extends AsyncTask<String, Integer, Long>
 				Constants.EDITUSERGENDER = getValueFromNode(childNode,"gender");
 			}	
 			edit_profile_activity.setResponseFromRequest(requestNumber);
-		}
-		else if (requestNumber == Constants.editprofile_list2)
+		}*/
+		/*else if (requestNumber == Constants.editprofile_list2)
 		{			 
 			if(response != null)
 			{
@@ -199,7 +208,7 @@ public class WebAPIHelper extends AsyncTask<String, Integer, Long>
 				Constants.EDITEDUSERID = 0;
 			}
 			edit_profile_activity.setResponseFromRequest2(requestNumber);
-		}
+		}*/
 		else if (requestNumber == Constants.fblogin_request)
 		{			 
 			if(response != null)
@@ -236,7 +245,7 @@ public class WebAPIHelper extends AsyncTask<String, Integer, Long>
 		}
 		else if (requestNumber == Constants.product_list)
 		{		
-			ArrayList<Constants> arr_ProductList = null;
+			Constants.all_items.clear();
 			if(response != null)
 			{				
 				Element node = (Element) response.getElementsByTagName("root").item(0);
@@ -252,39 +261,39 @@ public class WebAPIHelper extends AsyncTask<String, Integer, Long>
 				
 				for(int j=0; j<cloth.getLength(); j++)
 				{
-					if(arr_ProductList == null)
-					{
-						arr_ProductList = new ArrayList<Constants>();
-					}					
-					Constants Product_list=new Constants();
+									
+					WardrobaItem item=new WardrobaItem();
 					Element optionchildNode = (Element) cloth.item(j);
 
-					Product_list.PIdCloth = parseIntValue(getValueFromNode(optionchildNode,"id_cloth"));
-					Product_list.PUserId = parseIntValue(getValueFromNode(optionchildNode,"user_id"));
-					Product_list.PObjectId = parseIntValue(getValueFromNode(optionchildNode,"object_id"));
-					Product_list.PLikeCount = parseIntValue(getValueFromNode(optionchildNode,"like_count"));
-					Product_list.PCommentCount = parseIntValue(getValueFromNode(optionchildNode,"comment_count"));
-					Product_list.PViewCount = parseIntValue(getValueFromNode(optionchildNode,"view_count"));
-					Product_list.PProductRange = getValueFromNode(optionchildNode,"price_range");
-					Product_list.PPrice = getValueFromNode(optionchildNode,"price");
-					Product_list.PDescription = getValueFromNode(optionchildNode,"description");
-					Product_list.PCategoryname = getValueFromNode(optionchildNode,"category_name");
-					Product_list.PDiscountedPrice = getValueFromNode(optionchildNode,"discounted_price");
-					Product_list.PDiscpontPerc = getValueFromNode(optionchildNode,"discount_perc");
-					Product_list.PSeasonName = getValueFromNode(optionchildNode,"season_name");
-					Product_list.PDesigner = getValueFromNode(optionchildNode,"designer");
-					Product_list.PShortDescription = getValueFromNode(optionchildNode,"Shortdescription");
-					Product_list.PImageUrl = getValueFromNode(optionchildNode,"img_url");
-					Product_list.PLikeStatus = getValueFromNode(optionchildNode,"like_statue");
+					item.setPIdCloth(parseIntValue(getValueFromNode(optionchildNode,"id_cloth")));
+					item.setPUserId(parseIntValue(getValueFromNode(optionchildNode,"user_id")));
+					item.setPObjectId(parseIntValue(getValueFromNode(optionchildNode,"object_id")));
+					item.setPLikeCount(parseIntValue(getValueFromNode(optionchildNode,"like_count")));
+					item.setPCommentCount(parseIntValue(getValueFromNode(optionchildNode,"comment_count")));
+					item.setPViewCount(parseIntValue(getValueFromNode(optionchildNode,"view_count")));
+					item.setPProductRange(getValueFromNode(optionchildNode,"price_range"));
+					item.setPPrice(getValueFromNode(optionchildNode,"price"));
+					item.setPDescription(getValueFromNode(optionchildNode,"description"));
+					item.setPCategoryname(getValueFromNode(optionchildNode,"category_name"));
+					item.setPDiscountedPrice(getValueFromNode(optionchildNode,"discounted_price"));
+					item.setPDiscpontPerc(getValueFromNode(optionchildNode,"discount_perc"));
+					item.setPSeasonName(getValueFromNode(optionchildNode,"season_name"));
+					item.setPDesigner(getValueFromNode(optionchildNode,"designer"));
+					item.setPShortDescription( getValueFromNode(optionchildNode,"Shortdescription"));
+					item.setPImageUrl( getValueFromNode(optionchildNode,"img_url"));
+					item.setPLikeStatus(getValueFromNode(optionchildNode,"like_statue"));
+					Log.d("Like status:", "status:"+item.getPLikeStatus()+".");
+					Constants.all_items.add(item);
 					
-					arr_ProductList.add(Product_list);
 				}
 			}
-			home_activity.setResponseFromRequest(requestNumber,arr_ProductList);
+			Log.d("hello", "total records:"+Constants.all_items.size());
+			home_activity.setResponseFromRequest(requestNumber);
 		}
 		else if(requestNumber==Constants.search_list)
 		{
-			List<Constants> productlist=null;
+			
+			Constants.my_items.clear();
 			if(response != null)
 			{
 				Element node = (Element) response.getElementsByTagName("root").item(0);
@@ -295,37 +304,32 @@ public class WebAPIHelper extends AsyncTask<String, Integer, Long>
 
                 for(int j=0; j<cloth.getLength(); j++)
                 {
-                        if(productlist == null)
-                        {
-                                productlist = new ArrayList<Constants>();
-                        }
-                        Constants Product_list=new Constants();
+                		WardrobaItem wardrobaItem=new WardrobaItem();
                         Element optionchildNode = (Element) cloth.item(j);
 
-                        Product_list.GIdCloth =parseIntValue(getValueFromNode(optionchildNode,"id_cloth"));
-                        Product_list.GUserId =parseIntValue(getValueFromNode(optionchildNode,"user_id"));
-                        Product_list.GObjectId =parseIntValue(getValueFromNode(optionchildNode,"object_id"));
-                        Product_list.GLikeCount =parseIntValue(getValueFromNode(optionchildNode,"like_count"));
-                        Product_list.GCommentCount =parseIntValue(getValueFromNode(optionchildNode,"comment_count"));
-                        Product_list.GViewCount =parseIntValue(getValueFromNode(optionchildNode,"view_count"));
-                        Product_list.GProductRange = getValueFromNode(optionchildNode,"price_range");
-                        Product_list.GPrice = getValueFromNode(optionchildNode,"price");
-                        Product_list.GDescription =getValueFromNode(optionchildNode,"description");
-                        Product_list.GShortDescription =getValueFromNode(optionchildNode,"Shortdescription");
-                        Product_list.GImageUrl = getValueFromNode(optionchildNode,"img_url");
-                        Product_list.GLikeStatus = getValueFromNode(optionchildNode,"like_statue");
-                        Product_list.GCategoryname=getValueFromNode(optionchildNode,"category_name");
-                        Product_list.GDiscountedPrice=getValueFromNode(optionchildNode,"discounted_price");
-                        Product_list.GSeasonName=getValueFromNode(optionchildNode,"season_name");
-                        Product_list.GDesigner=getValueFromNode(optionchildNode,"designer");
-                        
-                        
-                        Log.d("Product", "Image:"+Product_list.GImageUrl);
-                        productlist.add(Product_list);
+                        wardrobaItem.setPIdCloth(parseIntValue(getValueFromNode(optionchildNode,"id_cloth")));
+                        wardrobaItem.setPUserId(parseIntValue(getValueFromNode(optionchildNode,"user_id")));
+                        wardrobaItem.setPObjectId(parseIntValue(getValueFromNode(optionchildNode,"object_id")));
+                        wardrobaItem.setPLikeCount(parseIntValue(getValueFromNode(optionchildNode,"like_count")));
+                        wardrobaItem.setPCommentCount(parseIntValue(getValueFromNode(optionchildNode,"comment_count")));
+                        wardrobaItem.setPViewCount(parseIntValue(getValueFromNode(optionchildNode,"view_count")));
+                        wardrobaItem.setPProductRange(getValueFromNode(optionchildNode,"price_range"));
+                        wardrobaItem.setPPrice(getValueFromNode(optionchildNode,"price"));
+                        wardrobaItem.setPDescription(getValueFromNode(optionchildNode,"description"));
+                        wardrobaItem.setPCategoryname(getValueFromNode(optionchildNode,"category_name"));
+                        wardrobaItem.setPDiscountedPrice(getValueFromNode(optionchildNode,"discounted_price"));
+                        wardrobaItem.setPDiscpontPerc(getValueFromNode(optionchildNode,"discount_perc"));
+                        wardrobaItem.setPSeasonName(getValueFromNode(optionchildNode,"season_name"));
+                        wardrobaItem.setPDesigner(getValueFromNode(optionchildNode,"designer"));
+                        wardrobaItem.setPShortDescription( getValueFromNode(optionchildNode,"Shortdescription"));
+                        wardrobaItem.setPImageUrl( getValueFromNode(optionchildNode,"img_url"));
+                        wardrobaItem.setPLikeStatus( getValueFromNode(optionchildNode,"like_statue"));
+    					
+    					Constants.my_items.add(wardrobaItem);
                 	}
 				}
 
-				productGalleryGridFragment.setResponseFromRequest(productlist);
+				productGalleryGridFragment.setResponseFromRequest();
 			
 		}
 		else if(requestNumber==Constants.product_like)

@@ -12,6 +12,7 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat.Action;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,22 +32,23 @@ import android.widget.Toast;
 public class ProductGalleryGridFragment extends Fragment 
 {
 
-	List<Constants> arr_productGallery;
+	
 	ProductGalleryAdapter adapter;
 	GridView gridView;
 	ImageView imgSearch;
 	EditText txtKeyward;
 	Typeface tf;
+	WardrobaItem wardrobaMyItem;
 	OnProductSelectListener callback;
 	public interface OnProductSelectListener {
         /** Called by HeadlinesFragment when a list item is selected */
-        public void OnProductSelected(int position,List<Constants> arrProducts);
+        public void OnProductSelected(int position);
     }
-	public void setResponseFromRequest(Object obj)
+	public void setResponseFromRequest()
 	{
-		if(obj!=null)
+		if(Constants.my_items.size()>0)
 		{
-			arr_productGallery=(ArrayList<Constants>)obj;
+			
 			adapter=new ProductGalleryAdapter(this.getActivity());
 			gridView.setAdapter(adapter);
 			adapter.notifyDataSetChanged();
@@ -57,7 +59,7 @@ public class ProductGalleryGridFragment extends Fragment
 				public void onItemClick(AdapterView<?> arg0, View arg1,
 						int position, long arg3) {
 					// TODO Auto-generated method stub
-					callback.OnProductSelected(position, arr_productGallery);
+					callback.OnProductSelected(position);
 				}
 				
 			});
@@ -65,7 +67,7 @@ public class ProductGalleryGridFragment extends Fragment
 		else
 		{	
 			Toast.makeText(getActivity(), "No products found",Toast.LENGTH_SHORT).show();
-			arr_productGallery=new ArrayList<Constants>();
+			
 			adapter=new ProductGalleryAdapter(this.getActivity());
 			gridView.setAdapter(adapter);
 			adapter.notifyDataSetChanged();
@@ -80,7 +82,23 @@ public class ProductGalleryGridFragment extends Fragment
         //Toast.makeText(getActivity(), "Hello fragment", Toast.LENGTH_SHORT).show();
          tf= Typeface.createFromAsset(getActivity().getAssets(),"fonts/GOTHIC.TTF");
          gridView=(GridView)root.findViewById(R.id.product_grid);
-         
+         if(Constants.my_items.size()>0)
+         {
+        	 adapter=new ProductGalleryAdapter(this.getActivity());
+ 			gridView.setAdapter(adapter);
+ 			adapter.notifyDataSetChanged();
+ 			gridView.setOnItemClickListener(new OnItemClickListener() 
+			{
+
+				@Override
+				public void onItemClick(AdapterView<?> arg0, View arg1,
+						int position, long arg3) {
+					// TODO Auto-generated method stub
+					callback.OnProductSelected(position);
+				}
+				
+			});
+         }
     	 imgSearch=(ImageView)root.findViewById(R.id.imgSearch);
     	 txtKeyward=(EditText)root.findViewById(R.id.txtKeyward);
     	 txtKeyward.setTypeface(tf);
@@ -110,6 +128,7 @@ public class ProductGalleryGridFragment extends Fragment
 						 inputManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
 							WebAPIHelper webAPIHelper=new WebAPIHelper(Constants.search_list, ProductGalleryGridFragment.this, "Please wait...");
 							String url=Constants.PRODUCT_SEARCH_URL+"id="+Constants.LOGIN_USERID+"&keyword="+data;
+							Log.d("ProductGalleryGrid", "url="+url);
 							webAPIHelper.execute(url);
 							
 						} catch (Exception e) {
@@ -123,19 +142,38 @@ public class ProductGalleryGridFragment extends Fragment
 				}
 			}
 		});
-    	 try {
-			WebAPIHelper webAPIHelper=new WebAPIHelper(Constants.search_list, ProductGalleryGridFragment.this, "Please wait...");
-			String url=Constants.PRODUCT_SEARCH_URL+"id="+Constants.LOGIN_USERID;
-			webAPIHelper.execute(url);
-			
-		} catch (Exception e) {
-			// TODO: handle exception
-			
-		}
+    	
         return root;
     }
     
- 
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		super.onCreate(savedInstanceState);
+		 try {
+			 if(savedInstanceState==null)
+			 {
+				WebAPIHelper webAPIHelper=new WebAPIHelper(Constants.search_list, ProductGalleryGridFragment.this, "Please wait...");
+				String url=Constants.PRODUCT_SEARCH_URL+"id="+Constants.LOGIN_USERID;
+				Log.d("ProductGalleryGrid", "url="+url);
+				webAPIHelper.execute(url);
+			 }
+			 
+				
+			} catch (Exception e) {
+				// TODO: handle exception
+				
+			}
+	}
+	@Override
+	public void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
+		if(adapter!=null)
+		{
+			adapter.notifyDataSetChanged();
+		}
+	}
      @Override
         public void onAttach(Activity activity) {
             super.onAttach(activity);
@@ -176,7 +214,7 @@ public class ProductGalleryGridFragment extends Fragment
  		@Override
  		public int getCount() {
  			// TODO Auto-generated method stub
- 			return arr_productGallery.size();
+ 			return Constants.my_items.size();
  		}
 
  		@Override
@@ -202,8 +240,9 @@ public class ProductGalleryGridFragment extends Fragment
  				grid=convertView=mInflater.inflate(R.layout.product_detail_activity, null);
  						
  			}
+ 			wardrobaMyItem=Constants.my_items.get(position);
  			ImageView img=(ImageView)grid.findViewById(R.id.imgProductIcon);
- 			imageLoader.DisplayImage(arr_productGallery.get(position).GImageUrl, img);
+ 			imageLoader.DisplayImage(wardrobaMyItem.getPImageUrl(), img);
  			return grid;
  		}
     	 

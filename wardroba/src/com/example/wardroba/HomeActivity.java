@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import com.connection.Constants;
 import com.connection.WebAPIHelper;
+
 import BaseAdapter.HomeProductBaseAdapter;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -33,18 +34,18 @@ public class HomeActivity extends Activity
 	public TextView txtNameSurname,txtDate;
 	Typeface tf;
 	
-	private ArrayList<Constants> arr_ProductList;
+	HomeProductBaseAdapter adapter=null;
 	
 	
   	@SuppressWarnings("unchecked")
-  	public void setResponseFromRequest(int requestNumber, Object obj) 
+  	public void setResponseFromRequest(int requestNumber) 
   	{		  		 		
-  		arr_ProductList =(ArrayList<Constants>) obj;
-  		if(arr_ProductList != null)
-  		{  			 
+  		if(Constants.all_items.size()>0)
+  		{
 //  			txtNameSurname.setText(Constants.USER_NAME.toString());
 //  			txtDate.setText(Constants.USER_DATE.toString());
-  			HomeProductBaseAdapter adapter=new HomeProductBaseAdapter(arr_ProductList,HomeActivity.this);
+  			adapter=new HomeProductBaseAdapter(HomeActivity.this);
+  			adapter.notifyDataSetChanged();
  	    	lsvProductList.setAdapter(adapter);
  	    	
   		}
@@ -57,16 +58,29 @@ public class HomeActivity extends Activity
   	@SuppressWarnings("unchecked")
   	public void setResponseFromRequest1(int requestNumber) 
   	{	
-  			String status=Constants.LIKE_STATUS.toString().trim();
-  			if(status.equals("LIKE"))
+  			
+  			if(adapter!=null)
   			{
-  				arr_ProductList.get(Constants.SELECTED_ID).PLikeStatus="UNLIKE";
-  	  			arr_ProductList.get(Constants.SELECTED_ID).PLikeCount=Constants.LIKE_COUNT;
-  			}else
-  			{
-  				arr_ProductList.get(Constants.SELECTED_ID).PLikeStatus="LIKE";
-  	  			arr_ProductList.get(Constants.SELECTED_ID).PLikeCount=Constants.LIKE_COUNT;
+  				adapter.notifyDataSetChanged();
   			}
+  			int cloth_id=Constants.all_items.get(Constants.SELECTED_ID).getPIdCloth();
+			String status=Constants.all_items.get(Constants.SELECTED_ID).getPLikeStatus();
+			int like_count=Constants.all_items.get(Constants.SELECTED_ID).getPLikeCount();
+			int count=0;
+  			if(Constants.my_items.size()>0)
+  			{
+  				for(WardrobaItem temp:Constants.my_items)
+  				{
+  					int id=temp.getPIdCloth();
+  					if(id==cloth_id)
+  						break;
+  				
+  					count++;	
+  				}
+  				
+  			}
+  			Constants.my_items.get(count).setPLikeStatus(status);
+  			Constants.my_items.get(count).setPLikeCount(like_count);
   	} 	
     public void onCreate(Bundle savedInstanceState) 
     {
@@ -166,6 +180,17 @@ public class HomeActivity extends Activity
    {
 	super.onPause();	
    } 
+   @Override
+protected void onResume() {
+	// TODO Auto-generated method stub
+	super.onResume();
+	//Toast.makeText(getApplicationContext(), "resume", Toast.LENGTH_SHORT).show();
+	if(adapter!=null)
+	{
+		adapter.notifyDataSetChanged();
+		lsvProductList.refreshDrawableState();
+	}
+}
    public void alert()
    {
 	   AlertDialog.Builder builder = new AlertDialog.Builder(HomeActivity.this);
