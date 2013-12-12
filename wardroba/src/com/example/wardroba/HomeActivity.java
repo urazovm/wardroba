@@ -46,7 +46,9 @@ public class HomeActivity extends Activity
 //  			txtDate.setText(Constants.USER_DATE.toString());
   			adapter=new HomeProductBaseAdapter(HomeActivity.this);
   			adapter.notifyDataSetChanged();
+  			
  	    	lsvProductList.setAdapter(adapter);
+ 	    	lsvProductList.invalidateViews();
  	    	
   		}
   		else
@@ -63,24 +65,27 @@ public class HomeActivity extends Activity
   			{
   				adapter.notifyDataSetChanged();
   			}
-  			int cloth_id=Constants.all_items.get(Constants.SELECTED_ID).getPIdCloth();
-			String status=Constants.all_items.get(Constants.SELECTED_ID).getPLikeStatus();
-			int like_count=Constants.all_items.get(Constants.SELECTED_ID).getPLikeCount();
-			int count=0;
   			if(Constants.my_items.size()>0)
   			{
-  				for(WardrobaItem temp:Constants.my_items)
-  				{
-  					int id=temp.getPIdCloth();
-  					if(id==cloth_id)
-  						break;
-  				
-  					count++;	
-  				}
-  				
+	  			int cloth_id=Constants.all_items.get(Constants.SELECTED_ID).getPIdCloth();
+				String status=Constants.all_items.get(Constants.SELECTED_ID).getPLikeStatus();
+				int like_count=Constants.all_items.get(Constants.SELECTED_ID).getPLikeCount();
+				int count=0;
+	  			if(Constants.my_items.size()>0)
+	  			{
+	  				for(WardrobaItem temp:Constants.my_items)
+	  				{
+	  					int id=temp.getPIdCloth();
+	  					if(id==cloth_id)
+	  						break;
+	  				
+	  					count++;	
+	  				}
+	  				
+	  			}
+	  			Constants.my_items.get(count).setPLikeStatus(status);
+	  			Constants.my_items.get(count).setPLikeCount(like_count);
   			}
-  			Constants.my_items.get(count).setPLikeStatus(status);
-  			Constants.my_items.get(count).setPLikeCount(like_count);
   	} 	
     public void onCreate(Bundle savedInstanceState) 
     {

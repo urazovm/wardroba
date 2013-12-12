@@ -1,25 +1,22 @@
 package BaseAdapter;
 
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.ImageLoader.ImageLoader;
 import com.connection.Constants;
 import com.connection.WebAPIHelper1;
 import com.example.wardroba.CommentViewActivity;
-import com.example.wardroba.HomeTabActivity;
-import com.example.wardroba.LoginActivity;
 import com.example.wardroba.R;
+import com.example.wardroba.SmartImageView;
 import com.example.wardroba.WardrobaItem;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Typeface;
-import android.sax.StartElementListener;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
@@ -30,7 +27,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class HomeProductBaseAdapter extends BaseAdapter  
+public class HomeProductBaseAdapter extends BaseAdapter 
 {
 	LayoutInflater mInflater;
 	Activity activity;
@@ -38,9 +35,8 @@ public class HomeProductBaseAdapter extends BaseAdapter
 	ImageLoader imageLoader;
 	public GroupItem item ;
 	Typeface tf;
-	Animation animZoomIn;
-	Animation animFadeIn,animFadeOut;
-	Animation animZoomOut;
+	
+	
 
 	String LikeStatus;
 	String CommentId;
@@ -61,11 +57,11 @@ public class HomeProductBaseAdapter extends BaseAdapter
 		mInflater = (LayoutInflater)activity.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
 		imageLoader=new ImageLoader(activity);
 		 tf= Typeface.createFromAsset(activity.getAssets(),"fonts/GOTHIC.TTF");
-
-		animZoomIn = AnimationUtils.loadAnimation(activity,R.anim.zoom_in);
-	    animZoomOut = AnimationUtils.loadAnimation(activity,R.anim.zoom_out);
+		 
+		
 //	    animFadeIn=AnimationUtils.loadAnimation(activity, R.anim.fade_in);
 //	    animFadeOut=AnimationUtils.loadAnimation(activity, R.anim.fade_out);	
+	    
 	}
 
 	public int getCount()
@@ -93,7 +89,7 @@ public class HomeProductBaseAdapter extends BaseAdapter
 	public View getView(final int position, View convertView, ViewGroup parent) 
 	{
 		 	final TextView txtLikeCount,txtCommentCount,txtShortDiscription;
-		 	ImageView imgProductImage;
+		 	SmartImageView imgProductImage;
 		 	final ProgressBar progressBar;
 		 	final ImageView btnLike,btnComment,btnShare;
 		 	final ImageView imgLikeDil;
@@ -111,7 +107,8 @@ public class HomeProductBaseAdapter extends BaseAdapter
 			txtLikeCount =(TextView) vi.findViewById(R.id.txt_like);
 			txtCommentCount =(TextView) vi.findViewById(R.id.txt_comment);
 			txtShortDiscription =(TextView) vi.findViewById(R.id.txt_short_description);
-			imgProductImage =(ImageView) vi.findViewById(R.id.img_product_photo);
+			imgProductImage =(SmartImageView) vi.findViewById(R.id.img_product_photo);
+			
 			imgLikeDil =(ImageView) vi.findViewById(R.id.img_like_dil);
 			progressBar=(ProgressBar)vi.findViewById(R.id.progressBar1);
 			btnLike =(ImageView) vi.findViewById(R.id.img_like);
@@ -206,17 +203,47 @@ public class HomeProductBaseAdapter extends BaseAdapter
 					Toast.makeText(activity,"Share", 5000).show();
 				}
 			});
-		
-			imgProductImage.setOnClickListener(new View.OnClickListener() 
+			imgProductImage.setDilImage(imgLikeDil);
+			
+			/*imgProductImage.setOnClickListener(new View.OnClickListener() 
 			{
 				public void onClick(View v) 
 				{
 					//Toast.makeText(activity,"Photo", 5000).show();
+
 					imgLikeDil.setVisibility(View.VISIBLE);
-					imgLikeDil.startAnimation(animZoomIn);
+					Animation anim=AnimationUtils.loadAnimation(activity, R.anim.fade_in);
+					//anim.setFillAfter(true);
+					//anim.setRepeatMode(Animation.REVERSE);
+					imgLikeDil.startAnimation(anim);
+					anim.setAnimationListener(new AnimationListener() {
+						
+						@Override
+						public void onAnimationStart(Animation arg0) {
+							// TODO Auto-generated method stub
+							
+						}
+						
+						@Override
+						public void onAnimationRepeat(Animation arg0) {
+							// TODO Auto-generated method stub
+							
+						}
+						
+						@Override
+						public void onAnimationEnd(Animation arg0) {
+							// TODO Auto-generated method stub
+							
+							imgLikeDil.setVisibility(View.GONE);
+							Animation anim=AnimationUtils.loadAnimation(activity, R.anim.fade_out);
+							
+							//anim.setRepeatMode(Animation.REVERSE);
+							imgLikeDil.startAnimation(anim);
+						}
+					});
 					
 				}
-			});
+			});*/
 			
 //			animFadeOut.setAnimationListener(new AnimationListener() 
 //			{
@@ -253,6 +280,8 @@ public class HomeProductBaseAdapter extends BaseAdapter
 		int previousTop = 0;
 	}
 
+	 
+	
 	
 
 
