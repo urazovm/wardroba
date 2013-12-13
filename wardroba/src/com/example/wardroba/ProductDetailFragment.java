@@ -5,6 +5,7 @@ import com.connection.Constants;
 import com.connection.WebAPIHelper1;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -127,8 +128,9 @@ public class ProductDetailFragment extends Fragment
 		imageUrl=selected_item.getPImageUrl();
 		likeCount=selected_item.getPLikeCount();
 		commentCount=selected_item.getPCommentCount();
-		shortDesc=selected_item.getPShortDescription();
 		//imageLoader.DisplayImage(imageUrl, imgProductPhoto);
+		shortDesc=selected_item.getPTag();
+
 		txtLike.setText(String.valueOf(likeCount));
 		txtComment.setText(String.valueOf(commentCount));
 		textDescription.setText(shortDesc.trim());
@@ -147,10 +149,12 @@ public class ProductDetailFragment extends Fragment
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
 				String url;
-				String Cloth_Id,User_Id,ObjectId1;
+				String Cloth_Id,User_Id,ObjectId1,Cloth_type;
 				Cloth_Id = String.valueOf( selected_item.getPIdCloth());
 				User_Id = String.valueOf(selected_item.getPUserId());
 				ObjectId1 = String.valueOf(selected_item.getPObjectId());
+				Cloth_type=selected_item.getPClothType().toString().trim();
+				
 				Constants.SELECTED_ID=SELECTED_PRODUCT;
 				
 				int count_like = (selected_item.getPLikeCount());
@@ -160,12 +164,12 @@ public class ProductDetailFragment extends Fragment
 					
 					txtLike.setText(String.valueOf(count_like=count_like+1));
 					imgLike.setBackgroundResource(R.drawable.like_h);
-					url = Constants.PRODUCT_LIKE_URL+"&id_cloth="+Cloth_Id+"&user_id="+User_Id+"&object_id="+ObjectId1+"&status="+"LIKE";
+					url = Constants.PRODUCT_LIKE_URL+"&id_cloth="+Cloth_Id+"&user_id="+User_Id+"&object_id="+ObjectId1+"&cloth_type="+Cloth_type+"&status="+"LIKE";
 		        }else
 		        {
 		        	txtLike.setText(String.valueOf(count_like=count_like-1));
 		        	imgLike.setBackgroundResource(R.drawable.like);
-		        	url = Constants.PRODUCT_LIKE_URL+"&id_cloth="+Cloth_Id+"&user_id="+User_Id+"&object_id="+ObjectId1+"&status="+"UNLIKE";
+		        	url = Constants.PRODUCT_LIKE_URL+"&id_cloth="+Cloth_Id+"&user_id="+User_Id+"&object_id="+ObjectId1+"&cloth_type="+Cloth_type+"&status="+"UNLIKE";
 		        }
 				try
 				{
@@ -183,8 +187,12 @@ public class ProductDetailFragment extends Fragment
 		{
 			
 			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
+			public void onClick(View v) 
+			{
+//				Constants.CLOTHISID = String.valueOf(selected_item.getPIdCloth());
+//				Constants.CLOTH_USERID = String.valueOf(selected_item.getPUserId());
+//				Constants.OBJECT_ID = String.valueOf(selected_item.getPObjectId());
+//				Constants.CLOTH_TYPE= selected_item.getPClothType().toString().trim();
 				
 			}
 		});

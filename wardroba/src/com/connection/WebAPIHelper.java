@@ -260,11 +260,6 @@ public class WebAPIHelper extends AsyncTask<String, Integer, Long>
 				NodeList noderesult=  node.getElementsByTagName("result");
 				Element result = (Element) noderesult.item(0);
 				
-				Constants.USER_NAME = getValueFromNode(result,"username");
-				Constants.USER_IMAGE = getValueFromNode(result,"user_image");
-				Constants.USER_DATE = getValueFromNode(result,"date");
-				
-				
 				NodeList cloth =  result.getElementsByTagName("cloth");
 				
 				for(int j=0; j<cloth.getLength(); j++)
@@ -273,26 +268,22 @@ public class WebAPIHelper extends AsyncTask<String, Integer, Long>
 					WardrobaItem item=new WardrobaItem();
 					Element optionchildNode = (Element) cloth.item(j);
 
+					item.setPUserName( getValueFromNode(optionchildNode,"username"));
+					item.setPUserImage( getValueFromNode(optionchildNode,"user_image"));
+					item.setPUserDate( getValueFromNode(optionchildNode,"date"));
+					
 					item.setPIdCloth(parseIntValue(getValueFromNode(optionchildNode,"id_cloth")));
 					item.setPUserId(parseIntValue(getValueFromNode(optionchildNode,"user_id")));
 					item.setPObjectId(parseIntValue(getValueFromNode(optionchildNode,"object_id")));
 					item.setPLikeCount(parseIntValue(getValueFromNode(optionchildNode,"like_count")));
 					item.setPCommentCount(parseIntValue(getValueFromNode(optionchildNode,"comment_count")));
 					item.setPViewCount(parseIntValue(getValueFromNode(optionchildNode,"view_count")));
-					item.setPProductRange(getValueFromNode(optionchildNode,"price_range"));
-					item.setPPrice(getValueFromNode(optionchildNode,"price"));
-					item.setPDescription(getValueFromNode(optionchildNode,"description"));
-					item.setPCategoryname(getValueFromNode(optionchildNode,"category_name"));
-					item.setPDiscountedPrice(getValueFromNode(optionchildNode,"discounted_price"));
-					item.setPDiscpontPerc(getValueFromNode(optionchildNode,"discount_perc"));
-					item.setPSeasonName(getValueFromNode(optionchildNode,"season_name"));
-					item.setPDesigner(getValueFromNode(optionchildNode,"designer"));
-					item.setPShortDescription( getValueFromNode(optionchildNode,"Shortdescription"));
+					item.setPTag( getValueFromNode(optionchildNode,"tags"));
 					item.setPImageUrl( getValueFromNode(optionchildNode,"img_url"));
 					item.setPLikeStatus(getValueFromNode(optionchildNode,"like_statue"));
+					item.setPClothType(getValueFromNode(optionchildNode,"cloth_type"));
 					Log.d("Like status:", "status:"+item.getPLikeStatus()+".");
 					Constants.all_items.add(item);
-					
 				}
 			}
 			Log.d("hello", "total records:"+Constants.all_items.size());
@@ -300,7 +291,6 @@ public class WebAPIHelper extends AsyncTask<String, Integer, Long>
 		}
 		else if(requestNumber==Constants.search_list)
 		{
-			
 			Constants.my_items.clear();
 			if(response != null)
 			{
@@ -321,17 +311,10 @@ public class WebAPIHelper extends AsyncTask<String, Integer, Long>
                         wardrobaItem.setPLikeCount(parseIntValue(getValueFromNode(optionchildNode,"like_count")));
                         wardrobaItem.setPCommentCount(parseIntValue(getValueFromNode(optionchildNode,"comment_count")));
                         wardrobaItem.setPViewCount(parseIntValue(getValueFromNode(optionchildNode,"view_count")));
-                        wardrobaItem.setPProductRange(getValueFromNode(optionchildNode,"price_range"));
-                        wardrobaItem.setPPrice(getValueFromNode(optionchildNode,"price"));
-                        wardrobaItem.setPDescription(getValueFromNode(optionchildNode,"description"));
-                        wardrobaItem.setPCategoryname(getValueFromNode(optionchildNode,"category_name"));
-                        wardrobaItem.setPDiscountedPrice(getValueFromNode(optionchildNode,"discounted_price"));
-                        wardrobaItem.setPDiscpontPerc(getValueFromNode(optionchildNode,"discount_perc"));
-                        wardrobaItem.setPSeasonName(getValueFromNode(optionchildNode,"season_name"));
-                        wardrobaItem.setPDesigner(getValueFromNode(optionchildNode,"designer"));
-                        wardrobaItem.setPShortDescription( getValueFromNode(optionchildNode,"Shortdescription"));
+                        wardrobaItem.setPTag( getValueFromNode(optionchildNode,"tags"));
                         wardrobaItem.setPImageUrl( getValueFromNode(optionchildNode,"img_url"));
                         wardrobaItem.setPLikeStatus( getValueFromNode(optionchildNode,"like_statue"));
+                        wardrobaItem.setPClothType(getValueFromNode(optionchildNode,"cloth_type"));
     					
     					Constants.my_items.add(wardrobaItem);
                 	}
