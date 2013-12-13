@@ -42,13 +42,6 @@ public class HomeProductBaseAdapter extends BaseAdapter
 	String CommentId;
 	WardrobaItem wardrobaItem;
 	
-//	String Sharing_Tag;
-//	String Sharing_URL;
-//	String Delete_SelectionId;
-//	String UsernameString;
-//	String UserPhotoUrl;
-//	String UserDate;
-	
 
   	public HomeProductBaseAdapter(Activity activity)
 	{
@@ -81,7 +74,6 @@ public class HomeProductBaseAdapter extends BaseAdapter
 	}
 	class GroupItem
 	{
-		
 		public ImageView imgUserPhoto;
 		public TextView txtNameSurname,txtDate;
 	}
@@ -90,7 +82,7 @@ public class HomeProductBaseAdapter extends BaseAdapter
 	{
 		 	final TextView txtLikeCount,txtCommentCount,txtShortDiscription;
 		 	SmartImageView imgProductImage;
-		 	final ProgressBar progressBar;
+		 	final ProgressBar progressBar,progressBarUserPhoto;
 		 	final ImageView btnLike,btnComment,btnShare;
 		 	final ImageView imgLikeDil;
 		 	wardrobaItem=Constants.all_items.get(position);
@@ -111,6 +103,7 @@ public class HomeProductBaseAdapter extends BaseAdapter
 			
 			imgLikeDil =(ImageView) vi.findViewById(R.id.img_like_dil);
 			progressBar=(ProgressBar)vi.findViewById(R.id.progressBar1);
+			progressBarUserPhoto=(ProgressBar)vi.findViewById(R.id.progressBar2);
 			btnLike =(ImageView) vi.findViewById(R.id.img_like);
 			btnComment =(ImageView) vi.findViewById(R.id.img_comment);
 			btnShare =(ImageView) vi.findViewById(R.id.img_share);
@@ -125,7 +118,8 @@ public class HomeProductBaseAdapter extends BaseAdapter
 			item.txtNameSurname.setText(wardrobaItem.getPUserName().toString().trim());
 			item.txtDate.setText(wardrobaItem.getPUserDate().toString().trim());
 			
-			//imageLoader.DisplayImage(wardrobaItem.getPUserImage().toString().trim(),item.imgUserPhoto);
+			imageLoader.DisplayImage(wardrobaItem.getPUserImage().toString().trim(),item.imgUserPhoto,progressBarUserPhoto);
+			progressBar.setVisibility(View.GONE);
 			
 			txtLikeCount.setText(String.valueOf(wardrobaItem.getPLikeCount()));
 			txtCommentCount.setText(String.valueOf(wardrobaItem.getPCommentCount()));
@@ -141,9 +135,8 @@ public class HomeProductBaseAdapter extends BaseAdapter
 	        }
 			
 			String temp=wardrobaItem.getPImageUrl();
-
-			 //imageLoader.DisplayImage(temp,imgProductImage);
-			 progressBar.setVisibility(View.GONE);
+			imageLoader.DisplayImage(temp,imgProductImage,progressBar);
+			progressBar.setVisibility(View.GONE);
 
 			
 			btnLike.setOnClickListener(new View.OnClickListener() 

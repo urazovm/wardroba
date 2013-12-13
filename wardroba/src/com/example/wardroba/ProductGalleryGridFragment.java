@@ -25,14 +25,13 @@ import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
 public class ProductGalleryGridFragment extends Fragment 
 {
-
-	
 	ProductGalleryAdapter adapter;
 	GridView gridView;
 	ImageView imgSearch;
@@ -40,8 +39,8 @@ public class ProductGalleryGridFragment extends Fragment
 	Typeface tf;
 	WardrobaItem wardrobaMyItem;
 	OnProductSelectListener callback;
-	public interface OnProductSelectListener {
-        /** Called by HeadlinesFragment when a list item is selected */
+	public interface OnProductSelectListener 
+	{
         public void OnProductSelected(int position);
     }
 	public void setResponseFromRequest()
@@ -75,9 +74,9 @@ public class ProductGalleryGridFragment extends Fragment
 		
 	}
 	@Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) 
+	{
          ViewGroup root = (ViewGroup) inflater.inflate(R.layout.product_list_activity, null);
-         //init(root);
          getActivity().findViewById(R.id.btnBack).setVisibility(View.GONE);
         //Toast.makeText(getActivity(), "Hello fragment", Toast.LENGTH_SHORT).show();
          tf= Typeface.createFromAsset(getActivity().getAssets(),"fonts/GOTHIC.TTF");
@@ -242,7 +241,9 @@ public class ProductGalleryGridFragment extends Fragment
  			}
  			wardrobaMyItem=Constants.my_items.get(position);
  			ImageView img=(ImageView)grid.findViewById(R.id.imgProductIcon);
- 			//imageLoader.DisplayImage(wardrobaMyItem.getPImageUrl(), img);
+ 			ProgressBar progressBar=(ProgressBar)grid.findViewById(R.id.progressBar2);
+ 			imageLoader.DisplayImage(wardrobaMyItem.getPImageUrl(), img,progressBar);
+ 			progressBar.setVisibility(View.GONE);
  			return grid;
  		}
     	 

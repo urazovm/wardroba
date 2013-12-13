@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 public class ProfileActivity extends FragmentActivity
@@ -17,6 +18,7 @@ public class ProfileActivity extends FragmentActivity
 	ImageView btnBack;
 	TextView txtProfileLable;
 	Typeface tf;
+
  
     public void onCreate(Bundle savedInstanceState) 
     {
@@ -28,7 +30,7 @@ public class ProfileActivity extends FragmentActivity
         txtProfileLable=(TextView)findViewById(R.id.txtProfileLabel);
         txtProfileLable.setTypeface(tf);
         btnBack.setVisibility(View.GONE);
-        
+		
         if(savedInstanceState!=null)
 		{
 			return;

@@ -57,10 +57,9 @@ public class ProfileViewFragment extends Fragment
 //		Txt_pass.setText(Constants.USERID);
 	}
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) 
+	{
 		ViewGroup root = (ViewGroup) inflater.inflate(R.layout.profile_view_activity, null);
-		// TODO Auto-generated method stub
 		tf= Typeface.createFromAsset(getActivity().getAssets(),"fonts/GOTHIC.TTF");
         imageLoader=new ImageLoader(getActivity());
         preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
@@ -77,6 +76,7 @@ public class ProfileViewFragment extends Fragment
 		txtFollowingLabel=(TextView)root.findViewById(R.id.txtFollowingLabel);
 		imgLoader=(ProgressBar)root.findViewById(R.id.progLoader);
 		imgLoader.setVisibility(View.GONE);
+
 		Btn_edit_profile = (Button)root.findViewById(R.id.btn_edit_profile);
 		Btn_logout = (Button)root.findViewById(R.id.btn_logout);
 		getActivity().findViewById(R.id.btnBack).setVisibility(View.GONE);
@@ -96,8 +96,6 @@ public class ProfileViewFragment extends Fragment
 	}
 	public void initButtonListener(View root)
 	{
-		
-		
 		Btn_logout.setOnClickListener(new View.OnClickListener() 
 		{
 			@Override
@@ -120,13 +118,7 @@ public class ProfileViewFragment extends Fragment
 			{
 				
 				ProfileEditActivity secondFragment=new ProfileEditActivity();
-				
-	            
-	            
 	            FragmentTransaction transaction = getFragmentManager().beginTransaction();
-
-	            // Replace whatever is in the fragment_container view with this fragment,
-	            // and add the transaction to the back stack so the user can navigate back
 	            transaction.replace(R.id.fragment_container, secondFragment);
 	            transaction.addToBackStack(null);
 
@@ -139,13 +131,7 @@ public class ProfileViewFragment extends Fragment
     {
     	
         super.onCreate(savedInstanceState);       
-        
-        
-//		Txt_pass = (TextView)findViewById(R.id.txt_passward);
-		
-		
-		
-		
+
 		if(isOnline()==true)
 		{
 			if(Constants.LOGIN_USERID != 0)
@@ -164,13 +150,14 @@ public class ProfileViewFragment extends Fragment
     }
     
     @Override
-    public void onAttach(Activity activity) {
-    	// TODO Auto-generated method stub
-    	
-    	try {
-        	activity.findViewById(R.id.btnBack).setVisibility(View.GONE);
-        	
-        } catch (ClassCastException e) {
+    public void onAttach(Activity activity) 
+    {
+    	try 
+    	{
+        	activity.findViewById(R.id.btnBack).setVisibility(View.GONE);	
+        }
+    	catch (ClassCastException e) 
+        {
             throw new ClassCastException(activity.toString() + " must implement onButtonPressed");
         }
 		super.onAttach(activity);
