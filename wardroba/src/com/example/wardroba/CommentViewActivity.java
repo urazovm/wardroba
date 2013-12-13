@@ -105,7 +105,7 @@ public class CommentViewActivity extends Activity
 			try
 			{
 				WebAPIHelper webAPIHelper = new WebAPIHelper(Constants.comment_list,CommentViewActivity.this ,"Please Wait....");
-				String url = Constants.VIEW_COMMENT_URL+"&object_id="+Constants.OBJECT_ID+"&user_id="+Constants.CLOTH_USERID;	
+				String url = Constants.VIEW_COMMENT_URL+"&object_id="+Constants.OBJECT_ID+"&user_id="+Constants.CLOTH_USERID+"&cloth_type="+Constants.CLOTH_TYPE;	
 				Log.d("Comment View= ",url.toString());
 				webAPIHelper.execute(url);    	
 				
@@ -156,10 +156,9 @@ public class CommentViewActivity extends Activity
 						try
 						{
 							WebAPIHelper1 webAPIHelper = new WebAPIHelper1(Constants.comment_add,CommentViewActivity.this);
-							String url = Constants.ADD_COMMENT_URL+"&object_id="+Constants.OBJECT_ID+"&user_id="+Constants.CLOTH_USERID+"&comment="+CommentText;	
+							String url = Constants.ADD_COMMENT_URL+"&object_id="+Constants.OBJECT_ID+"&user_id="+Constants.CLOTH_USERID+"&comment="+CommentText+"&cloth_type="+Constants.CLOTH_TYPE;	
 							Log.d("Comment View= ",url.toString());
 							webAPIHelper.execute(url);    	
-							
 							//http://dev.wardroba.com/serviceXml/product_comment.php?object_id=560&user_id=66&comment=testing
 
 						}

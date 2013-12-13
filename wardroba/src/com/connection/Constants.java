@@ -53,7 +53,7 @@ public class Constants implements Serializable
  	public static int LOGIN_USERID;
  	public static String LOGINFORM;
  	public static int LOGOUTID;
- 	public static String CLOTHISID,CLOTH_USERID,OBJECT_ID;
+ 	public static String CLOTHISID,CLOTH_USERID,OBJECT_ID,CLOTH_TYPE;
  	
  	public static String USEREMAIL;
  	public static String USERGENDER;
@@ -74,7 +74,7 @@ public class Constants implements Serializable
  	public int GIdCloth,GUserId,GObjectId,GLikeCount,GCommentCount,GViewCount;
     public String GProductRange,GPrice,GDescription,GCategoryname,GDiscountedPrice,GDiscpontPerc,GSeasonName,GDesigner,GShortDescription,GImageUrl,GLikeStatus;
      
-     public static String USER_NAME,USER_IMAGE,USER_DATE;
+     //public static String USER_NAME,USER_IMAGE,USER_DATE;
  	
 	
  	// login session variable

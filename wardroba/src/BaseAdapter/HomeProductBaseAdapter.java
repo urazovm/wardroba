@@ -122,12 +122,14 @@ public class HomeProductBaseAdapter extends BaseAdapter
 			item.txtDate.setTypeface(tf);
 			imgLikeDil.setVisibility(View.GONE);
 
-			item.txtNameSurname.setText(Constants.USER_NAME.toString());
-			item.txtDate.setText(Constants.USER_DATE.toString());
+			item.txtNameSurname.setText(wardrobaItem.getPUserName().toString().trim());
+			item.txtDate.setText(wardrobaItem.getPUserDate().toString().trim());
+			
+			//imageLoader.DisplayImage(wardrobaItem.getPUserImage().toString().trim(),item.imgUserPhoto);
 			
 			txtLikeCount.setText(String.valueOf(wardrobaItem.getPLikeCount()));
 			txtCommentCount.setText(String.valueOf(wardrobaItem.getPCommentCount()));
-			txtShortDiscription.setText(wardrobaItem.getPShortDescription().toString().trim());
+			txtShortDiscription.setText(wardrobaItem.getPTag().toString().trim());
 			
 			String Status=wardrobaItem.getPLikeStatus().toString().trim();
 			if(Status.equals("LIKE"))
@@ -139,8 +141,8 @@ public class HomeProductBaseAdapter extends BaseAdapter
 	        }
 			
 			String temp=wardrobaItem.getPImageUrl();
-			 imageLoader.DisplayImage(temp,imgProductImage);
-			 progressBar.setVisibility(View.GONE);
+			imageLoader.DisplayImage(temp,imgProductImage);
+			progressBar.setVisibility(View.GONE);
 			
 			btnLike.setOnClickListener(new View.OnClickListener() 
 			{
@@ -151,6 +153,9 @@ public class HomeProductBaseAdapter extends BaseAdapter
 					Constants.CLOTHISID = String.valueOf(wardrobaItem.getPIdCloth());
 					Constants.CLOTH_USERID = String.valueOf(wardrobaItem.getPUserId());
 					Constants.OBJECT_ID = String.valueOf(wardrobaItem.getPObjectId());
+					Constants.CLOTH_TYPE= wardrobaItem.getPClothType().toString().trim();
+					Log.d("Object id:", "object id:"+Constants.OBJECT_ID+" user id:"+Constants.CLOTH_USERID);
+					
 					LikeStatus = wardrobaItem.getPLikeStatus().toString().trim();
 					Log.d("BaseAdapter", "Like status:"+LikeStatus);
 
@@ -159,15 +164,14 @@ public class HomeProductBaseAdapter extends BaseAdapter
 			
 					if(LikeStatus.equals("LIKE"))
 			        {
-						
 						txtLikeCount.setText(String.valueOf(count_like=count_like+1));
 						btnLike.setBackgroundResource(R.drawable.like_h);
-						url = Constants.PRODUCT_LIKE_URL+"&id_cloth="+Constants.CLOTHISID+"&user_id="+Constants.CLOTH_USERID+"&object_id="+Constants.OBJECT_ID+"&status="+"LIKE";
+						url = Constants.PRODUCT_LIKE_URL+"&id_cloth="+Constants.CLOTHISID+"&user_id="+Constants.CLOTH_USERID+"&object_id="+Constants.OBJECT_ID+"&cloth_type="+Constants.CLOTH_TYPE+"&status="+"LIKE";
 			        }else
 			        {
 			        	txtLikeCount.setText(String.valueOf(count_like=count_like-1));
 			        	btnLike.setBackgroundResource(R.drawable.like);
-			        	url = Constants.PRODUCT_LIKE_URL+"&id_cloth="+Constants.CLOTHISID+"&user_id="+Constants.CLOTH_USERID+"&object_id="+Constants.OBJECT_ID+"&status="+"UNLIKE";
+			        	url = Constants.PRODUCT_LIKE_URL+"&id_cloth="+Constants.CLOTHISID+"&user_id="+Constants.CLOTH_USERID+"&object_id="+Constants.OBJECT_ID+"&cloth_type="+Constants.CLOTH_TYPE+"&status="+"UNLIKE";
 			        }
 					try
 					{
@@ -187,15 +191,18 @@ public class HomeProductBaseAdapter extends BaseAdapter
 			{
 				public void onClick(View v) 
 				{
+					
 					Constants.CLOTHISID = String.valueOf(wardrobaItem.getPIdCloth());
 					Constants.CLOTH_USERID = String.valueOf(wardrobaItem.getPUserId());
 					Constants.OBJECT_ID = String.valueOf(wardrobaItem.getPObjectId());
+					Constants.CLOTH_TYPE= wardrobaItem.getPClothType().toString().trim();
+					Log.d("Object id:", "object id:"+Constants.OBJECT_ID+" user id:"+Constants.CLOTH_USERID);
 					Intent intent=new Intent(activity,CommentViewActivity.class);
 		   			activity.startActivity(intent);
 				}
 			});
 		
-
+			
 			btnShare.setOnClickListener(new View.OnClickListener() 
 			{
 				public void onClick(View v) 

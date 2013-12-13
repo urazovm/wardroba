@@ -78,7 +78,7 @@ public class ProductGallery extends FragmentActivity implements OnProductSelectL
    	 public ProductGalleryAdapter(Context context) 
    	 {
    		 mContext=context;
-   		mInflater=(LayoutInflater)mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+   		 mInflater=(LayoutInflater)mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
    		 imageLoader=new ImageLoader(mContext);
 			// TODO Auto-generated constructor stub
 		}
@@ -119,7 +119,8 @@ public class ProductGallery extends FragmentActivity implements OnProductSelectL
     }
 
 	@Override
-	public void OnProductSelected(int position) {
+	public void OnProductSelected(int position) 
+	{
 		// TODO Auto-generated method stub
 		
             // If the frag is not available, we're in the one-pane layout and must swap frags...
@@ -127,15 +128,12 @@ public class ProductGallery extends FragmentActivity implements OnProductSelectL
             // Create fragment and give it an argument for the selected article
 			ProductDetailFragment secondFragment=new ProductDetailFragment();
 			secondFragment.setProductArray(position);
-            
-            
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
             // Replace whatever is in the fragment_container view with this fragment,
             // and add the transaction to the back stack so the user can navigate back
             transaction.replace(R.id.fragment_container, secondFragment);
             transaction.addToBackStack(null);
-
             // Commit the transaction
             transaction.commit();
         
