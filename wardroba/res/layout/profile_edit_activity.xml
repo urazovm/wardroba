@@ -88,10 +88,10 @@
 				    android:textColor="@color/textcolor2"
 				    android:textSize="14dp" />
 				<ImageView
-						    android:id="@+id/textView1"
-						    android:layout_width="fill_parent"
-						    android:layout_height="wrap_content"
-						    android:background="@drawable/login_form_line"/>
+					    android:id="@+id/textView1"
+					    android:layout_width="fill_parent"
+					    android:layout_height="wrap_content"
+					    android:background="@drawable/login_form_line"/>
 				<EditText
 				    android:id="@+id/edt_city"
 				    android:layout_width="fill_parent"
