@@ -22,7 +22,7 @@ public class WebAPIHelper1 extends AsyncTask<String, Integer, Long>
 	private Dialogs mainActivity;
 	private Document response;
 	private int requestNumber;
-	private String loadingMessage;
+	private String loadingMessage="Please wait...";
 	private ProductDetailFragment mFragment;
 	Context myContext;
 	
@@ -61,8 +61,8 @@ public class WebAPIHelper1 extends AsyncTask<String, Integer, Long>
 	}
 	protected void onPreExecute() 
 	{
-		//progressDlg.setMessage(loadingMessage);
-		//progressDlg.show();
+		progressDlg.setMessage(loadingMessage);
+		progressDlg.show();
 	}
 
 	protected Long doInBackground(String... urls) 
@@ -137,6 +137,7 @@ public class WebAPIHelper1 extends AsyncTask<String, Integer, Long>
                 comment.setStore_name(getValueFromNode(childNode,"store_name"));
                 comment.setComment(getValueFromNode(childNode,"comment"));
                 comment.setDate(getValueFromNode(childNode,"created_at"));
+                Log.d("ApiHelper", "comment:"+comment.getComment());
 			}
 			else
 			{
@@ -147,7 +148,7 @@ public class WebAPIHelper1 extends AsyncTask<String, Integer, Long>
 		}
 
 		
-		//progressDlg.dismiss();
+		progressDlg.dismiss();
 	}
 		
 	private float parsefloatValue(String valueFromNode) 

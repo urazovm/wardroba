@@ -189,11 +189,12 @@ public class ProductDetailFragment extends Fragment
 			@Override
 			public void onClick(View v) 
 			{
-//				Constants.CLOTHISID = String.valueOf(selected_item.getPIdCloth());
-//				Constants.CLOTH_USERID = String.valueOf(selected_item.getPUserId());
-//				Constants.OBJECT_ID = String.valueOf(selected_item.getPObjectId());
-//				Constants.CLOTH_TYPE= selected_item.getPClothType().toString().trim();
-				
+				Constants.CLOTHISID = String.valueOf(selected_item.getPIdCloth());
+				Constants.CLOTH_USERID = String.valueOf(selected_item.getPUserId());
+				Constants.OBJECT_ID = String.valueOf(selected_item.getPObjectId());
+				Constants.CLOTH_TYPE= selected_item.getPClothType().toString().trim();
+				Intent intent=new Intent(getActivity(),CommentViewActivity.class);
+	   			startActivity(intent);
 			}
 		});
 		imgShare.setOnClickListener(new View.OnClickListener() {

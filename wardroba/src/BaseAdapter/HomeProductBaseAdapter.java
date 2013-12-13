@@ -93,7 +93,7 @@ public class HomeProductBaseAdapter extends BaseAdapter
 		 	final ProgressBar progressBar;
 		 	final ImageView btnLike,btnComment,btnShare;
 		 	final ImageView imgLikeDil;
-		 	wardrobaItem=Constants.all_items.get(position);
+		 	final WardrobaItem wardrobaItem=Constants.all_items.get(position);
 		 	View vi=null;
 			item =new GroupItem();
 
@@ -142,7 +142,7 @@ public class HomeProductBaseAdapter extends BaseAdapter
 			
 			String temp=wardrobaItem.getPImageUrl();
 
-			 //imageLoader.DisplayImage(temp,imgProductImage);
+			 imageLoader.DisplayImage(temp,imgProductImage,progressBar);
 			 progressBar.setVisibility(View.GONE);
 
 			
@@ -159,7 +159,7 @@ public class HomeProductBaseAdapter extends BaseAdapter
 					Log.d("Object id:", "object id:"+Constants.OBJECT_ID+" user id:"+Constants.CLOTH_USERID);
 					
 					LikeStatus = wardrobaItem.getPLikeStatus().toString().trim();
-					Log.d("BaseAdapter", "Like status:"+LikeStatus);
+					Log.d("BaseAdapter", "Like status:"+LikeStatus.toString());
 
 					Constants.SELECTED_ID=position;
 					int count_like = (wardrobaItem.getPLikeCount());
@@ -169,11 +169,13 @@ public class HomeProductBaseAdapter extends BaseAdapter
 						txtLikeCount.setText(String.valueOf(count_like=count_like+1));
 						btnLike.setBackgroundResource(R.drawable.like_h);
 						url = Constants.PRODUCT_LIKE_URL+"&id_cloth="+Constants.CLOTHISID+"&user_id="+Constants.CLOTH_USERID+"&object_id="+Constants.OBJECT_ID+"&cloth_type="+Constants.CLOTH_TYPE+"&status="+"LIKE";
+						
 			        }else
 			        {
 			        	txtLikeCount.setText(String.valueOf(count_like=count_like-1));
 			        	btnLike.setBackgroundResource(R.drawable.like);
 			        	url = Constants.PRODUCT_LIKE_URL+"&id_cloth="+Constants.CLOTHISID+"&user_id="+Constants.CLOTH_USERID+"&object_id="+Constants.OBJECT_ID+"&cloth_type="+Constants.CLOTH_TYPE+"&status="+"UNLIKE";
+			        	
 			        }
 					try
 					{
@@ -198,7 +200,8 @@ public class HomeProductBaseAdapter extends BaseAdapter
 					Constants.CLOTH_USERID = String.valueOf(wardrobaItem.getPUserId());
 					Constants.OBJECT_ID = String.valueOf(wardrobaItem.getPObjectId());
 					Constants.CLOTH_TYPE= wardrobaItem.getPClothType().toString().trim();
-					Log.d("Object id:", "object id:"+Constants.OBJECT_ID+" user id:"+Constants.CLOTH_USERID);
+					Log.d("Object id:", "object id:"+Constants.OBJECT_ID+" user id:"+Constants.CLOTH_USERID.toString());
+					Log.d("BaseAdapter", "Object ID:"+String.valueOf(Constants.all_items.get(position).getPObjectId()));
 					Intent intent=new Intent(activity,CommentViewActivity.class);
 		   			activity.startActivity(intent);
 				}
@@ -214,71 +217,7 @@ public class HomeProductBaseAdapter extends BaseAdapter
 			});
 			imgProductImage.setDilImage(imgLikeDil);
 			
-			/*imgProductImage.setOnClickListener(new View.OnClickListener() 
-			{
-				public void onClick(View v) 
-				{
-					//Toast.makeText(activity,"Photo", 5000).show();
 
-					imgLikeDil.setVisibility(View.VISIBLE);
-					Animation anim=AnimationUtils.loadAnimation(activity, R.anim.fade_in);
-					//anim.setFillAfter(true);
-					//anim.setRepeatMode(Animation.REVERSE);
-					imgLikeDil.startAnimation(anim);
-					anim.setAnimationListener(new AnimationListener() {
-						
-						@Override
-						public void onAnimationStart(Animation arg0) {
-							// TODO Auto-generated method stub
-							
-						}
-						
-						@Override
-						public void onAnimationRepeat(Animation arg0) {
-							// TODO Auto-generated method stub
-							
-						}
-						
-						@Override
-						public void onAnimationEnd(Animation arg0) {
-							// TODO Auto-generated method stub
-							
-							imgLikeDil.setVisibility(View.GONE);
-							Animation anim=AnimationUtils.loadAnimation(activity, R.anim.fade_out);
-							
-							//anim.setRepeatMode(Animation.REVERSE);
-							imgLikeDil.startAnimation(anim);
-						}
-					});
-					
-				}
-			});*/
-			
-//			animFadeOut.setAnimationListener(new AnimationListener() 
-//			{
-//				
-//				@Override
-//				public void onAnimationStart(Animation animation) {
-//					// TODO Auto-generated method stub
-//					//imgLikeDil.setVisibility(View.GONE);
-//				}
-//				
-//				@Override
-//				public void onAnimationRepeat(Animation animation) {
-//					// TODO Auto-generated method stub
-//					
-//				}
-//				
-//				@Override
-//				public void onAnimationEnd(Animation animation) 
-//				{
-//					// TODO Auto-generated method stub
-//					Toast.makeText(activity, "call start", Toast.LENGTH_SHORT).show();
-//					
-//						animFadeOut.start();
-//						imgLikeDil.setVisibility(View.GONE);
-//				}
-//			});
 		return vi;	
 	}	
 	

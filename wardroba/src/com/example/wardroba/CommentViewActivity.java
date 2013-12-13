@@ -1,5 +1,6 @@
 package com.example.wardroba;
 
+import java.net.URLEncoder;
 import java.util.ArrayList;
 
 import com.connection.Constants;
@@ -68,15 +69,46 @@ public class CommentViewActivity extends Activity
 	@SuppressWarnings("unchecked")
   	public void setResponseFromRequest1(Comment c) 
   	{		  		
+		//Toast.makeText(CommentViewActivity.this, "response", Toast.LENGTH_SHORT).show();
+		Log.d("CommentPage", "array size:"+arr_CommentList.size());
+		Log.d("CommentPage", "comment:"+c.getComment());
 		if(arr_CommentList.size()==0)
 		{
-			arr_CommentList=new ArrayList<Comment>();
-			adapter=new CommentBaseAdapter(arr_CommentList,CommentViewActivity.this);
-	    	adapter.notifyDataSetChanged();
-			lsvComment.setAdapter(adapter);
+			lsvComment.setAdapter(null);
 		}
-		arr_CommentList.add(c);
-		adapter.notifyDataSetChanged();
+		else
+		{
+			arr_CommentList.add(c);
+			
+			adapter.notifyDataSetChanged();
+			int count=0;
+			int cloth_id=Integer.parseInt(Constants.CLOTHISID);
+			if(Constants.all_items.size()>0)
+			{
+				for(WardrobaItem temp:Constants.all_items)
+					{
+						int id=temp.getPIdCloth();
+						if(id==cloth_id)
+							break;
+					
+						count++;	
+					}
+				Constants.all_items.get(count).setPCommentCount(arr_CommentList.size());
+			}
+			count=0;
+			if(Constants.my_items.size()>0)
+			{
+				for(WardrobaItem temp:Constants.my_items)
+					{
+						int id=temp.getPIdCloth();
+						if(id==cloth_id)
+							break;
+					
+						count++;	
+					}
+				Constants.my_items.get(count).setPCommentCount(arr_CommentList.size());
+			}
+		}	
   	} 	
 	
 	@Override
@@ -156,8 +188,8 @@ public class CommentViewActivity extends Activity
 						try
 						{
 							WebAPIHelper1 webAPIHelper = new WebAPIHelper1(Constants.comment_add,CommentViewActivity.this);
-							String url = Constants.ADD_COMMENT_URL+"&object_id="+Constants.OBJECT_ID+"&user_id="+Constants.CLOTH_USERID+"&comment="+CommentText+"&cloth_type="+Constants.CLOTH_TYPE;	
-							Log.d("Comment View= ",url.toString());
+							String url = Constants.ADD_COMMENT_URL+"&object_id="+Constants.OBJECT_ID+"&user_id="+Constants.CLOTH_USERID+"&comment="+URLEncoder.encode(CommentText)+"&cloth_type="+Constants.CLOTH_TYPE;	
+							Log.d("Comment add= ",url.toString());
 							webAPIHelper.execute(url);    	
 							//http://dev.wardroba.com/serviceXml/product_comment.php?object_id=560&user_id=66&comment=testing
 

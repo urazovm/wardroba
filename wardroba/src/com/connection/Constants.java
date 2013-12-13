@@ -21,7 +21,7 @@ public class Constants implements Serializable
 	public static final String PRODUCT_LIKE_URL="http://dev.wardroba.com/serviceXml/product_like.php?";
 	public static final String VIEW_COMMENT_URL="http://dev.wardroba.com/serviceXml/comment.php?";
 	public static final String ADD_COMMENT_URL="http://dev.wardroba.com/serviceXml/product_comment.php?";
-	public static final String PRODUCT_SEARCH_URL="http://dev.wardroba.com/serviceXml/product_search.php?";
+	public static final String PRODUCT_SEARCH_URL="http://dev.wardroba.com/serviceXml/all_my_items.php?";
 	public static final String PRODUCT_DETAIL_URL="http://dev.wardroba.com/serviceXml/product.php?";
 	public static final String IMAGEURL="http://dev.wardroba.com/serviceXml/productimage.php?";
 	public static final String PROUCTADDURL="http://dev.wardroba.com/serviceXml/product_add.php?";
