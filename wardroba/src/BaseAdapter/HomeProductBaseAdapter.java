@@ -7,15 +7,19 @@ import com.connection.WebAPIHelper1;
 import com.example.wardroba.CommentViewActivity;
 import com.example.wardroba.R;
 import com.example.wardroba.SmartImageView;
+import com.example.wardroba.SmartImageView.onMyDoubleClickListener;
 import com.example.wardroba.WardrobaItem;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.gesture.GestureOverlayView.OnGestureListener;
 import android.graphics.Typeface;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.GestureDetector.OnDoubleTapListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -37,7 +41,6 @@ public class HomeProductBaseAdapter extends BaseAdapter
 	Typeface tf;
 	
 	
-
 	String LikeStatus;
 	String CommentId;
 	WardrobaItem wardrobaItem;
@@ -51,6 +54,7 @@ public class HomeProductBaseAdapter extends BaseAdapter
 		imageLoader=new ImageLoader(activity);
 		 tf= Typeface.createFromAsset(activity.getAssets(),"fonts/GOTHIC.TTF");
 		 
+		
 		
 //	    animFadeIn=AnimationUtils.loadAnimation(activity, R.anim.fade_in);
 //	    animFadeOut=AnimationUtils.loadAnimation(activity, R.anim.fade_out);	
@@ -82,6 +86,7 @@ public class HomeProductBaseAdapter extends BaseAdapter
 	{
 		 	final TextView txtLikeCount,txtCommentCount,txtShortDiscription;
 		 	SmartImageView imgProductImage;
+		 	  int like_count=0;
 		 	final ProgressBar progressBar,progressBarUserPhoto;
 		 	final ImageView btnLike,btnComment,btnShare;
 		 	final ImageView imgLikeDil;
@@ -100,6 +105,7 @@ public class HomeProductBaseAdapter extends BaseAdapter
 			txtCommentCount =(TextView) vi.findViewById(R.id.txt_comment);
 			txtShortDiscription =(TextView) vi.findViewById(R.id.txt_short_description);
 			imgProductImage =(SmartImageView) vi.findViewById(R.id.img_product_photo);
+			
 			
 			imgLikeDil =(ImageView) vi.findViewById(R.id.img_like_dil);
 			progressBar=(ProgressBar)vi.findViewById(R.id.progressBar1);
@@ -140,6 +146,51 @@ public class HomeProductBaseAdapter extends BaseAdapter
 			 imageLoader.DisplayImage(temp,imgProductImage,progressBar);
 			 progressBar.setVisibility(View.GONE);
 
+			 imgProductImage.callback=new onMyDoubleClickListener() {
+					
+					@Override
+					public void setLikeProduct() {
+						// TODO Auto-generated method stub
+						
+						
+						
+						//Toast.makeText(activity, "hello like count:"+like_count++,Toast.LENGTH_SHORT).show();
+						Constants.CLOTHISID = String.valueOf(wardrobaItem.getPIdCloth());
+						Constants.CLOTH_USERID = String.valueOf(wardrobaItem.getPUserId());
+						Constants.OBJECT_ID = String.valueOf(wardrobaItem.getPObjectId());
+						Constants.CLOTH_TYPE= wardrobaItem.getPClothType().toString().trim();
+						Log.d("Object id:", "object id:"+Constants.OBJECT_ID+" user id:"+Constants.CLOTH_USERID);
+						
+						LikeStatus = wardrobaItem.getPLikeStatus().toString().trim();
+						Log.d("BaseAdapter", "Like status:"+LikeStatus.toString());
+
+						Constants.SELECTED_ID=position;
+						int count_like = (wardrobaItem.getPLikeCount());
+						
+						String url="";
+						if(LikeStatus.equals("LIKE"))
+				        {
+							txtLikeCount.setText(String.valueOf(count_like=count_like+1));
+							btnLike.setBackgroundResource(R.drawable.like_h);
+							url = Constants.PRODUCT_LIKE_URL+"&id_cloth="+Constants.CLOTHISID+"&user_id="+Constants.CLOTH_USERID+"&object_id="+Constants.OBJECT_ID+"&cloth_type="+Constants.CLOTH_TYPE+"&status="+"LIKE";
+							try
+							{
+								WebAPIHelper1 webAPIHelper = new WebAPIHelper1(Constants.product_like,activity);
+								Log.d("Like URL= ",url.toString());
+								webAPIHelper.execute(url);    	
+							}
+							catch(Exception e)
+							{
+								
+							}
+					    }
+						else
+						{
+							Toast.makeText(activity, "already like", Toast.LENGTH_SHORT).show();
+						}
+						
+					}
+				};
 
 			
 			btnLike.setOnClickListener(new View.OnClickListener() 
@@ -212,6 +263,9 @@ public class HomeProductBaseAdapter extends BaseAdapter
 				}
 			});
 			imgProductImage.setDilImage(imgLikeDil);
+			//gestureListener=new GestureListener();
+			
+			
 			
 
 		return vi;	
@@ -224,7 +278,8 @@ public class HomeProductBaseAdapter extends BaseAdapter
 		int previousTop = 0;
 	}
 
-	 
+	
+    
 	
 	
 

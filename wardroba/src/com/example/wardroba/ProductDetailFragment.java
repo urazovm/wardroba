@@ -18,6 +18,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 public class ProductDetailFragment extends Fragment
@@ -27,6 +28,7 @@ public class ProductDetailFragment extends Fragment
 	ImageLoader imageLoader;
 	LinearLayout shareDialog;
 	WardrobaItem selected_item;
+	ProgressBar progLoader;
 	public static int SELECTED_PRODUCT=0;
 	Typeface tf;
 	@SuppressWarnings("unchecked")
@@ -75,7 +77,7 @@ public class ProductDetailFragment extends Fragment
 		imgLike=(ImageView)root.findViewById(R.id.img_like);
 		imgComment=(ImageView)root.findViewById(R.id.img_comment);
 		shareDialog=(LinearLayout)root.findViewById(R.id.dialogShare);
-		
+		progLoader=(ProgressBar)root.findViewById(R.id.progLoader);
 		imageLoader=new ImageLoader(getActivity());
 		tf= Typeface.createFromAsset(getActivity().getAssets(),"fonts/GOTHIC.TTF");
 		txtLike.setTypeface(tf);
@@ -128,7 +130,7 @@ public class ProductDetailFragment extends Fragment
 		imageUrl=selected_item.getPImageUrl();
 		likeCount=selected_item.getPLikeCount();
 		commentCount=selected_item.getPCommentCount();
-		//imageLoader.DisplayImage(imageUrl, imgProductPhoto);
+		imageLoader.DisplayImage(imageUrl, imgProductPhoto,progLoader);
 		shortDesc=selected_item.getPTag();
 
 		txtLike.setText(String.valueOf(likeCount));

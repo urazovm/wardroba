@@ -1,29 +1,32 @@
 package com.example.wardroba;
 
 import android.content.Context;
-import android.gesture.GestureOverlayView;
-import android.gesture.GestureOverlayView.OnGestureListener;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.View;
-import android.view.GestureDetector.OnDoubleTapListener;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Animation.AnimationListener;
 import android.view.MotionEvent;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 public class SmartImageView  extends ImageView 
 {
+	public interface onMyDoubleClickListener
+	{
+		public void setLikeProduct();
+	}
 	GestureDetector gestureDetector;
 	ImageView imgDil;
+	public static int LIKE_COUNT=0;
+	public onMyDoubleClickListener callback;
 	public SmartImageView(Context context) {
 		super(context);
 		// TODO Auto-generated constructor stub
 		
 	}
+	
 		
 	public SmartImageView(Context context,AttributeSet set) 
 	{
@@ -37,7 +40,7 @@ public class SmartImageView  extends ImageView
 	{
 		imgDil=view;
 	}
-
+	
 	public void initImageview()
 	{
 		setOnTouchListener(new OnTouchListener() {
@@ -45,10 +48,12 @@ public class SmartImageView  extends ImageView
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
 				// TODO Auto-generated method stub
+	
 				return gestureDetector.onTouchEvent(event);
 			}
 		});
 	}
+	
 	
 	
 	private class GestureListener extends GestureDetector.SimpleOnGestureListener {
@@ -69,6 +74,7 @@ public class SmartImageView  extends ImageView
 			Animation anim=AnimationUtils.loadAnimation(getContext(), R.anim.fade_in);
 			//anim.setFillAfter(true);
 			//anim.setRepeatMode(Animation.REVERSE);
+			callback.setLikeProduct();
 			imgDil.startAnimation(anim);
 			anim.setAnimationListener(new AnimationListener() {
 				

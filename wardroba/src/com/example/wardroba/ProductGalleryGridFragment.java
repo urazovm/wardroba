@@ -241,7 +241,7 @@ public class ProductGalleryGridFragment extends Fragment
  			}
  			wardrobaMyItem=Constants.my_items.get(position);
  			ImageView img=(ImageView)grid.findViewById(R.id.imgProductIcon);
- 			ProgressBar progressBar=(ProgressBar)grid.findViewById(R.id.progressBar2);
+ 			ProgressBar progressBar=(ProgressBar)grid.findViewById(R.id.progressBar1);
  			imageLoader.DisplayImage(wardrobaMyItem.getPImageUrl(), img,progressBar);
  			progressBar.setVisibility(View.GONE);
  			return grid;
