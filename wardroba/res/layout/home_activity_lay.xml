@@ -172,13 +172,24 @@
 	    android:orientation="horizontal"
 	    android:gravity="center_vertical"
 	    android:weightSum="1.0">
-	    <ImageView 
-	        android:id="@+id/img_user_photo"
-	        android:layout_width="40dp"
-	        android:layout_height="40dp"
-	        android:layout_marginLeft="10dp"
-	        android:background="@drawable/wall_icon"/>
-	    
+		<RelativeLayout android:layout_width="wrap_content"
+        	android:layout_height="wrap_content">
+		    <ImageView 
+		        android:id="@+id/img_user_photo"
+		        android:layout_width="40dp"
+		        android:layout_height="40dp"
+		        android:layout_marginLeft="10dp"
+		        android:background="@drawable/wall_icon"/>
+
+		    <ProgressBar
+		        android:id="@+id/progressBar2"
+		        style="?android:attr/progressBarStyleSmall"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_centerHorizontal="true"
+		        android:layout_centerVertical="true" />
+
+	    </RelativeLayout>
 	    <TextView
 	        android:id="@+id/txt_name_surname" 
 	        android:layout_width="0dp"
