@@ -3,11 +3,8 @@ package com.example.wardroba;
 import com.ImageLoader.ImageLoader;
 import com.TabBar.TabHostProvider;
 import com.TabBar.TabView;
-import com.TabBar.TabbarView;
 import com.connection.Constants;
 import com.connection.WebAPIHelper;
-import com.example.wardroba.ProductGalleryGridFragment.OnProductSelectListener;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -24,10 +21,8 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ImageView.ScaleType;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -42,10 +37,10 @@ public class ProfileViewFragment extends Fragment
 	ImageLoader imageLoader;
 	ProgressBar imgLoader;
 	Typeface tf;
-	
+	WardrobaProfile myProfile;
 	public void setResponseFromRequest(int requestNumber,WardrobaProfile profile) 
 	{
-		WardrobaProfile myProfile=(WardrobaProfile)profile;
+		myProfile=(WardrobaProfile)profile;
 		txtName.setText(myProfile.getName()+" "+myProfile.getLastname());
 		txtCityAddress.setText(myProfile.getAddress()+" "+myProfile.getCity());
 		txtEmail.setText(myProfile.getEmail());
@@ -118,6 +113,14 @@ public class ProfileViewFragment extends Fragment
 			{
 				
 				ProfileEditActivity secondFragment=new ProfileEditActivity();
+				Bundle args=new Bundle();
+				args.putString("name",myProfile.getName());
+				args.putString("surname",myProfile.getLastname());
+				args.putString("city",myProfile.getCity());
+				args.putString("Email",myProfile.getEmail());
+				args.putString("profileImage",myProfile.getUser_image());
+	
+				secondFragment.setArguments(args);
 	            FragmentTransaction transaction = getFragmentManager().beginTransaction();
 	            transaction.replace(R.id.fragment_container, secondFragment);
 	            transaction.addToBackStack(null);
