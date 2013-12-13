@@ -44,7 +44,7 @@ public class ProfileActivity1 extends Activity
 		txtItems.setText(String.valueOf(myProfile.getItems()));
 		txtFollower.setText(String.valueOf(myProfile.getFollower()));
 		txtFollowing.setText(String.valueOf(myProfile.getFollowing()));
-		imageLoader.DisplayImage("http://images.desimartini.com/media/versions/salman_khan_6._gallery_image_100_100.jpg", imgProfilePhoto);
+		//imageLoader.DisplayImage("http://images.desimartini.com/media/versions/salman_khan_6._gallery_image_100_100.jpg", imgProfilePhoto);
 		
 //		Txt_pass.setText(Constants.USERID);
 	}

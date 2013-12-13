@@ -112,7 +112,7 @@ public class ProductGallery extends FragmentActivity implements OnProductSelectL
 						
 			}
 			ImageView img=(ImageView)grid.findViewById(R.id.imgProductIcon);
-			imageLoader.DisplayImage(arr_productGallery.get(position).GImageUrl, img);
+			//imageLoader.DisplayImage(arr_productGallery.get(position).GImageUrl, img);
 			return grid;
 		}
    	 

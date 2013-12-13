@@ -30,7 +30,9 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Xfermode;
 import android.graphics.drawable.BitmapDrawable;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.ImageView.ScaleType;
 
 public class ImageLoader {
@@ -39,6 +41,7 @@ public class ImageLoader {
     FileCache fileCache;
     private Map<ImageView, String> imageViews=Collections.synchronizedMap(new WeakHashMap<ImageView, String>());
     ExecutorService executorService; 
+    ProgressBar myLoader;
     
     public ImageLoader(Context context){
         fileCache=new FileCache(context);
@@ -46,28 +49,31 @@ public class ImageLoader {
     }
     
     final int stub_id=R.drawable.progrss;
-    public void DisplayImage(String url, ImageView imageView)
+    public void DisplayImage(String url, ImageView imageView,ProgressBar loader)
     {
         imageViews.put(imageView, url);
         Bitmap bitmap=memoryCache.get(url);
-        
+        this.myLoader=loader;
         if(bitmap!=null)
         {
         	if(bitmap.getWidth()>300 || bitmap.getHeight()>400)
         	{
         		imageView.setScaleType(ScaleType.FIT_CENTER);
         		imageView.setImageBitmap(bitmap);
+        		myLoader.setVisibility(View.GONE);
         		
         	}	
         	else
         	{
         		imageView.setImageBitmap(bitmap);
+        		myLoader.setVisibility(View.GONE);
         	}
         }
         else
         {
             queuePhoto(url, imageView);
-            imageView.setImageResource(stub_id);
+            myLoader.setVisibility(View.VISIBLE);
+            //imageView.setImageResource(stub_id);
         }
     }
         
@@ -190,6 +196,7 @@ public class ImageLoader {
             	
             		photoToLoad.imageView.setScaleType(ScaleType.FIT_CENTER);
             		photoToLoad.imageView.setImageBitmap(bitmap);
+            		myLoader.setVisibility(View.GONE);
             	
             		
             	}
@@ -198,6 +205,7 @@ public class ImageLoader {
             		
             		
             		photoToLoad.imageView.setImageBitmap(getRoundedCornerBitmap(bitmap, 3));
+            		myLoader.setVisibility(View.GONE);
             		
             		
             	}

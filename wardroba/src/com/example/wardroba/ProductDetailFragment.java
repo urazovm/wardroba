@@ -128,7 +128,7 @@ public class ProductDetailFragment extends Fragment
 		likeCount=selected_item.getPLikeCount();
 		commentCount=selected_item.getPCommentCount();
 		shortDesc=selected_item.getPShortDescription();
-		imageLoader.DisplayImage(imageUrl, imgProductPhoto);
+		//imageLoader.DisplayImage(imageUrl, imgProductPhoto);
 		txtLike.setText(String.valueOf(likeCount));
 		txtComment.setText(String.valueOf(commentCount));
 		textDescription.setText(shortDesc.trim());

@@ -28,6 +28,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 public class ProfileViewFragment extends Fragment
@@ -39,6 +40,7 @@ public class ProfileViewFragment extends Fragment
     public ImageView Btn_back,imgProfilePhoto;
 	SharedPreferences preferences;
 	ImageLoader imageLoader;
+	ProgressBar imgLoader;
 	Typeface tf;
 	
 	public void setResponseFromRequest(int requestNumber,WardrobaProfile profile) 
@@ -50,7 +52,7 @@ public class ProfileViewFragment extends Fragment
 		txtItems.setText(String.valueOf(myProfile.getItems()));
 		txtFollower.setText(String.valueOf(myProfile.getFollower()));
 		txtFollowing.setText(String.valueOf(myProfile.getFollowing()));
-		imageLoader.DisplayImage("http://images.desimartini.com/media/versions/salman_khan_6._gallery_image_100_100.jpg", imgProfilePhoto);
+		imageLoader.DisplayImage("http://images.desimartini.com/media/versions/salman_khan_6._gallery_image_100_100.jpg", imgProfilePhoto,imgLoader);
 		
 //		Txt_pass.setText(Constants.USERID);
 	}
@@ -73,7 +75,8 @@ public class ProfileViewFragment extends Fragment
 		txtFollowerLabel=(TextView)root.findViewById(R.id.txtFollowersLabel);
 		txtFollowing=(TextView)root.findViewById(R.id.txtFollowing);
 		txtFollowingLabel=(TextView)root.findViewById(R.id.txtFollowingLabel);
-		
+		imgLoader=(ProgressBar)root.findViewById(R.id.progLoader);
+		imgLoader.setVisibility(View.GONE);
 		Btn_edit_profile = (Button)root.findViewById(R.id.btn_edit_profile);
 		Btn_logout = (Button)root.findViewById(R.id.btn_logout);
 		getActivity().findViewById(R.id.btnBack).setVisibility(View.GONE);

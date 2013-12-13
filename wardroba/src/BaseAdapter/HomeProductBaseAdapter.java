@@ -139,7 +139,7 @@ public class HomeProductBaseAdapter extends BaseAdapter
 	        }
 			
 			String temp=wardrobaItem.getPImageUrl();
-			 imageLoader.DisplayImage(temp,imgProductImage);
+			 //imageLoader.DisplayImage(temp,imgProductImage);
 			 progressBar.setVisibility(View.GONE);
 			
 			btnLike.setOnClickListener(new View.OnClickListener() 

@@ -121,7 +121,7 @@ public class ProductGallery1 extends FragmentActivity
 						
 			}
 			ImageView img=(ImageView)grid.findViewById(R.id.imgProductIcon);
-			imageLoader.DisplayImage(arr_productGallery.get(position).GImageUrl, img);
+			//imageLoader.DisplayImage(arr_productGallery.get(position).GImageUrl, img);
 			return grid;
 		}
    	 

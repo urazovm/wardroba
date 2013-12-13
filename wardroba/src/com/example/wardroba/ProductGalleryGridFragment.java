@@ -242,7 +242,7 @@ public class ProductGalleryGridFragment extends Fragment
  			}
  			wardrobaMyItem=Constants.my_items.get(position);
  			ImageView img=(ImageView)grid.findViewById(R.id.imgProductIcon);
- 			imageLoader.DisplayImage(wardrobaMyItem.getPImageUrl(), img);
+ 			//imageLoader.DisplayImage(wardrobaMyItem.getPImageUrl(), img);
  			return grid;
  		}
     	 
