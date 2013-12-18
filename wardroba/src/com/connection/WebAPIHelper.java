@@ -10,6 +10,7 @@ import org.w3c.dom.NodeList;
 import com.example.wardroba.Comment;
 import com.example.wardroba.CommentViewActivity;
 import com.example.wardroba.HomeActivity;
+import com.example.wardroba.ProductDetailFragment;
 import com.example.wardroba.ProductGalleryGridFragment;
 import com.example.wardroba.ProfileEditActivity;
 import com.example.wardroba.LoginActivity;
@@ -34,6 +35,7 @@ public class WebAPIHelper extends AsyncTask<String, Integer, Long>
 	private ProfileActivity profile_activity;
 	private ProfileViewFragment profileViewFragment;
 	private ProfileEditActivity edit_profile_activity;
+	//private ProductDetailFragment product_detail_fragment;
 	private ProductGallery product_activity;
 	private CommentViewActivity comment_view_activity;
 
@@ -55,6 +57,7 @@ public class WebAPIHelper extends AsyncTask<String, Integer, Long>
 		this.requestNumber = requestNumber;
 		loadingMessage = msg;
 	}
+
 	public WebAPIHelper(int requestNumber, ProfileViewFragment activity, String msg) 
 	{
 		this.profileViewFragment = activity;

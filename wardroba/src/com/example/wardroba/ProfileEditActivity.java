@@ -58,6 +58,7 @@ public class ProfileEditActivity extends Fragment
         edtSurname.setText(bundle.getString("surname"));
         edttCityAddress.setText(bundle.getString("city"));
         edtEmail.setText(bundle.getString("Email"));
+
         btnSave.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
@@ -83,7 +84,7 @@ public class ProfileEditActivity extends Fragment
 					}
 					else if(!valid_password)
 					{
-						Toast.makeText(getActivity(), "Password must be match in both field 'Password' and 'Repeat Password'", Toast.LENGTH_SHORT).show();
+						Toast.makeText(getActivity(), "Please verify 'Password' and 'Repeat Password'", Toast.LENGTH_SHORT).show();
 					}
 					else
 					{
@@ -92,11 +93,12 @@ public class ProfileEditActivity extends Fragment
 				}
 				else
 				{
-					Toast.makeText(getActivity(), "Please fill all fields", Toast.LENGTH_SHORT).show();
+					Toast.makeText(getActivity(), "Please enter all values", Toast.LENGTH_SHORT).show();
 				}
 			}
 		});
        
+
 		return root;
 	}
 	public boolean checkEmpty()

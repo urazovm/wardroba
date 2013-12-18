@@ -28,6 +28,7 @@ import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,7 +37,7 @@ public class HomeProductBaseAdapter extends BaseAdapter
 {
 	LayoutInflater mInflater;
 	Activity activity;
-	
+	LinearLayout SharDialog;
 	ImageLoader imageLoader;
 	public GroupItem item ;
 	Typeface tf;
@@ -47,13 +48,13 @@ public class HomeProductBaseAdapter extends BaseAdapter
 	WardrobaItem wardrobaItem;
 	
 
-  	public HomeProductBaseAdapter(Activity activity)
+  	public HomeProductBaseAdapter(Activity activity , LinearLayout dialog1)
 	{
 		this.activity=activity;
-		
+		this.SharDialog=dialog1;
 		mInflater = (LayoutInflater)activity.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
 		imageLoader=new ImageLoader(activity);
-		 tf= Typeface.createFromAsset(activity.getAssets(),"fonts/GOTHIC.TTF");
+		tf= Typeface.createFromAsset(activity.getAssets(),"fonts/GOTHIC.TTF");
 		 
 		
 		
@@ -272,7 +273,11 @@ public class HomeProductBaseAdapter extends BaseAdapter
 			{
 				public void onClick(View v) 
 				{
-					Toast.makeText(activity,"Share", 5000).show();
+					//Toast.makeText(activity,"Share", 5000).show();
+					SharDialog.setVisibility(View.VISIBLE);
+					Animation anim=AnimationUtils.loadAnimation(activity, R.anim.slide_up_anim);
+					anim.setFillAfter(true);
+					SharDialog.startAnimation(anim);
 				}
 			});
 			imgProductImage.setDilImage(imgLikeDil);
