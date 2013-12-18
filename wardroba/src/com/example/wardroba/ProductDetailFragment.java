@@ -137,7 +137,7 @@ public class ProductDetailFragment extends Fragment
 		txtComment.setText(String.valueOf(commentCount));
 		textDescription.setText(shortDesc.trim());
 		shareDialog.setVisibility(View.GONE);
-		final String LikeStatus = selected_item.getPLikeStatus().toString().trim();
+		String LikeStatus = selected_item.getPLikeStatus().toString().trim();
 		if(LikeStatus.equals("LIKE"))
         {
 			imgLike.setBackgroundResource(R.drawable.like);
@@ -151,12 +151,13 @@ public class ProductDetailFragment extends Fragment
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
 				String url;
+				String LikeStatus;
 				String Cloth_Id,User_Id,ObjectId1,Cloth_type;
 				Cloth_Id = String.valueOf( selected_item.getPIdCloth());
 				User_Id = String.valueOf(selected_item.getPUserId());
 				ObjectId1 = String.valueOf(selected_item.getPObjectId());
 				Cloth_type=selected_item.getPClothType().toString().trim();
-				
+				LikeStatus = selected_item.getPLikeStatus().toString().trim();
 				Constants.SELECTED_ID=SELECTED_PRODUCT;
 				
 				int count_like = (selected_item.getPLikeCount());
@@ -167,11 +168,15 @@ public class ProductDetailFragment extends Fragment
 					txtLike.setText(String.valueOf(count_like=count_like+1));
 					imgLike.setBackgroundResource(R.drawable.like_h);
 					url = Constants.PRODUCT_LIKE_URL+"&id_cloth="+Cloth_Id+"&user_id="+User_Id+"&object_id="+ObjectId1+"&cloth_type="+Cloth_type+"&status="+"LIKE";
+					Constants.my_items.get(Constants.SELECTED_ID).setPLikeStatus("UNLIKE");
+					Constants.my_items.get(Constants.SELECTED_ID).setPLikeCount(count_like);
 		        }else
 		        {
 		        	txtLike.setText(String.valueOf(count_like=count_like-1));
 		        	imgLike.setBackgroundResource(R.drawable.like);
 		        	url = Constants.PRODUCT_LIKE_URL+"&id_cloth="+Cloth_Id+"&user_id="+User_Id+"&object_id="+ObjectId1+"&cloth_type="+Cloth_type+"&status="+"UNLIKE";
+		        	Constants.my_items.get(Constants.SELECTED_ID).setPLikeStatus("UNLIKE");
+					Constants.my_items.get(Constants.SELECTED_ID).setPLikeCount(count_like);
 		        }
 				try
 				{

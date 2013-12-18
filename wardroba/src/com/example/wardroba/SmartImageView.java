@@ -36,6 +36,13 @@ public class SmartImageView  extends ImageView
 		 
 		 initImageview();
 	}
+	@Override
+	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+		// TODO Auto-generated method stub
+		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+		
+	}
+	
 	public void setDilImage(ImageView view)
 	{
 		imgDil=view;

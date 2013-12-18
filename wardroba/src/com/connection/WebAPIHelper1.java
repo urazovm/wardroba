@@ -61,8 +61,8 @@ public class WebAPIHelper1 extends AsyncTask<String, Integer, Long>
 	}
 	protected void onPreExecute() 
 	{
-		progressDlg.setMessage(loadingMessage);
-		progressDlg.show();
+		/*progressDlg.setMessage(loadingMessage);
+		progressDlg.show();*/
 	}
 
 	protected Long doInBackground(String... urls) 

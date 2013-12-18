@@ -6,6 +6,6 @@
     <color name="textcolor">#C71255</color>
     <color name="textcolor2">#969696</color>
     <color name="text_hint_color">#CFCFCF</color>
-    
+    <color name="red_bg_close">#AC1F50</color>
     
 </resources>

@@ -16,14 +16,15 @@
 		    <LinearLayout 
 			    android:layout_width="fill_parent"
 			    android:layout_height="wrap_content"
-			    android:layout_margin="10dp"
+			    android:layout_margin="5dp"
 			    android:orientation="vertical">
 			 	<LinearLayout				 
 				    android:layout_width="fill_parent"
 				    android:layout_height="wrap_content"
 				    android:layout_marginTop="5dp"
-				    android:layout_marginLeft="5dp"
+				    android:layout_marginLeft="10dp"
 				    android:layout_marginBottom="5dp"
+				    android:layout_marginRight="10dp"
 				    android:orientation="horizontal">
 					<RelativeLayout
 				        android:layout_width="wrap_content"
@@ -57,30 +58,32 @@
 	 	<LinearLayout
 	 	    android:layout_width="wrap_content"
 	 	    android:layout_height="wrap_content"
-	 	    android:layout_margin="5dp"
+	 	    android:layout_margin="10dp"
 	 	    android:layout_gravity="center_horizontal"
 	 	    android:background="@drawable/edit_profile_form_bg"
+	 	    
 	 	    android:orientation="vertical" >
  	
 				<EditText
 				    android:id="@+id/edt_name"
 				    android:layout_width="fill_parent"
-				    android:layout_height="35dp"
+				    android:layout_height="30dp"
 				    android:background="#00ffffff"
 				    android:gravity="center"
 				    android:hint="@string/register_name_hint"
 				    android:padding="3dp"
+				    android:layout_marginTop="5dp"
 				    android:textColor="@color/textcolor2"
 				    android:textSize="14dp" />
 				<ImageView
 						    android:id="@+id/textView1"
-						    android:layout_width="fill_parent"
+						    android:layout_width="wrap_content"
 						    android:layout_height="wrap_content"
-						    android:background="@drawable/login_form_line"/>
+						    android:background="@drawable/edit_profile_form_line"/>
 				<EditText
 				    android:id="@+id/edt_surname"
 				    android:layout_width="fill_parent"
-				    android:layout_height="35dp"
+				    android:layout_height="30dp"
 				    android:background="#00ffffff"
 				    android:gravity="center"
 				    android:hint="@string/register_surname_hint"
@@ -89,13 +92,13 @@
 				    android:textSize="14dp" />
 				<ImageView
 					    android:id="@+id/textView1"
-					    android:layout_width="fill_parent"
+					    android:layout_width="wrap_content"
 					    android:layout_height="wrap_content"
-					    android:background="@drawable/login_form_line"/>
+					    android:background="@drawable/edit_profile_form_line"/>
 				<EditText
 				    android:id="@+id/edt_city"
 				    android:layout_width="fill_parent"
-				    android:layout_height="35dp"
+				    android:layout_height="30dp"
 				    android:layout_marginLeft="5dp"
 				    android:layout_marginRight="5dp"
 				    android:background="#00ffffff"
@@ -105,14 +108,14 @@
 				    android:textColor="@color/textcolor2"
 				    android:textSize="14dp" />
 				<ImageView
-						    android:id="@+id/textView1"
-						    android:layout_width="fill_parent"
-						    android:layout_height="wrap_content"
-						    android:background="@drawable/login_form_line"/>
+					    android:id="@+id/textView1"
+					    android:layout_width="wrap_content"
+					    android:layout_height="wrap_content"
+					    android:background="@drawable/edit_profile_form_line"/>
 				<EditText
 				    android:id="@+id/edt_email"
 				    android:layout_width="fill_parent"
-				    android:layout_height="35dp"
+				    android:layout_height="30dp"
 				    android:layout_marginLeft="5dp"
 				    android:layout_marginRight="5dp"
 				    android:background="#00ffffff"
@@ -124,14 +127,14 @@
 				    android:padding="3dp"
 				    android:textSize="14dp" />
 				<ImageView
-						    android:id="@+id/textView1"
-						    android:layout_width="fill_parent"
-						    android:layout_height="wrap_content"
-						    android:background="@drawable/login_form_line"/>
+					    android:id="@+id/textView1"
+					    android:layout_width="wrap_content"
+					    android:layout_height="wrap_content"
+					    android:background="@drawable/edit_profile_form_line"/>
 				<EditText
 				    android:id="@+id/edt_passward"
 				    android:layout_width="fill_parent"
-				    android:layout_height="35dp"
+				    android:layout_height="30dp"
 				    android:layout_marginLeft="5dp"
 				    android:layout_marginRight="5dp"
 				    android:background="#00ffffff"
@@ -143,14 +146,14 @@
 				    android:padding="3dp"
 				    android:textSize="14dp" />
 				<ImageView
-						    android:id="@+id/textView1"
-						    android:layout_width="fill_parent"
-						    android:layout_height="wrap_content"
-						    android:background="@drawable/login_form_line"/>
+					    android:id="@+id/textView1"
+					    android:layout_width="wrap_content"
+					    android:layout_height="wrap_content"
+					    android:background="@drawable/edit_profile_form_line"/>
 				<EditText
 				    android:id="@+id/edt_repeat_passward"
 				    android:layout_width="fill_parent"
-				    android:layout_height="35dp"
+				    android:layout_height="30dp"
 				    android:layout_marginLeft="5dp"
 				    android:layout_marginRight="5dp"
 				    android:background="#00ffffff"
@@ -160,6 +163,7 @@
 				    android:inputType="textPassword"
 				    android:textColor="@color/textcolor2"
 				    android:padding="3dp"
+				    android:layout_marginBottom="3dp"
 				    android:textSize="14dp" />
 				
 				

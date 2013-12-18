@@ -23,6 +23,8 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
+import android.graphics.Matrix.ScaleToFit;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
@@ -30,6 +32,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Xfermode;
 import android.graphics.drawable.BitmapDrawable;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -42,9 +45,10 @@ public class ImageLoader {
     private Map<ImageView, String> imageViews=Collections.synchronizedMap(new WeakHashMap<ImageView, String>());
     ExecutorService executorService; 
     ProgressBar myLoader;
-    
+    Context mContext;
     public ImageLoader(Context context){
         fileCache=new FileCache(context);
+        mContext=context;
         executorService=Executors.newFixedThreadPool(5);
     }
     
@@ -56,18 +60,20 @@ public class ImageLoader {
         this.myLoader=loader;
         if(bitmap!=null)
         {
-        	if(bitmap.getWidth()>300 || bitmap.getHeight()>400)
+        		//imageView.setScaleType(ScaleType.CENTER);
+        	if(bitmap.getWidth()>=300 || bitmap.getHeight()>=300)
         	{
-        		imageView.setScaleType(ScaleType.FIT_CENTER);
-        		imageView.setImageBitmap(bitmap);
-        		myLoader.setVisibility(View.GONE);
-        		
-        	}	
-        	else
-        	{
+        		imageView.setScaleType(ScaleType.FIT_XY);
         		imageView.setImageBitmap(bitmap);
         		myLoader.setVisibility(View.GONE);
         	}
+        	else
+        	{
+        		imageView.setScaleType(ScaleType.CENTER);
+        		imageView.setImageBitmap(bitmap);
+        		myLoader.setVisibility(View.GONE);
+        	}
+        	
         }
         else
         {
@@ -116,7 +122,13 @@ public class ImageLoader {
     private Bitmap decodeFile(File f){
         try {
             //decode image size
-            BitmapFactory.Options o = new BitmapFactory.Options();
+        	Bitmap temp;
+        	temp=BitmapFactory.decodeStream(new FileInputStream(f));
+        	Log.e("Bitmap", "width:"+temp.getWidth());
+        	Log.e("Bitmap", "Height:"+temp.getHeight());
+        	int width = temp.getWidth();
+            int height = temp.getHeight();
+        	            /*BitmapFactory.Options o = new BitmapFactory.Options();
             o.inJustDecodeBounds = true;
             BitmapFactory.decodeStream(new FileInputStream(f),null,o);
             
@@ -134,12 +146,16 @@ public class ImageLoader {
             
             //decode with inSampleSize
             BitmapFactory.Options o2 = new BitmapFactory.Options();
-            o2.inSampleSize=scale;
-            return BitmapFactory.decodeStream(new FileInputStream(f), null, o2);
+            o2.inSampleSize=scale;*/
+            return temp;//BitmapFactory.decodeStream(new FileInputStream(f));//, null, o2);
         } catch (FileNotFoundException e) {}
         return null;
     }
-    
+    private int dpToPx(int dp)
+    {
+        float density =  mContext.getResources().getDisplayMetrics().density;
+        return Math.round((float)dp * density);
+    }
     //Task for the queue
     private class PhotoToLoad
     {
@@ -191,24 +207,23 @@ public class ImageLoader {
             if(bitmap!=null)
             {
             	
-            	if(bitmap.getWidth()>300 || bitmap.getHeight()>400)
-            	{
             	
-            		photoToLoad.imageView.setScaleType(ScaleType.FIT_CENTER);
+            		//photoToLoad.imageView.setScaleType(ScaleType.CENTER);
+            		
+            	if(bitmap.getWidth()>=300 || bitmap.getHeight()>=300)
+            	{
+            		photoToLoad.imageView.setScaleType(ScaleType.FIT_XY);
             		photoToLoad.imageView.setImageBitmap(bitmap);
             		myLoader.setVisibility(View.GONE);
-            	
-            		
             	}
             	else
             	{
-            		
-            		
-            		photoToLoad.imageView.setImageBitmap(getRoundedCornerBitmap(bitmap, 3));
+            		photoToLoad.imageView.setScaleType(ScaleType.CENTER);
+            		photoToLoad.imageView.setImageBitmap(bitmap);
             		myLoader.setVisibility(View.GONE);
-            		
-            		
             	}
+            		
+            	
             }//else
                // photoToLoad.imageView.setImageResource(stub_id);
         }

@@ -38,7 +38,7 @@ public class HomeTabActivity  extends TabActivity{
         intent = new Intent().setClass(this, CameraViewActivity.class);
         spec = tabHost.newTabSpec("third").setIndicator("Third").setContent(intent);
         tabHost.addTab(spec);
-
+        
 
         intent = new Intent().setClass(this, ProfileActivity.class);
         spec = tabHost.newTabSpec("forth").setIndicator("Forth").setContent(intent);
@@ -79,11 +79,12 @@ public class HomeTabActivity  extends TabActivity{
 
             public void onClick(View v)
             {
-                tabHost.setCurrentTab(2);
-                firstButton.setBackgroundResource(R.drawable.menu_icon_1);
+                Intent intent=new Intent(HomeTabActivity.this,CameraViewActivity.class);
+                startActivity(intent);
+                /*firstButton.setBackgroundResource(R.drawable.menu_icon_1);
                 secondButton.setBackgroundResource(R.drawable.menu_icon_2);              
                 thirdButton.setBackgroundResource(R.drawable.menu_icon_3_h);
-                fourthButton.setBackgroundResource(R.drawable.menu_icon_4);
+                fourthButton.setBackgroundResource(R.drawable.menu_icon_4);*/
             }
 
         });

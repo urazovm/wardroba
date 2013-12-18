@@ -1,19 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<LinearLayout 
+<FrameLayout 
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:background="@color/white"
-    android:orientation="vertical">
-    <LinearLayout 
-	    android:layout_width="fill_parent"
-	    android:layout_height="wrap_content"
-	    android:layout_margin="5dp"
-	    android:orientation="vertical">
+    >
+    
+    <LinearLayout android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/back"
+        android:tag="back"
+        android:gravity="right">
+        <RelativeLayout android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <ImageView android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:background="@color/red_bg_close"
+                />
+            <ImageView android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/comment_close"
+                android:layout_centerInParent="true"
+                />
+        </RelativeLayout>
+    </LinearLayout>
+    
 	    <RelativeLayout 
 		    android:layout_width="fill_parent"
-		    android:layout_height="fill_parent"
-		    android:orientation="vertical" >
+		    android:layout_height="wrap_content"
+		    android:orientation="vertical"
+		    android:id="@+id/front"
+		    android:tag="front"
+		    android:background="#FFFFFF" >
+        	
 			    <TextView
 			        android:id="@+id/txt_user_name"
 			        android:layout_width="wrap_content"
@@ -30,18 +48,23 @@
 			        android:layout_alignParentRight="true"
 			        android:textColor="@color/grey"
 			        android:text="" />
-		</RelativeLayout>
-	  	<TextView
-	       android:id="@+id/txt_comment"
-	       android:layout_width="wrap_content"
-	       android:layout_height="wrap_content"
-	       android:textColor="@color/grey"
-	       android:text="" />
-	 </LinearLayout>
+			
+		  	<TextView
+		       android:id="@+id/txt_comment"
+		       android:layout_width="wrap_content"
+		       android:layout_height="wrap_content"
+		       android:textColor="@color/grey"
+		       android:layout_below="@id/txt_user_name"
+		       android:text="" />
+		  	
+	 	
+	 
   	 <TextView 
           android:id="@+id/textView1" 
 	      android:layout_width="fill_parent" 
 	      android:background="@color/grey"  
 	      android:layout_marginTop="3dp"
+	      android:layout_below="@id/txt_comment"
 	      android:layout_height="0.5dip"/>  
-</LinearLayout>
+	     </RelativeLayout>
+</FrameLayout>

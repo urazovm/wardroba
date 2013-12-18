@@ -7,6 +7,8 @@ import com.connection.Constants;
 import com.connection.WebAPIHelper;
 import com.connection.WebAPIHelper1;
 import com.facebook.Request;
+import com.swipinglist.master.BaseSwipeListViewListener;
+import com.swipinglist.master.SwipeListView;
 
 import BaseAdapter.CommentBaseAdapter;
 import BaseAdapter.HomeProductBaseAdapter;
@@ -19,8 +21,11 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -30,12 +35,14 @@ import android.widget.Toast;
 public class CommentViewActivity extends Activity
 {
 	public ImageView btnBack;
-	public ListView lsvComment;
+	public SwipeListView lsvComment;
 	public TextView txtHeader,txtOK;
 	public EditText edtAddComment;
 	String MSG;
 	Typeface tf;
+	
 	CommentBaseAdapter adapter;
+	
 	
 	private ArrayList<Comment> arr_CommentList;
 	
@@ -54,7 +61,7 @@ public class CommentViewActivity extends Activity
   				lsvComment.setAdapter(adapter);
   			}else
   			{
-  				lsvComment.setAdapter(null);
+  				//lsvComment.setAdapter(null);
   	  			Toast.makeText(getApplicationContext(), "No Record Found !", 5000).show();
   			}
   		}
@@ -74,7 +81,7 @@ public class CommentViewActivity extends Activity
 		Log.d("CommentPage", "comment:"+c.getComment());
 		if(arr_CommentList.size()==0)
 		{
-			lsvComment.setAdapter(null);
+			//lsvComment.setAdapter(null);
 		}
 		else
 		{
@@ -82,6 +89,7 @@ public class CommentViewActivity extends Activity
 			
 			adapter.notifyDataSetChanged();
 			int count=0;
+			boolean flag=false;
 			int cloth_id=Integer.parseInt(Constants.CLOTHISID);
 			if(Constants.all_items.size()>0)
 			{
@@ -89,24 +97,37 @@ public class CommentViewActivity extends Activity
 					{
 						int id=temp.getPIdCloth();
 						if(id==cloth_id)
+						{
+							flag=true;
 							break;
+						}
 					
 						count++;	
 					}
-				Constants.all_items.get(count).setPCommentCount(arr_CommentList.size());
+				if(flag)
+				{
+					Constants.all_items.get(count).setPCommentCount(arr_CommentList.size());
+				}
 			}
 			count=0;
+			flag=false;
 			if(Constants.my_items.size()>0)
 			{
 				for(WardrobaItem temp:Constants.my_items)
 					{
 						int id=temp.getPIdCloth();
 						if(id==cloth_id)
+						{
+							flag=true;
 							break;
+						}
 					
 						count++;	
 					}
-				Constants.my_items.get(count).setPCommentCount(arr_CommentList.size());
+				if(flag)
+				{
+					Constants.my_items.get(count).setPCommentCount(arr_CommentList.size());
+				}
 			}
 		}	
   	} 	
@@ -120,8 +141,8 @@ public class CommentViewActivity extends Activity
 		
 		btnBack=(ImageView)findViewById(R.id.img_back);
 		
-		lsvComment=(ListView)findViewById(R.id.list_cooment);
-		
+		lsvComment=(SwipeListView)findViewById(R.id.listComment);
+		//lsvComment.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 		txtHeader=(TextView)findViewById(R.id.txt_header);
 		txtOK=(TextView)findViewById(R.id.txt_ok);
 		
@@ -153,7 +174,44 @@ public class CommentViewActivity extends Activity
 			MSG="Please check your internet connection...";
 			alert();
 		}
-		
+		lsvComment.setSwipeListViewListener(new BaseSwipeListViewListener(){
+			@Override
+			public void onOpened(int position, boolean toRight) {
+				// TODO Auto-generated method stub
+				super.onOpened(position, toRight);
+			}
+			 @Override
+	            public void onMove(int position, float x) {
+	            }
+
+	            @Override
+	            public void onStartOpen(int position, int action, boolean right) {
+	                Log.d("swipe", String.format("onStartOpen %d - action %d", position, action));
+	            }
+
+	            @Override
+	            public void onStartClose(int position, boolean right) {
+	                Log.d("swipe", String.format("onStartClose %d", position));
+	            }
+
+	            @Override
+	            public void onClickFrontView(int position) {
+	                Log.d("swipe", String.format("onClickFrontView %d", position));
+	            }
+
+	            @Override
+	            public void onClickBackView(int position) {
+	                Log.d("swipe", String.format("onClickBackView %d", position));
+	            }
+
+	            @Override
+	            public void onDismiss(int[] reverseSortedPositions) {
+	                for (int position : reverseSortedPositions) {
+	                  //  data.remove(position);
+	                }
+	                adapter.notifyDataSetChanged();
+	            }
+		});
 		BackButton();
 		CommentAddButton();
 	}
@@ -242,4 +300,5 @@ public class CommentViewActivity extends Activity
 		AlertDialog alert = builder.create();
 		alert.show();  
    }
+   
 }

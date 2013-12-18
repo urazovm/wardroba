@@ -22,6 +22,7 @@ import android.view.View;
 import android.view.GestureDetector.OnDoubleTapListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
@@ -41,7 +42,7 @@ public class HomeProductBaseAdapter extends BaseAdapter
 	Typeface tf;
 	
 	
-	String LikeStatus;
+	
 	String CommentId;
 	WardrobaItem wardrobaItem;
 	
@@ -87,6 +88,7 @@ public class HomeProductBaseAdapter extends BaseAdapter
 		 	final TextView txtLikeCount,txtCommentCount,txtShortDiscription;
 		 	SmartImageView imgProductImage;
 		 	  int like_count=0;
+		 	 
 		 	final ProgressBar progressBar,progressBarUserPhoto;
 		 	final ImageView btnLike,btnComment,btnShare;
 		 	final ImageView imgLikeDil;
@@ -95,7 +97,7 @@ public class HomeProductBaseAdapter extends BaseAdapter
 			item =new GroupItem();
 
 	         
-			vi=mInflater.inflate(R.layout.home_activity_lay, null);
+			vi=mInflater.inflate(R.layout.home_activity_lay, parent,false);
 			item.imgUserPhoto=(ImageView)vi.findViewById(R.id.img_user_photo);
 		    item.txtNameSurname=(TextView)vi.findViewById(R.id.txt_name_surname);
 		    item.txtDate=(TextView)vi.findViewById(R.id.txt_date);
@@ -153,7 +155,7 @@ public class HomeProductBaseAdapter extends BaseAdapter
 						// TODO Auto-generated method stub
 						
 						
-						
+						String LikeStatus;
 						//Toast.makeText(activity, "hello like count:"+like_count++,Toast.LENGTH_SHORT).show();
 						Constants.CLOTHISID = String.valueOf(wardrobaItem.getPIdCloth());
 						Constants.CLOTH_USERID = String.valueOf(wardrobaItem.getPUserId());
@@ -197,43 +199,54 @@ public class HomeProductBaseAdapter extends BaseAdapter
 			{
 				public void onClick(View v) 
 				{
-					String url;
-
-					Constants.CLOTHISID = String.valueOf(wardrobaItem.getPIdCloth());
-					Constants.CLOTH_USERID = String.valueOf(wardrobaItem.getPUserId());
-					Constants.OBJECT_ID = String.valueOf(wardrobaItem.getPObjectId());
-					Constants.CLOTH_TYPE= wardrobaItem.getPClothType().toString().trim();
-					Log.d("Object id:", "object id:"+Constants.OBJECT_ID+" user id:"+Constants.CLOTH_USERID);
 					
-					LikeStatus = wardrobaItem.getPLikeStatus().toString().trim();
-					Log.d("BaseAdapter", "Like status:"+LikeStatus.toString());
+					
+							// TODO Auto-generated method stub
+								String LikeStatus;
+								String url;
+								Constants.CLOTHISID = String.valueOf(wardrobaItem.getPIdCloth());
+								Constants.CLOTH_USERID = String.valueOf(wardrobaItem.getPUserId());
+								Constants.OBJECT_ID = String.valueOf(wardrobaItem.getPObjectId());
+								Constants.CLOTH_TYPE= wardrobaItem.getPClothType().toString().trim();
+								Log.d("Object id:", "object id:"+Constants.OBJECT_ID+" user id:"+Constants.CLOTH_USERID);
+								
+								LikeStatus = wardrobaItem.getPLikeStatus().toString().trim();
+								Log.d("BaseAdapter", "Like status:"+LikeStatus.toString());
 
-					Constants.SELECTED_ID=position;
-					int count_like = (wardrobaItem.getPLikeCount());
-			
-					if(LikeStatus.equals("LIKE"))
-			        {
-						txtLikeCount.setText(String.valueOf(count_like=count_like+1));
-						btnLike.setBackgroundResource(R.drawable.like_h);
-						url = Constants.PRODUCT_LIKE_URL+"&id_cloth="+Constants.CLOTHISID+"&user_id="+Constants.CLOTH_USERID+"&object_id="+Constants.OBJECT_ID+"&cloth_type="+Constants.CLOTH_TYPE+"&status="+"LIKE";
+								Constants.SELECTED_ID=position;
+								int count_like = (wardrobaItem.getPLikeCount());
 						
-			        }else
-			        {
-			        	txtLikeCount.setText(String.valueOf(count_like=count_like-1));
-			        	btnLike.setBackgroundResource(R.drawable.like);
-			        	url = Constants.PRODUCT_LIKE_URL+"&id_cloth="+Constants.CLOTHISID+"&user_id="+Constants.CLOTH_USERID+"&object_id="+Constants.OBJECT_ID+"&cloth_type="+Constants.CLOTH_TYPE+"&status="+"UNLIKE";
-			        	
-			        }
-					try
-					{
-						WebAPIHelper1 webAPIHelper = new WebAPIHelper1(Constants.product_like,activity);
-						Log.d("Like URL= ",url.toString());
-						webAPIHelper.execute(url);    	
-					}
-					catch(Exception e)
-					{
-						
-					}	
+								if(LikeStatus.equals("LIKE"))
+						        {
+									txtLikeCount.setText(String.valueOf(count_like=count_like+1));
+									btnLike.setBackgroundResource(R.drawable.like_h);
+									url = Constants.PRODUCT_LIKE_URL+"&id_cloth="+Constants.CLOTHISID+"&user_id="+Constants.CLOTH_USERID+"&object_id="+Constants.OBJECT_ID+"&cloth_type="+Constants.CLOTH_TYPE+"&status="+"LIKE";
+									Constants.all_items.get(Constants.SELECTED_ID).setPLikeStatus("UNLIKE");
+									Constants.all_items.get(Constants.SELECTED_ID).setPLikeCount(count_like);
+						        }else
+						        {
+						        	txtLikeCount.setText(String.valueOf(count_like=count_like-1));
+						        	btnLike.setBackgroundResource(R.drawable.like);
+						        	url = Constants.PRODUCT_LIKE_URL+"&id_cloth="+Constants.CLOTHISID+"&user_id="+Constants.CLOTH_USERID+"&object_id="+Constants.OBJECT_ID+"&cloth_type="+Constants.CLOTH_TYPE+"&status="+"UNLIKE";
+						        	Constants.all_items.get(Constants.SELECTED_ID).setPLikeStatus("LIKE");
+						        	Constants.all_items.get(Constants.SELECTED_ID).setPLikeCount(count_like);
+						        }
+								try
+								{
+									 
+									
+									WebAPIHelper1 webAPIHelper = new WebAPIHelper1(Constants.product_like,activity);
+									Log.d("Like URL= ",url.toString());
+									webAPIHelper.execute(url);    	
+								}
+								catch(Exception e)
+								{
+									
+								}	
+							
+					
+					
+					
 				}
 			});
 		

@@ -44,14 +44,14 @@
                                 android:id="@+id/imgProfile_bg"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:background="@drawable/profile_bg" />
+                                android:src="@drawable/profile_bg" />
 
-                            <ImageView
+                             <ImageView
                                 android:id="@+id/imgProfilePhoto"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_centerInParent="true"
-                                android:background="@drawable/profile_photo" />
+                                android:src="@drawable/profile_photo"
+                                android:layout_centerInParent="true" /> 
                             <ProgressBar 
 							    android:id="@+id/progLoader"
 							    android:layout_width="40dp"
