@@ -2,6 +2,7 @@ package com.example.wardroba;
 
 import com.ImageLoader.ImageLoader;
 import com.connection.Constants;
+import com.connection.WebAPIHelper;
 import com.connection.WebAPIHelper1;
 
 import android.app.Activity;
@@ -20,11 +21,14 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class ProductDetailFragment extends Fragment
 {
 	ImageView imgProductPhoto,imgShare,imgLike,imgComment;
-	TextView txtLike,txtComment,textDescription;
+	ImageView btnFacebook,btnTwitter,btnPinterest,btnTumbler,btnGooglePlus;
+	Button btnCancel;
+	TextView txtLike,txtComment,textDescription,txtSharLable;
 	ImageLoader imageLoader;
 	LinearLayout shareDialog;
 	WardrobaItem selected_item;
@@ -34,16 +38,6 @@ public class ProductDetailFragment extends Fragment
 	@SuppressWarnings("unchecked")
   	public void setResponseFromRequest1(int requestNumber) 
   	{	
-  			/*String status=Constants.LIKE_STATUS.toString().trim();
-  			if(status.equals("LIKE"))
-  			{
-  				arr_productList.get(SELECTED_PRODUCT).GLikeStatus="UNLIKE";
-  	  			arr_productList.get(SELECTED_PRODUCT).GLikeCount=Constants.LIKE_COUNT;
-  			}else
-  			{
-  				arr_productList.get(SELECTED_PRODUCT).GLikeStatus="LIKE";
-  	  			arr_productList.get(SELECTED_PRODUCT).GLikeCount=Constants.LIKE_COUNT;
-  			}*/
 			int cloth_id=Constants.my_items.get(Constants.SELECTED_ID).getPIdCloth();
 			String status=Constants.my_items.get(Constants.SELECTED_ID).getPLikeStatus();
 			int like_count=Constants.my_items.get(Constants.SELECTED_ID).getPLikeCount();
@@ -66,8 +60,8 @@ public class ProductDetailFragment extends Fragment
   	}
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
+			Bundle savedInstanceState) 
+	{
 		ViewGroup root = (ViewGroup) inflater.inflate(R.layout.product_detail_lay, null);
 		imgProductPhoto=(ImageView)root.findViewById(R.id.img_product_photo);
 		txtLike=(TextView)root.findViewById(R.id.txt_like);
@@ -78,36 +72,49 @@ public class ProductDetailFragment extends Fragment
 		imgComment=(ImageView)root.findViewById(R.id.img_comment);
 		shareDialog=(LinearLayout)root.findViewById(R.id.dialogShare);
 		progLoader=(ProgressBar)root.findViewById(R.id.progLoader);
+		
+		btnFacebook=(ImageView)root.findViewById(R.id.btnFB);
+		btnTwitter=(ImageView)root.findViewById(R.id.btnTwitter);
+		btnPinterest=(ImageView)root.findViewById(R.id.btnPinterest);
+		btnTumbler=(ImageView)root.findViewById(R.id.btnTumbler);
+		btnGooglePlus=(ImageView)root.findViewById(R.id.btnGplus);
+		btnCancel=(Button)root.findViewById(R.id.btnCancel);
+		txtSharLable=(TextView)root.findViewById(R.id.txt_share_lable);
+		
 		imageLoader=new ImageLoader(getActivity());
 		tf= Typeface.createFromAsset(getActivity().getAssets(),"fonts/GOTHIC.TTF");
 		txtLike.setTypeface(tf);
 		txtComment.setTypeface(tf);
+		btnCancel.setTypeface(tf);
 		textDescription.setTypeface(tf);
-		initShareDialog(root);
+		txtSharLable.setTypeface(tf);
+		
+		CancelDialog();
+		FacebookSharing();
+		TwitterSharing();
+		PinterestSharing();
+		TumblerSharing();
+		GooglePlusSharing();
+		ProductDelete();
 		return root;
 	}
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
-		super.onCreate(savedInstanceState);
-		
+	public void onCreate(Bundle savedInstanceState) 
+	{
+		super.onCreate(savedInstanceState);	
 	}
 	@Override
-	public void onSaveInstanceState(Bundle outState) {
-		// TODO Auto-generated method stub
-		super.onSaveInstanceState(outState);
-		
+	public void onSaveInstanceState(Bundle outState) 
+	{
+		super.onSaveInstanceState(outState);	
 	}
 	@Override
-	public void onStart() {
-		// TODO Auto-generated method stub
+	public void onStart() 
+	{
 		super.onStart();
-	//	Toast.makeText(getActivity(), "On start", Toast.LENGTH_SHORT).show();
 		 Bundle args = getArguments();
-	        if (args != null) {
-	            // Set article based on argument passed in
-	        	//Toast.makeText(getActivity(), "get argument", Toast.LENGTH_SHORT).show();
-	            
+	        if (args != null) 
+	        {	            
 	        }
 	        updateProductDetail();
 	}
@@ -122,11 +129,8 @@ public class ProductDetailFragment extends Fragment
 	{
 		String imageUrl,shortDesc;
 		int likeCount,commentCount;
-		/*imageUrl=args.getString("image_url");
-		likeCount=args.getInt("like_count");
-		commentCount=args.getInt("comment_count");
-		shortDesc=args.getString("short_description");*/
-		 selected_item=Constants.my_items.get(SELECTED_PRODUCT);
+
+		selected_item=Constants.my_items.get(SELECTED_PRODUCT);
 		imageUrl=selected_item.getPImageUrl();
 		likeCount=selected_item.getPLikeCount();
 		commentCount=selected_item.getPCommentCount();
@@ -145,10 +149,11 @@ public class ProductDetailFragment extends Fragment
         {
         	imgLike.setBackgroundResource(R.drawable.like_h);
         }
-		imgLike.setOnClickListener(new View.OnClickListener() {
-			
+		imgLike.setOnClickListener(new View.OnClickListener() 
+		{	
 			@Override
-			public void onClick(View arg0) {
+			public void onClick(View arg0) 
+			{
 				// TODO Auto-generated method stub
 				String url;
 				String Cloth_Id,User_Id,ObjectId1,Cloth_type;
@@ -163,7 +168,6 @@ public class ProductDetailFragment extends Fragment
 		
 				if(LikeStatus.equals("LIKE"))
 		        {
-					
 					txtLike.setText(String.valueOf(count_like=count_like+1));
 					imgLike.setBackgroundResource(R.drawable.like_h);
 					url = Constants.PRODUCT_LIKE_URL+"&id_cloth="+Cloth_Id+"&user_id="+User_Id+"&object_id="+ObjectId1+"&cloth_type="+Cloth_type+"&status="+"LIKE";
@@ -187,7 +191,6 @@ public class ProductDetailFragment extends Fragment
 		});
 		imgComment.setOnClickListener(new View.OnClickListener() 
 		{
-			
 			@Override
 			public void onClick(View v) 
 			{
@@ -199,11 +202,11 @@ public class ProductDetailFragment extends Fragment
 	   			startActivity(intent);
 			}
 		});
-		imgShare.setOnClickListener(new View.OnClickListener() {
-			
+		imgShare.setOnClickListener(new View.OnClickListener() 
+		{	
 			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
+			public void onClick(View v) 
+			{
 				shareDialog.setVisibility(View.VISIBLE);
 				Animation anim=AnimationUtils.loadAnimation(getActivity(), R.anim.slide_up_anim);
 				anim.setFillAfter(true);
@@ -235,21 +238,40 @@ public class ProductDetailFragment extends Fragment
 		super.onAttach(activity);
 	}
 	
-	public void initShareDialog(View root)
+	
+	public void ProductDelete()
 	{
-		ImageView fb,twt,pint,tmb,gplus;
-		Button btnCancel;
-		fb=(ImageView)root.findViewById(R.id.btnFB);
-		twt=(ImageView)root.findViewById(R.id.btnTwitter);
-		pint=(ImageView)root.findViewById(R.id.btnPinterest);
-		tmb=(ImageView)root.findViewById(R.id.btnTumbler);
-		gplus=(ImageView)root.findViewById(R.id.btnGplus);
-		btnCancel=(Button)root.findViewById(R.id.btnCancel);
-		btnCancel.setOnClickListener(new View.OnClickListener() {
-			
+		imgProductPhoto.setOnClickListener(new View.OnClickListener() 
+		{	
 			@Override
-			public void onClick(View arg0) {
-				// TODO Auto-generated method stub
+			public void onClick(View v) 
+			{
+				Constants.CLOTHISID = String.valueOf(selected_item.getPIdCloth());
+				Toast.makeText(getActivity(), "FDF",5000).show();
+				try
+				{
+//					WebAPIHelper1 webAPIHelper = new WebAPIHelper1(Constants.produce_delete,ProductDetailFragment.this,"Please wait...");
+//					String url = Constants.PRODUCT_DELETE_URL+"id_cloth="+Constants.CLOTHISID;
+//					Log.d("Product Delete URL= ",url.toString());
+//					webAPIHelper.execute(url);    
+					
+					//http://dev.wardroba.com/serviceXml/product_delete.php?id_cloth=50
+
+				}
+				catch(Exception e)
+				{
+					
+				}
+			}
+		});
+	}
+	public void CancelDialog()
+	{
+		btnCancel.setOnClickListener(new View.OnClickListener() 
+		{
+			@Override
+			public void onClick(View arg0) 
+			{
 				shareDialog.setVisibility(View.GONE);
 				Animation anim=AnimationUtils.loadAnimation(getActivity(), R.anim.slide_down_anim);
 				anim.setFillBefore(true);
@@ -257,4 +279,60 @@ public class ProductDetailFragment extends Fragment
 			}
 		});
 	}
+   public void FacebookSharing()
+   {
+		btnFacebook.setOnClickListener(new View.OnClickListener() 
+		{
+			@Override
+			public void onClick(View arg0) 
+			{
+					Toast.makeText(getActivity(), "Facebook", 5000).show();
+			}
+		});
+   }
+   
+   public void TwitterSharing()
+   {
+		btnTwitter.setOnClickListener(new View.OnClickListener() 
+		{
+			@Override
+			public void onClick(View arg0) 
+			{
+				Toast.makeText(getActivity(), "Twitter", 5000).show();
+			}
+		});
+   }
+   public void PinterestSharing()
+   {
+		btnPinterest.setOnClickListener(new View.OnClickListener() 
+		{
+			@Override
+			public void onClick(View arg0) 
+			{
+				Toast.makeText(getActivity(), "Pinterest", 5000).show();
+			}
+		});
+   }
+   public void TumblerSharing()
+   {
+		btnTumbler.setOnClickListener(new View.OnClickListener() 
+		{
+			@Override
+			public void onClick(View arg0) 
+			{
+				Toast.makeText(getActivity(), "Tumbler", 5000).show();
+			}
+		});
+   }
+   public void GooglePlusSharing()
+   {
+		btnGooglePlus.setOnClickListener(new View.OnClickListener() 
+		{
+			@Override
+			public void onClick(View arg0) 
+			{
+				Toast.makeText(getActivity(), "GooglePlus", 5000).show();
+			}
+		});
+   }
 }

@@ -48,7 +48,6 @@ public class ProfileEditActivity extends Fragment
         edttCityAddress.setText(bundle.getString("city"));
         edtEmail.setText(bundle.getString("Email"));
         
-       
 		return root;
 	}
 	public void onAttach(Activity activity) 

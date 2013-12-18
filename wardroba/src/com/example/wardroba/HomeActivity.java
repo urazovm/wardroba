@@ -19,7 +19,10 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AbsListView;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -31,9 +34,11 @@ public class HomeActivity extends Activity
 {
 	public ListView lsvProductList;
 	public ImageView imgUserPhoto;
-	public TextView txtNameSurname,txtDate;
+	public TextView txtNameSurname,txtDate,txtSharLable;
 	Typeface tf;
-	
+	LinearLayout shareDialog;
+	ImageView btnFacebook,btnTwitter,btnPinterest,btnTumbler,btnGooglePlus;
+	Button btnCancel;
 	HomeProductBaseAdapter adapter=null;
 	
 	
@@ -44,7 +49,7 @@ public class HomeActivity extends Activity
   		{
 //  			txtNameSurname.setText(Constants.USER_NAME.toString());
 //  			txtDate.setText(Constants.USER_DATE.toString());
-  			adapter=new HomeProductBaseAdapter(HomeActivity.this);
+  			adapter=new HomeProductBaseAdapter(HomeActivity.this, shareDialog);
   			adapter.notifyDataSetChanged();
   			
  	    	lsvProductList.setAdapter(adapter);
@@ -59,33 +64,32 @@ public class HomeActivity extends Activity
   	} 	
   	@SuppressWarnings("unchecked")
   	public void setResponseFromRequest1(int requestNumber) 
-  	{	
-  			
-  			if(adapter!=null)
-  			{
-  				adapter.notifyDataSetChanged();
-  			}
+  	{		
+		if(adapter!=null)
+		{
+			adapter.notifyDataSetChanged();
+		}
+		if(Constants.my_items.size()>0)
+		{
+  			int cloth_id=Constants.all_items.get(Constants.SELECTED_ID).getPIdCloth();
+			String status=Constants.all_items.get(Constants.SELECTED_ID).getPLikeStatus();
+			int like_count=Constants.all_items.get(Constants.SELECTED_ID).getPLikeCount();
+			int count=0;
   			if(Constants.my_items.size()>0)
   			{
-	  			int cloth_id=Constants.all_items.get(Constants.SELECTED_ID).getPIdCloth();
-				String status=Constants.all_items.get(Constants.SELECTED_ID).getPLikeStatus();
-				int like_count=Constants.all_items.get(Constants.SELECTED_ID).getPLikeCount();
-				int count=0;
-	  			if(Constants.my_items.size()>0)
-	  			{
-	  				for(WardrobaItem temp:Constants.my_items)
-	  				{
-	  					int id=temp.getPIdCloth();
-	  					if(id==cloth_id)
-	  						break;
-	  				
-	  					count++;	
-	  				}
-	  				
-	  			}
-	  			Constants.my_items.get(count).setPLikeStatus(status);
-	  			Constants.my_items.get(count).setPLikeCount(like_count);
+  				for(WardrobaItem temp:Constants.my_items)
+  				{
+  					int id=temp.getPIdCloth();
+  					if(id==cloth_id)
+  						break;
+  				
+  					count++;	
+  				}
+  				
   			}
+  			Constants.my_items.get(count).setPLikeStatus(status);
+  			Constants.my_items.get(count).setPLikeCount(like_count);
+		}
   	} 	
     public void onCreate(Bundle savedInstanceState) 
     {
@@ -94,26 +98,33 @@ public class HomeActivity extends Activity
 	    setContentView(R.layout.home_activity);
 	 	 
 	    lsvProductList=(ListView)findViewById(R.id.product_list);
-//	    imgUserPhoto=(ImageView)findViewById(R.id.img_user_photo);
-//	    txtNameSurname=(TextView)findViewById(R.id.txt_name_surname);
-//	    txtDate=(TextView)findViewById(R.id.txt_date);
-		
 	    tf= Typeface.createFromAsset(getAssets(),"fonts/GOTHIC.TTF");
-//	    txtNameSurname.setTypeface(tf);
-//	    txtDate.setTypeface(tf);
+	   
+	    
+		btnFacebook=(ImageView)findViewById(R.id.btnFB);
+		btnTwitter=(ImageView)findViewById(R.id.btnTwitter);
+		btnPinterest=(ImageView)findViewById(R.id.btnPinterest);
+		btnTumbler=(ImageView)findViewById(R.id.btnTumbler);
+		btnGooglePlus=(ImageView)findViewById(R.id.btnGplus);
+		btnCancel=(Button)findViewById(R.id.btnCancel);
+		txtSharLable=(TextView)findViewById(R.id.txt_share_lable);
+
+	    shareDialog=(LinearLayout)findViewById(R.id.dialogShare);
+	    shareDialog.setVisibility(View.GONE);
+	    btnCancel.setTypeface(tf);
+	    txtSharLable.setTypeface(tf);
+	    
 	    lsvProductList.setOnScrollListener(new OnScrollListener() 
 		{
 	        int mScrollState = OnScrollListener.SCROLL_STATE_IDLE;
 	        public void onScrollStateChanged(AbsListView view, int scrollState) 
 	        {
-	            // Store the state to avoid re-laying out in IDLE state.
 	            mScrollState = scrollState;
 	        }
 
 	        @Override
 	        public void onScroll(AbsListView list, int firstItem, int visibleCount, int totalCount) 
 	        {
-	            // Nothing to do in IDLE state.
 	            if (mScrollState == OnScrollListener.SCROLL_STATE_IDLE)
 	                return;
 
@@ -126,15 +137,10 @@ public class HomeActivity extends Activity
 	                LinearLayout title = (LinearLayout) listItem.findViewById(R.id.header);
 
 	                int topMargin = 0;
-	                if (i == 0) {
+	                if (i == 0) 
+	                {
 	                    int top = listItem.getTop();
 	                    int height = listItem.getHeight();
-
-	                    // if top is negative, the list item has scrolled up.
-	                    // if the title view falls within the container's visible portion,
-	                    //     set the top margin to be the (inverse) scrolled amount of the container.
-	                    // else
-	                    //     set the top margin to be the difference between the heights.
 	                    if (top < 0)
 	                        topMargin = title.getHeight() < (top + height) ? -top : (height - title.getHeight());
 	                }
@@ -142,7 +148,6 @@ public class HomeActivity extends Activity
 	                // set the margin.
 	                ((ViewGroup.MarginLayoutParams) title.getLayoutParams()).topMargin = topMargin;
 
-	                // request Android to layout again.
 	                listItem.requestLayout();
 	            }
 	        }
@@ -166,6 +171,13 @@ public class HomeActivity extends Activity
 			alert();
 		}
 
+	    CancelSharDialog();
+	    FacebookSharing();
+	    TwitterSharing();
+	    PinterestSharing();
+	    TumblerSharing();
+	    GooglePlusSharing();
+	    
     }
     
     public boolean isOnline()
@@ -210,5 +222,77 @@ protected void onResume() {
 		       });
 		AlertDialog alert = builder.create();
 		alert.show();  
+   }
+   
+   public void CancelSharDialog()
+   {
+		btnCancel.setOnClickListener(new View.OnClickListener() 
+		{
+			@Override
+			public void onClick(View arg0) 
+			{
+				shareDialog.setVisibility(View.GONE);
+				Animation anim=AnimationUtils.loadAnimation(HomeActivity.this, R.anim.slide_down_anim);
+				anim.setFillBefore(true);
+				shareDialog.startAnimation(anim);
+			}
+		});
+   }
+   
+   public void FacebookSharing()
+   {
+		btnFacebook.setOnClickListener(new View.OnClickListener() 
+		{
+			@Override
+			public void onClick(View arg0) 
+			{
+					Toast.makeText(getApplicationContext(), "Facebook", 5000).show();
+			}
+		});
+   }
+   
+   public void TwitterSharing()
+   {
+		btnTwitter.setOnClickListener(new View.OnClickListener() 
+		{
+			@Override
+			public void onClick(View arg0) 
+			{
+				Toast.makeText(getApplicationContext(), "Twitter", 5000).show();
+			}
+		});
+   }
+   public void PinterestSharing()
+   {
+		btnPinterest.setOnClickListener(new View.OnClickListener() 
+		{
+			@Override
+			public void onClick(View arg0) 
+			{
+				Toast.makeText(getApplicationContext(), "Pinterest", 5000).show();
+			}
+		});
+   }
+   public void TumblerSharing()
+   {
+		btnTumbler.setOnClickListener(new View.OnClickListener() 
+		{
+			@Override
+			public void onClick(View arg0) 
+			{
+				Toast.makeText(getApplicationContext(), "Tumbler", 5000).show();
+			}
+		});
+   }
+   public void GooglePlusSharing()
+   {
+		btnGooglePlus.setOnClickListener(new View.OnClickListener() 
+		{
+			@Override
+			public void onClick(View arg0) 
+			{
+				Toast.makeText(getApplicationContext(), "GooglePlus", 5000).show();
+			}
+		});
    }
 }

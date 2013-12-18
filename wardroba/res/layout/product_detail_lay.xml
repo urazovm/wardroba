@@ -105,24 +105,27 @@
 				 </LinearLayout>
 	             
         </RelativeLayout>
-	    	<LinearLayout android:layout_width="fill_parent"
-	    android:layout_height="wrap_content"
-	    android:orientation="vertical"
-	    android:layout_marginLeft="10dp"
-	    android:layout_marginRight="10dp" >
-	    <TextView 
-	        android:id="@+id/txt_short_description"
+	    
+	    <LinearLayout 
 	        android:layout_width="fill_parent"
-	        android:layout_height="wrap_content"
-	        android:text="@string/hello_world"
-	        android:textColor="@color/textcolor"
-	        />
-	</LinearLayout>
-	  
-	</LinearLayout>
-	
+		    android:layout_height="wrap_content"
+		    android:orientation="vertical"
+		    android:layout_marginLeft="10dp"
+		    android:layout_marginRight="10dp" >
+		    <TextView 
+		        android:id="@+id/txt_short_description"
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"
+		        android:text="@string/hello_world"
+		        android:textColor="@color/textcolor"/>
+			</LinearLayout>
+		</LinearLayout>
 	</LinearLayout>
 	      
+
+
+
+
 	<LinearLayout 
 	    android:id="@+id/dialogShare"
 	    android:visibility="gone"
@@ -130,14 +133,16 @@
 	    android:layout_height="wrap_content"
 	    android:layout_alignParentBottom="true"
 	    android:orientation="vertical"
-	    android:background="@color/white">
-	    <TextView android:layout_width="fill_parent"
+	    android:background="@color/grey_light">
+	    <TextView 
+	        android:id="@+id/txt_share_lable"
+	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
 	        android:layout_gravity="center_horizontal"
 	        android:text="share"
 	        android:gravity="center_horizontal"
 	        android:textColor="@color/grey"
-	        android:textSize="20dp"
+	        android:textSize="16dp"
 	        android:layout_margin="5dp"/>
 	    <LinearLayout android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
@@ -152,7 +157,7 @@
 	            android:id="@+id/btnFB"
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
-	            
+	        
 	            android:background="@drawable/social_icon_1"/>
 	        </LinearLayout>
 	        <LinearLayout android:layout_width="0dp"
@@ -163,7 +168,6 @@
 	            android:id="@+id/btnTwitter"
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
-	            
 	            android:background="@drawable/social_icon_2"
 	            />
 	        </LinearLayout>
@@ -214,8 +218,8 @@
 	            android:layout_width="fill_parent"
 	            android:layout_height="wrap_content"
 	            android:text="cancel"
-	            android:textSize="18dp"
-	            android:textColor="@color/textcolor2"
+	            android:textSize="16dp"
+	            android:textColor="@color/grey"
 	            android:background="@drawable/border"
 	            android:layout_marginLeft="15dp"
 	            android:layout_marginRight="15dp"/>
