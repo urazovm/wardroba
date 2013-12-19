@@ -3,9 +3,11 @@ package BaseAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import com.ImageLoader.ImageLoader;
 import com.connection.Constants;
+import com.connection.WebAPIHelper;
 import com.connection.WebAPIHelper1;
 import com.example.wardroba.Comment;
 import com.example.wardroba.CommentViewActivity;
@@ -13,19 +15,27 @@ import com.example.wardroba.HomeTabActivity;
 import com.example.wardroba.LoginActivity;
 import com.example.wardroba.R;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.sax.StartElementListener;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
+import android.view.animation.Interpolator;
+import android.view.animation.TranslateAnimation;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,12 +43,13 @@ public class CommentBaseAdapter extends BaseAdapter
 {
 	LayoutInflater mInflater;
 	Activity activity;
-	Comment commentData;
+	
 	List<Comment> arr_CommentList;	
 	ImageLoader imageLoader;
 	public GroupItem item ;
+	AlertDialog.Builder builder;
 	Typeface tf;
-		
+	
   	public CommentBaseAdapter(ArrayList<Comment> arr_category,final Activity activity)
 	{
 		this.activity=activity;
@@ -46,6 +57,7 @@ public class CommentBaseAdapter extends BaseAdapter
 		mInflater = (LayoutInflater)activity.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
 		imageLoader=new ImageLoader(activity);
 		 tf= Typeface.createFromAsset(activity.getAssets(),"fonts/GOTHIC.TTF");
+		
 	}
 
 	public int getCount()
@@ -77,9 +89,43 @@ public class CommentBaseAdapter extends BaseAdapter
 		 	
 		 	View vi=null;
 			item =new GroupItem();
-			commentData=arr_CommentList.get(position);
+			final Comment commentData=arr_CommentList.get(position);
 	         
 			vi=mInflater.inflate(R.layout.comment_view_activity_lay, null);
+			
+			RelativeLayout close_lay=(RelativeLayout)vi.findViewById(R.id.lay_close);
+			close_lay.setOnClickListener(new View.OnClickListener() {
+				
+				@Override
+				public void onClick(View arg0) {
+					// TODO Auto-generated method stub
+					builder=new AlertDialog.Builder(activity);
+					builder.setMessage("Are you sure, You want to delete?");
+					builder.setPositiveButton("Yes", new OnClickListener() {
+						
+						@Override
+						public void onClick(DialogInterface dialog, int arg1) {
+							// TODO Auto-generated method stub
+							//http://41.wardroba.amp/serviceXml/comment.php?object_id=72&user_id=2&id_comment=67&cloth_type=item
+							dialog.dismiss();
+							Constants.SELECTED_COMMENT=position;
+							WebAPIHelper1 apiHelper1=new WebAPIHelper1(Constants.comment_delete, activity);
+							String delete_url = Constants.VIEW_COMMENT_URL+"&object_id="+Constants.OBJECT_ID+"&user_id="+Constants.CLOTH_USERID+"&id_comment="+commentData.getComment_id()+"&cloth_type="+Constants.CLOTH_TYPE;
+							Log.d("CommentView", "comment delete url="+delete_url);
+							apiHelper1.execute(delete_url);
+						}
+					}).setNegativeButton("No", new OnClickListener() {
+						
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							// TODO Auto-generated method stub
+							dialog.dismiss();
+						}
+					});
+					builder.create().show();
+					
+				}
+			});
 			
 		    item.txtName=(TextView)vi.findViewById(R.id.txt_user_name);
 		    item.txtDate=(TextView)vi.findViewById(R.id.txt_date);
@@ -95,23 +141,8 @@ public class CommentBaseAdapter extends BaseAdapter
 			item.txtName.setText(String.valueOf(commentData.getStore_name().toString().trim()));
 			item.txtDate.setText(String.valueOf(commentData.getDate().toString().trim()));
 			item.txtComment.setText(commentData.getComment().toString().trim());
-			
-			
-		
-//			btnComment.setOnClickListener(new View.OnClickListener() 
-//			{
-//				public void onClick(View v) 
-//				{
-//					Constants.CLOTHISID = String.valueOf(arr_ProductList.get(position).PIdCloth);
-//					Constants.CLOTH_USERID = String.valueOf(arr_ProductList.get(position).PUserId);
-//					Constants.OBJECT_ID = String.valueOf(arr_ProductList.get(position).PObjectId);
-//					Intent intent=new Intent(activity,CommentViewActivity.class);
-//		   			activity.startActivity(intent);
-//				}
-//			});
-//		
-
-			
-		return vi;	
-	}	     
+			return vi;	
+	}	
+	
+	
 }

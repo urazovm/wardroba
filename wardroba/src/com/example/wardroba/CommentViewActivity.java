@@ -24,25 +24,38 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class CommentViewActivity extends Activity
 {
 	public ImageView btnBack;
-	public SwipeListView lsvComment;
+	public ListView lsvComment;
 	public TextView txtHeader,txtOK;
 	public EditText edtAddComment;
 	String MSG;
 	Typeface tf;
-	
+	View selectedView;
+	View prevView=null;
+	boolean isOpened=false;
+	int itemSelected;
 	CommentBaseAdapter adapter;
-	
+	SwipeDetector swipeDetector;
+	public static enum Action {
+        LR, // Left to Right
+        RL, // Right to Left
+        TB, // Top to bottom
+        BT, // Bottom to Top
+        None // when no action was detected
+    }
 	
 	private ArrayList<Comment> arr_CommentList;
 	
@@ -61,7 +74,9 @@ public class CommentViewActivity extends Activity
   				lsvComment.setAdapter(adapter);
   			}else
   			{
-  				//lsvComment.setAdapter(null);
+  				adapter=new CommentBaseAdapter(arr_CommentList,CommentViewActivity.this);
+  				adapter.notifyDataSetChanged();
+  				lsvComment.setAdapter(adapter);
   	  			Toast.makeText(getApplicationContext(), "No Record Found !", 5000).show();
   			}
   		}
@@ -79,14 +94,61 @@ public class CommentViewActivity extends Activity
 		//Toast.makeText(CommentViewActivity.this, "response", Toast.LENGTH_SHORT).show();
 		Log.d("CommentPage", "array size:"+arr_CommentList.size());
 		Log.d("CommentPage", "comment:"+c.getComment());
-		if(arr_CommentList.size()==0)
-		{
-			//lsvComment.setAdapter(null);
-		}
-		else
-		{
-			arr_CommentList.add(c);
+		
 			
+			arr_CommentList.add(c);
+			adapter=new CommentBaseAdapter(arr_CommentList,CommentViewActivity.this);
+			
+			adapter.notifyDataSetChanged();
+			lsvComment.setAdapter(adapter);
+			int count=0;
+			boolean flag=false;
+			int cloth_id=Integer.parseInt(Constants.CLOTHISID);
+			if(Constants.all_items.size()>0)
+			{
+				for(WardrobaItem temp:Constants.all_items)
+					{
+						int id=temp.getPIdCloth();
+						if(id==cloth_id)
+						{
+							flag=true;
+							break;
+						}
+					
+						count++;	
+					}
+				if(flag)
+				{
+					Constants.all_items.get(count).setPCommentCount(arr_CommentList.size());
+				}
+			}
+			count=0;
+			flag=false;
+			if(Constants.my_items.size()>0)
+			{
+				for(WardrobaItem temp:Constants.my_items)
+					{
+						int id=temp.getPIdCloth();
+						if(id==cloth_id)
+						{
+							flag=true;
+							break;
+						}
+					
+						count++;	
+					}
+				if(flag)
+				{
+					Constants.my_items.get(count).setPCommentCount(arr_CommentList.size());
+				}
+			}
+			
+  	} 	
+	public void setResponseForDelete()
+	{
+		if(arr_CommentList.size()>0)
+		{
+			arr_CommentList.remove(Constants.SELECTED_COMMENT);
 			adapter.notifyDataSetChanged();
 			int count=0;
 			boolean flag=false;
@@ -129,20 +191,18 @@ public class CommentViewActivity extends Activity
 					Constants.my_items.get(count).setPCommentCount(arr_CommentList.size());
 				}
 			}
-		}	
-  	} 	
-	
+		}
+	}
 	@Override
 	protected void onCreate(Bundle savedInstanceState) 
 	{
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.comment_view_activity);
-		
+		swipeDetector=new SwipeDetector();
 		btnBack=(ImageView)findViewById(R.id.img_back);
 		
-		lsvComment=(SwipeListView)findViewById(R.id.listComment);
-		//lsvComment.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+		lsvComment=(ListView)findViewById(R.id.list_cooment);
 		txtHeader=(TextView)findViewById(R.id.txt_header);
 		txtOK=(TextView)findViewById(R.id.txt_ok);
 		
@@ -174,47 +234,96 @@ public class CommentViewActivity extends Activity
 			MSG="Please check your internet connection...";
 			alert();
 		}
-		lsvComment.setSwipeListViewListener(new BaseSwipeListViewListener(){
+		lsvComment.setOnTouchListener(swipeDetector);
+		lsvComment.setOnItemClickListener(new OnItemClickListener() 
+		{
+
 			@Override
-			public void onOpened(int position, boolean toRight) {
+			public void onItemClick(AdapterView<?> parent, View view, int position,
+					long arg3) {
 				// TODO Auto-generated method stub
-				super.onOpened(position, toRight);
+				
+				
+				if(swipeDetector.swipeDetected())
+				{
+					
+					
+					
+					RelativeLayout front;
+					int bounds=dpToPx(70);
+					Log.d("CommentView", "swipe detected");
+					if(swipeDetector.mSwipeDetected==Action.RL)
+					{
+						if(prevView==null)
+						{
+							prevView=view;
+						}
+						else
+						{
+							prevView=selectedView;
+						}
+						selectedView=view;
+						if(isOpened)
+						{
+							Log.d("hello", "hello open slide");
+							if(prevView!=view)
+							{
+								front=(RelativeLayout)prevView.findViewById(R.id.front);
+								TranslateAnimation translateAnimation=new TranslateAnimation(-bounds, 0, 0, 0);
+								translateAnimation.setDuration(1000);
+								translateAnimation.setFillAfter(true);
+								
+								front.startAnimation(translateAnimation);
+								front=(RelativeLayout)view.findViewById(R.id.front);
+								TranslateAnimation translateAnimation1=new TranslateAnimation(0, -bounds, 0, 0);
+								translateAnimation1.setDuration(1000);
+								translateAnimation1.setFillAfter(true);
+								front.startAnimation(translateAnimation1);
+							}
+							isOpened=true;
+							itemSelected=position;
+						}
+						else
+						{
+							front=(RelativeLayout)view.findViewById(R.id.front);
+							TranslateAnimation translateAnimation=new TranslateAnimation(0, -bounds, 0, 0);
+							translateAnimation.setDuration(1000);
+							translateAnimation.setFillAfter(true);
+							front.startAnimation(translateAnimation);
+							isOpened=true;
+							itemSelected=position;
+						}
+					
+					}
+					else if (swipeDetector.mSwipeDetected==Action.LR) {
+						
+						if((itemSelected==position) && isOpened)
+						{
+							front=(RelativeLayout)view.findViewById(R.id.front);
+							TranslateAnimation translateAnimation=new TranslateAnimation(-bounds, 0, 0, 0);
+							translateAnimation.setDuration(1000);
+							translateAnimation.setFillAfter(true);
+							front.startAnimation(translateAnimation);
+							isOpened=false;
+						}
+					}
+					
+					
+				}
+				else
+				{
+					
+				}
 			}
-			 @Override
-	            public void onMove(int position, float x) {
-	            }
-
-	            @Override
-	            public void onStartOpen(int position, int action, boolean right) {
-	                Log.d("swipe", String.format("onStartOpen %d - action %d", position, action));
-	            }
-
-	            @Override
-	            public void onStartClose(int position, boolean right) {
-	                Log.d("swipe", String.format("onStartClose %d", position));
-	            }
-
-	            @Override
-	            public void onClickFrontView(int position) {
-	                Log.d("swipe", String.format("onClickFrontView %d", position));
-	            }
-
-	            @Override
-	            public void onClickBackView(int position) {
-	                Log.d("swipe", String.format("onClickBackView %d", position));
-	            }
-
-	            @Override
-	            public void onDismiss(int[] reverseSortedPositions) {
-	                for (int position : reverseSortedPositions) {
-	                  //  data.remove(position);
-	                }
-	                adapter.notifyDataSetChanged();
-	            }
 		});
 		BackButton();
 		CommentAddButton();
 	}
+	private int dpToPx(int dp)
+    {
+        float density =  getApplicationContext().getResources().getDisplayMetrics().density;
+        return Math.round((float)dp * density);
+    }
 	
 	public void BackButton()
 	{
@@ -300,5 +409,73 @@ public class CommentViewActivity extends Activity
 		AlertDialog alert = builder.create();
 		alert.show();  
    }
-   
+   class SwipeDetector implements View.OnTouchListener {
+
+	    
+
+	    private static final String logTag = "SwipeDetector";
+	    private static final int MIN_DISTANCE = 100;
+	    private float downX, downY, upX, upY;
+	    private Action mSwipeDetected = Action.None;
+
+	    public boolean swipeDetected() {
+	        return mSwipeDetected != Action.None;
+	    }
+
+	    public Action getAction() {
+	        return mSwipeDetected;
+	    }
+
+	    public boolean onTouch(View v, MotionEvent event) {
+	        switch (event.getAction()) {
+	        case MotionEvent.ACTION_DOWN: {
+	            downX = event.getX();
+	            downY = event.getY();
+	            mSwipeDetected = Action.None;
+	            return false; // allow other events like Click to be processed
+	        }
+	        case MotionEvent.ACTION_MOVE: {
+	            upX = event.getX();
+	            upY = event.getY();
+
+	            float deltaX = downX - upX;
+	            float deltaY = downY - upY;
+
+	            // horizontal swipe detection
+	            if (Math.abs(deltaX) > MIN_DISTANCE) {
+	                // left or right
+	                if (deltaX < 0) {
+	                    //Logger.show(Log.INFO,logTag, "Swipe Left to Right");
+	                    mSwipeDetected = Action.LR;
+	                    Log.i("CommentView", "swipe left to right");
+	                    return true;
+	                }
+	                if (deltaX > 0) {
+	                    //Logger.show(Log.INFO,logTag, "Swipe Right to Left");
+	                	Log.i("CommentView", "swipe left to right");
+	                	mSwipeDetected = Action.RL;
+	                    return true;
+	                }
+	            } else 
+
+	                // vertical swipe detection
+	                if (Math.abs(deltaY) > MIN_DISTANCE) {
+	                    // top or down
+	                    if (deltaY < 0) {
+	                        //Logger.show(Log.INFO,logTag, "Swipe Top to Bottom");
+	                        mSwipeDetected = Action.TB;
+	                        return false;
+	                    }
+	                    if (deltaY > 0) {
+	                        //Logger.show(Log.INFO,logTag, "Swipe Bottom to Top");
+	                        mSwipeDetected = Action.BT;
+	                        return false;
+	                    }
+	                } 
+	            return true;
+	        }
+	        }
+	        return false;
+	    }
+	}
 }

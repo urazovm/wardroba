@@ -40,60 +40,48 @@
    		 	android:layout_width="fill_parent"
    		 	android:paddingBottom="40dp"
     		android:layout_height="wrap_content">
-			<!-- <ListView 
+			 <ListView 
 			    android:id="@+id/list_cooment"
 			    android:layout_width="fill_parent"
 			    android:layout_height="fill_parent"
 			    android:smoothScrollbar="true"
 			    android:scrollingCache="false"
-			    android:listSelector="@android:color/transparent"/> -->
-			<com.swipinglist.master.SwipeListView
-			    xmlns:swipe="http://schemas.android.com/apk/res-auto"
-            	android:id="@+id/listComment"
-            	android:listSelector="#00000000"
-            	android:layout_width="fill_parent"
-            	android:layout_height="wrap_content"
-            	swipe:swipeFrontView="@+id/front"
-            	swipe:swipeBackView="@+id/back"
-            	swipe:swipeDrawableChecked="@drawable/choice_selected"
-            	swipe:swipeDrawableUnchecked="@drawable/choice_unselected"
-            	swipe:swipeCloseAllItemsWhenMoveList="true"
-            	swipe:swipeMode="right"
-            	app:swipeOffsetRight="200dp"
-            	app:swipeAnimationTime="500"
-            	app:swipeActionRight="reveal"
-            	
-			    ></com.swipinglist.master.SwipeListView>
+			    android:listSelector="@android:color/transparent"/> 
+			
 		</LinearLayout>
 		<LinearLayout 
    		 	android:layout_width="fill_parent"
-    		android:layout_height="40dp"
+    		android:layout_height="50dp"
     		android:orientation="vertical"
     		android:background="@color/grey"
     		android:layout_alignParentBottom="true">
 			<LinearLayout 
 			    android:layout_width="fill_parent"
-			    android:layout_height="wrap_content"
+			    android:layout_height="fill_parent"
 			    android:layout_gravity="center_vertical"
 			    android:orientation="horizontal"
+			    android:gravity="center_vertical"
 			    android:weightSum="1.0">
 			    <LinearLayout 
 			        android:layout_width="0dp"
 			        android:layout_weight="1.0"
 			        android:layout_margin="3dp"
-			        android:layout_height="wrap_content">
+			        android:layout_height="wrap_content"
+			        >
 			        <EditText 
 			            android:id="@+id/edt_comment"
 			            android:layout_width="fill_parent"
-			            android:layout_height="35dp"
+			            android:layout_height="40dp"
 			            android:singleLine="true"
 			            android:background="#ffffff"
 			            android:paddingLeft="7dp"
 			            android:paddingRight="7dp"
-			            android:textSize="14dp"
-			            android:textColorHint="@color/textcolor2"
+			            android:textSize="16dp"
+			           	android:textColorHint="@color/textcolor2"
 					    android:textColor="@color/textcolor2"
 			            android:hint="Add a comment..."/>
+			            
+			            
 			    </LinearLayout>
 			    <LinearLayout 
 			        android:layout_width="wrap_content"
@@ -106,7 +94,7 @@
 			  	        android:gravity="center_horizontal"
 			  	        android:text="OK"
 			  	        android:layout_marginTop="5dp"
-			  	         android:textColor="@color/white"
+			  	        android:textColor="@color/white"
 			  	        android:textSize="22dp"/>
 			        <!-- <ImageView 
 			            android:id="@+id/img_ok"

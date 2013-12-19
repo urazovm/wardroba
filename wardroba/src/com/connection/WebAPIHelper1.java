@@ -146,7 +146,23 @@ public class WebAPIHelper1 extends AsyncTask<String, Integer, Long>
 
 			((CommentViewActivity)myContext).setResponseFromRequest1(comment);
 		}
+		else if(requestNumber==Constants.comment_delete)
+		{
+			
+			if(response != null)
+			{
+				
+				Element node = (Element) response.getElementsByTagName("root").item(0);
+				NodeList nlist =  node.getElementsByTagName("result");
+				Log.d("WebApiHelper1", "Delete comment:");
+			}
+			else
+			{
+				Constants.LOGIN_USERID = 0;
+			}
 
+			((CommentViewActivity)myContext).setResponseForDelete();
+		}
 		
 		progressDlg.dismiss();
 	}

@@ -10,10 +10,12 @@
         android:id="@+id/back"
         android:tag="back"
         android:gravity="right">
-        <RelativeLayout android:layout_width="wrap_content"
+        <RelativeLayout 
+            android:id="@+id/lay_close"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content">
-            <ImageView android:layout_width="60dp"
-                android:layout_height="60dp"
+            <ImageView android:layout_width="70dp"
+                android:layout_height="70dp"
                 android:background="@color/red_bg_close"
                 />
             <ImageView android:layout_width="wrap_content"
@@ -26,45 +28,69 @@
     
 	    <RelativeLayout 
 		    android:layout_width="fill_parent"
-		    android:layout_height="wrap_content"
+		    android:layout_height="70dp"
 		    android:orientation="vertical"
 		    android:id="@+id/front"
 		    android:tag="front"
 		    android:background="#FFFFFF" >
-        	
+        		<LinearLayout 
+        		    android:id="@+id/lay_heading"
+        		    android:layout_width="fill_parent"
+        		    android:layout_height="wrap_content"
+        		    android:weightSum="1.0"
+        		    android:orientation="horizontal"
+        		    android:layout_marginLeft="5dp"
+        		    android:layout_marginRight="5dp"
+        		    android:layout_marginTop="5dp">
 			    <TextView
 			        android:id="@+id/txt_user_name"
-			        android:layout_width="wrap_content"
+			        android:layout_width="0dp"
+			        android:layout_weight="0.7"
 			        android:layout_height="wrap_content"
-			        android:layout_alignParentLeft="true"
-			        android:paddingRight="45dp"
+			        android:textSize="16dp"
+			        android:layout_marginRight="3dp"
+			        android:text=""
+			        android:singleLine="true"
 			        android:textColor="@color/textcolor"
-			        android:text="" />
+			         />
 		
 		   		 <TextView
 			        android:id="@+id/txt_date"
-			        android:layout_width="wrap_content"
+			        android:layout_width="0dp"
+			        android:layout_weight="0.3"
 			        android:layout_height="wrap_content"
-			        android:layout_alignParentRight="true"
 			        android:textColor="@color/grey"
+			        android:gravity="right"
+			        android:textSize="16dp"
+			        android:singleLine="true"
 			        android:text="" />
-			
-		  	<TextView
-		       android:id="@+id/txt_comment"
-		       android:layout_width="wrap_content"
-		       android:layout_height="wrap_content"
-		       android:textColor="@color/grey"
-		       android:layout_below="@id/txt_user_name"
-		       android:text="" />
-		  	
+				</LinearLayout>
+				<LinearLayout 
+				    android:id="@+id/lay_comment"
+				    android:layout_width="fill_parent"
+				    android:layout_height="wrap_content"
+				    android:layout_below="@id/lay_heading"
+				    android:layout_margin="5dp"
+				    >
+				  	<TextView
+				       android:id="@+id/txt_comment"
+				       android:layout_width="fill_parent"
+				       android:layout_height="wrap_content"
+				       android:textColor="@color/grey"
+				       android:maxLines="2"
+				       android:lines="2"
+				       android:ellipsize="end"
+				       android:text=""
+				       android:textSize="14dp" />
+		  		</LinearLayout>	
 	 	
 	 
   	 <TextView 
           android:id="@+id/textView1" 
 	      android:layout_width="fill_parent" 
-	      android:background="@color/grey"  
+	      android:background="@color/comment_divider"  
 	      android:layout_marginTop="3dp"
-	      android:layout_below="@id/txt_comment"
+	      android:layout_alignParentBottom="true"
 	      android:layout_height="0.5dip"/>  
 	     </RelativeLayout>
 </FrameLayout>

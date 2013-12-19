@@ -9,8 +9,11 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.hardware.Camera;
+import android.hardware.Camera.Parameters;
 import android.hardware.Camera.PictureCallback;
+import android.hardware.Camera.PreviewCallback;
 import android.hardware.Camera.ShutterCallback;
+import android.hardware.Camera.Size;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -26,7 +29,7 @@ import android.widget.Toast;
 public class CameraViewActivity extends Activity implements Callback
 {
 	
-	SurfaceView cameraSurface;
+	MySurfaceView cameraSurface;
 	SurfaceHolder holder;
 	ImageView btnHome,btnAlbum,btnCamera,btnFlash;
 	Camera camera;
@@ -40,7 +43,7 @@ public class CameraViewActivity extends Activity implements Callback
 		btnCamera=(ImageView)findViewById(R.id.btnCamera);
 		btnAlbum=(ImageView)findViewById(R.id.btnAlbum);
 		btnFlash=(ImageView)findViewById(R.id.btnFlash);
-		cameraSurface=(SurfaceView)findViewById(R.id.cameraSurface);
+		cameraSurface=(MySurfaceView)findViewById(R.id.cameraSurface);
 		holder=cameraSurface.getHolder();
 		holder.addCallback(this);
 		holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
@@ -49,6 +52,7 @@ public class CameraViewActivity extends Activity implements Callback
 			 
              try {
             	 camera=Camera.open();
+            	 
             	 camera.setDisplayOrientation(90);
             	 camera.setPreviewDisplay(holder);
             	 camera.startPreview();
@@ -80,7 +84,7 @@ public class CameraViewActivity extends Activity implements Callback
 		}
 		
 	};*/
-	PictureCallback myPictureCallback=new PictureCallback() {
+		PictureCallback myPictureCallback=new PictureCallback() {
 		
 		@Override
 		public void onPictureTaken(byte[] data, Camera camera) {
@@ -128,7 +132,7 @@ public class CameraViewActivity extends Activity implements Callback
 	        }
 	    }    
 	@Override
-	public void surfaceChanged(SurfaceHolder surfaceHolder, int arg1, int arg2, int arg3) {
+	public void surfaceChanged(SurfaceHolder surfaceHolder, int format, int width, int height) {
 		// TODO Auto-generated method stub
 		Log.e("CameraView", "Surface change");
 		if(isPriviewing)
@@ -137,6 +141,12 @@ public class CameraViewActivity extends Activity implements Callback
 			isPriviewing=false;
 		}
 		try {
+			
+			 Parameters parameters=camera.getParameters();
+        	 parameters.setRotation(90);
+        	 parameters.setPreviewSize(width, height);
+        	 camera.setDisplayOrientation(90);
+        	 camera.setParameters(parameters);
 	        camera.setPreviewDisplay(holder);
 	        
 	        camera.startPreview();
