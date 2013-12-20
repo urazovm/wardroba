@@ -8,10 +8,12 @@ import com.example.wardroba.Comment;
 import com.example.wardroba.CommentViewActivity;
 import com.example.wardroba.HomeActivityFragment;
 import com.example.wardroba.ProductDetailFragment;
+import com.example.wardroba.ProfileEditActivity;
 
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 
 
@@ -23,9 +25,9 @@ public class WebAPIHelper1 extends AsyncTask<String, Integer, Long>
 	private Document response;
 	private int requestNumber;
 	private String loadingMessage="Please wait...";
-	private ProductDetailFragment mFragment;
-	private HomeActivityFragment home_fragment;
-	
+
+	private Fragment mFragment;
+
 	Context myContext;
 	
 	private WebAPIRequest webAPIRequest = new WebAPIRequest();
@@ -56,17 +58,18 @@ public class WebAPIHelper1 extends AsyncTask<String, Integer, Long>
 	public WebAPIHelper1(int requestNumber, HomeActivityFragment pFragment) 
 	{
 		this.requestNumber = requestNumber;
-		this.home_fragment=pFragment;
-		progressDlg = new ProgressDialog(home_fragment.getActivity());
+		this.mFragment=pFragment;
+		progressDlg = new ProgressDialog(mFragment.getActivity());
 		//loadingMessage = msg;
 	}
 	public WebAPIHelper1(int requestNumber, ProductDetailFragment pFragment) 
 	{
 		this.requestNumber = requestNumber;
 		this.mFragment=pFragment;
-		progressDlg = new ProgressDialog(this.mFragment.getActivity());
+		//progressDlg = new ProgressDialog(this.mFragment.getActivity());
 		//loadingMessage = msg;
 	}
+	
 	protected void onPreExecute() 
 	{
 		/*progressDlg.setMessage(loadingMessage);
@@ -104,7 +107,7 @@ public class WebAPIHelper1 extends AsyncTask<String, Integer, Long>
 			{
 				Constants.LOGIN_USERID = 0;
 			}
-			home_fragment.setResponseFromRequest1(requestNumber);
+			((HomeActivityFragment)mFragment).setResponseFromRequest1(requestNumber);
 				//product_activity.setResponseFromRequest(productlist);
 		}
 
@@ -127,7 +130,7 @@ public class WebAPIHelper1 extends AsyncTask<String, Integer, Long>
 	  			}
 	  			Constants.my_items.get(Constants.SELECTED_ID).setPLikeCount(like_count);
 	  			
-	  			mFragment.setResponseFromRequest1(requestNumber);
+	  			((ProductDetailFragment)mFragment).setResponseFromRequest1(requestNumber);
 				
 			}
 		}

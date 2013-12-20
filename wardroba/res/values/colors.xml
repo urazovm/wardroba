@@ -2,6 +2,7 @@
 <resources>
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
+    <color name="grey_light">#F2F2F2</color>
     <color name="grey">#555555</color>
     <color name="textcolor">#B41C4E</color>
     <color name="textcolor2">#969696</color>
@@ -10,4 +11,5 @@
     <color name="comment_divider">#D8D8D8</color>
     <color name="comment_bg">#C6C6C6</color>
     <color name="share_bg">#F2F2F2</color>
+
 </resources>

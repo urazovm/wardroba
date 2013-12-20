@@ -3,12 +3,15 @@ package com.example.wardroba;
 import java.util.regex.Pattern;
 
 import com.ImageLoader.ImageLoader;
+import com.connection.Constants;
+import com.connection.WebAPIHelper;
 
 import android.app.Activity;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,6 +38,13 @@ public class ProfileEditActivity extends Fragment
               + "[0-9]{1,2}|25[0-5]|2[0-4][0-9])){1}|"
               + "([a-zA-Z]+[\\w-]+\\.)+[a-zA-Z]{2,4})$"
 				);
+	public void setResponseFromRequest(int request,int user_id,String msg)
+	{
+		if(user_id!=0)
+		{
+			Toast.makeText(getActivity(), "Update successfully.", Toast.LENGTH_SHORT).show();
+		}
+	}
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) 
 	{
@@ -87,8 +97,20 @@ public class ProfileEditActivity extends Fragment
 						Toast.makeText(getActivity(), "Please verify 'Password' and 'Repeat Password'", Toast.LENGTH_SHORT).show();
 					}
 					else
+						
 					{
+						String name,surname,city,email,password,repeatPassword;
+						name=edtName.getText().toString();
+						surname=edtSurname.getText().toString();
+						city=edttCityAddress.getText().toString();
+						password=edtPassword.getText().toString();
+						repeatPassword=edtRepatPassword.getText().toString();
 						Toast.makeText(getActivity(), "Update profile requesting...", Toast.LENGTH_SHORT).show();
+						//http://dev.wardroba.com/serviceXml/updateprofile.php?id=15&name=Nilesh&lastname=Pambhar&city=Rajkot&new_password=nilesh&confirm_password=nilesh
+						WebAPIHelper apiHelper=new WebAPIHelper(Constants.edit_profile, ProfileEditActivity.this, "Please wait...");
+						String url=Constants.PROFILE_SAVE_URL+"id="+Constants.LOGIN_USERID+"&name="+name+"&lastname="+surname+"&city="+city+"&new_password="+password+"&confirm_password="+repeatPassword;
+						Log.d("UpdateProfile", "url:"+url);
+						apiHelper.execute(url);
 					}
 				}
 				else

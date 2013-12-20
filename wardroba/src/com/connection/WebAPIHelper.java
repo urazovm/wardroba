@@ -25,6 +25,7 @@ import com.example.wardroba.WardrobaProfile;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 
 
@@ -41,7 +42,7 @@ public class WebAPIHelper extends AsyncTask<String, Integer, Long>
 	private ProductGallery product_activity;
 	private CommentViewActivity comment_view_activity;
 
-	private ProductGalleryGridFragment productGalleryGridFragment;
+	private Fragment myFragment;
 
 	private HomeActivityFragment  home_activity;
 	private Dialogs mainActivity;
@@ -116,12 +117,18 @@ public class WebAPIHelper extends AsyncTask<String, Integer, Long>
 	
 	public WebAPIHelper(int requestNumber, ProductGalleryGridFragment activity, String msg) 
 	{
-		this.productGalleryGridFragment = activity;
-		progressDlg = new ProgressDialog(productGalleryGridFragment.getActivity());
+		this.myFragment = activity;
+		progressDlg = new ProgressDialog(myFragment.getActivity());
 		this.requestNumber = requestNumber;
 		loadingMessage = msg;
 	}
-	
+	public WebAPIHelper(int requestNumber, ProfileEditActivity activity, String msg) 
+	{
+		this.myFragment = activity;
+		progressDlg = new ProgressDialog(myFragment.getActivity());
+		this.requestNumber = requestNumber;
+		loadingMessage = msg;
+	}
 	public WebAPIHelper(int requestNumber, CommentViewActivity activity, String msg) 
 	{
 		this.comment_view_activity = activity;
@@ -200,10 +207,11 @@ public class WebAPIHelper extends AsyncTask<String, Integer, Long>
 			}	
 			profileViewFragment.setResponseFromRequest(requestNumber,myProfile);
 		}
-		
+
 		else if (requestNumber == Constants.profile_owner_list)
 		{		
 			WardrobaProfile myProfile=new WardrobaProfile();
+
 			if(response != null)
 			{
 				
@@ -224,6 +232,8 @@ public class WebAPIHelper extends AsyncTask<String, Integer, Long>
 				myProfile.setFollowing(parseIntValue(getValueFromNode(childNode,"following")));
 			}	
 			profile_owner_Fragment.setResponseFromRequest(requestNumber,myProfile);
+
+			
 		}
 /*		else if (requestNumber == Constants.editprofile_list)
 		{			 
@@ -360,7 +370,7 @@ public class WebAPIHelper extends AsyncTask<String, Integer, Long>
                 	}
 				}
 
-				productGalleryGridFragment.setResponseFromRequest();
+				((ProductGalleryGridFragment)myFragment).setResponseFromRequest();
 			
 		}
 		else if(requestNumber==Constants.product_like)
