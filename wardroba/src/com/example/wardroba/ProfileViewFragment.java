@@ -25,6 +25,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class ProfileViewFragment extends Fragment
 {
@@ -38,8 +39,10 @@ public class ProfileViewFragment extends Fragment
 	ProgressBar imgLoader;
 	Typeface tf;
 	WardrobaProfile myProfile;
+	ViewGroup root;
 	public void setResponseFromRequest(int requestNumber,WardrobaProfile profile) 
 	{
+		Constants.OWNERID=0;
 		myProfile=(WardrobaProfile)profile;
 		txtName.setText(myProfile.getName()+" "+myProfile.getLastname());
 		txtCityAddress.setText(myProfile.getAddress()+" "+myProfile.getCity());
@@ -48,13 +51,12 @@ public class ProfileViewFragment extends Fragment
 		txtFollower.setText(String.valueOf(myProfile.getFollower()));
 		txtFollowing.setText(String.valueOf(myProfile.getFollowing()));
 		imageLoader.DisplayImage("http://images.desimartini.com/media/versions/salman_khan_6._gallery_image_100_100.jpg", imgProfilePhoto,imgLoader);
-		
-//		Txt_pass.setText(Constants.USERID);
+
 	}
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) 
 	{
-		ViewGroup root = (ViewGroup) inflater.inflate(R.layout.profile_view_activity, null);
+		root = (ViewGroup) inflater.inflate(R.layout.profile_view_activity, null);
 		tf= Typeface.createFromAsset(getActivity().getAssets(),"fonts/GOTHIC.TTF");
         imageLoader=new ImageLoader(getActivity());
         preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
@@ -134,14 +136,38 @@ public class ProfileViewFragment extends Fragment
     {
     	
         super.onCreate(savedInstanceState);       
-
+        
 		if(isOnline()==true)
 		{
 			if(Constants.LOGIN_USERID != 0)
 			{
-		    	WebAPIHelper webAPIHelper = new WebAPIHelper(Constants.profile_list,ProfileViewFragment.this ,"Please Wait....");
+//				//int OwnerID= Integer.valueOf(Constants.OWNERID.toString().trim());
+//				//Toast.makeText(getActivity(), "Owner ID ="+OwnerID, 5000).show();
+//				if(Constants.LOGIN_USERID == Constants.OWNERID || Constants.OWNERID == 0)
+//				{
+//					//Btn_edit_profile.setVisibility(View.VISIBLE);
+//					//Btn_logout.setVisibility(View.VISIBLE);
+//					
+//					WebAPIHelper webAPIHelper = new WebAPIHelper(Constants.profile_list,ProfileViewFragment.this ,"Please Wait....");
+//					String url = Constants.PROFILE_VIEW_URL+"id="+Constants.LOGIN_USERID;		
+//					webAPIHelper.execute(url);
+//				}else 
+//				{
+//					//Btn_edit_profile.setVisibility(View.GONE);
+//					//Btn_logout.setVisibility(View.GONE);
+//					
+//					WebAPIHelper webAPIHelper = new WebAPIHelper(Constants.profile_list,ProfileViewFragment.this ,"Please Wait....");
+//					String url = Constants.PROFILE_VIEW_URL+"id="+Constants.OWNERID;		
+//					webAPIHelper.execute(url);
+//				}
+				
+				WebAPIHelper webAPIHelper = new WebAPIHelper(Constants.profile_list,ProfileViewFragment.this ,"Please Wait....");
 				String url = Constants.PROFILE_VIEW_URL+"id="+Constants.LOGIN_USERID;		
 				webAPIHelper.execute(url);
+				
+			}else
+			{
+				Toast.makeText(getActivity(), "User profile not found", 5000).show();
 			}
 		}
 		else

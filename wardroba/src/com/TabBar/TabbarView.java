@@ -1,7 +1,7 @@
 package com.TabBar;
 
 import com.example.wardroba.CameraViewActivity;
-import com.example.wardroba.HomeActivity;
+import com.example.wardroba.HomeActivityFragment;
 import com.example.wardroba.ProductGallery;
 import com.example.wardroba.ProfileActivity;
 import com.example.wardroba.R;
@@ -33,7 +33,7 @@ public class TabbarView extends TabHostProvider
 		tabView.setBackgroundID(R.drawable.tab);
 		
 		HomeTab = new Tab(context, "Home");
-		HomeTab.setIntent(new Intent(context,HomeActivity.class));
+		HomeTab.setIntent(new Intent(context,HomeActivityFragment.class));
 		HomeTab.setIcon(R.drawable.menu_icon_1);
 		HomeTab.setIconSelected(R.drawable.menu_icon_1_h);
 		

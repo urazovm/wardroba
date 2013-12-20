@@ -9,7 +9,7 @@ import org.w3c.dom.NodeList;
 
 import com.example.wardroba.Comment;
 import com.example.wardroba.CommentViewActivity;
-import com.example.wardroba.HomeActivity;
+import com.example.wardroba.HomeActivityFragment;
 import com.example.wardroba.ProductDetailFragment;
 import com.example.wardroba.ProductGalleryGridFragment;
 import com.example.wardroba.ProfileEditActivity;
@@ -42,7 +42,7 @@ public class WebAPIHelper extends AsyncTask<String, Integer, Long>
 
 	private Fragment myFragment;
 
-	private HomeActivity  home_activity;
+	private HomeActivityFragment  home_activity;
 	private Dialogs mainActivity;
 	private Document response;
 	private int requestNumber;
@@ -96,10 +96,10 @@ public class WebAPIHelper extends AsyncTask<String, Integer, Long>
 		this.requestNumber = requestNumber;
 		loadingMessage = msg;
 	}		
-	public WebAPIHelper(int requestNumber, HomeActivity activity, String msg) 
+	public WebAPIHelper(int requestNumber, HomeActivityFragment activity, String msg) 
 	{
 		this.home_activity = activity;
-		progressDlg = new ProgressDialog(home_activity);
+		progressDlg = new ProgressDialog(home_activity.getActivity());
 		this.requestNumber = requestNumber;
 		loadingMessage = msg;
 	}
@@ -300,6 +300,7 @@ public class WebAPIHelper extends AsyncTask<String, Integer, Long>
 					
 					item.setPIdCloth(parseIntValue(getValueFromNode(optionchildNode,"id_cloth")));
 					item.setPUserId(parseIntValue(getValueFromNode(optionchildNode,"user_id")));
+					item.setPOwnerId(parseIntValue(getValueFromNode(optionchildNode,"owner_id")));
 					item.setPObjectId(parseIntValue(getValueFromNode(optionchildNode,"object_id")));
 					item.setPLikeCount(parseIntValue(getValueFromNode(optionchildNode,"like_count")));
 					item.setPCommentCount(parseIntValue(getValueFromNode(optionchildNode,"comment_count")));
@@ -364,7 +365,7 @@ public class WebAPIHelper extends AsyncTask<String, Integer, Long>
 			{
 				Constants.LOGIN_USERID = 0;
 			}
-			((HomeActivity)myContext).setResponseFromRequest1(requestNumber);
+			((HomeActivityFragment)home_activity).setResponseFromRequest1(requestNumber);
 				//product_activity.setResponseFromRequest(productlist);
 		}
 		else if(requestNumber==Constants.comment_list)

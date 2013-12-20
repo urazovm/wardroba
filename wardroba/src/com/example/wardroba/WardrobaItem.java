@@ -2,7 +2,7 @@ package com.example.wardroba;
 
 public class WardrobaItem {
 
-	private int PIdCloth,PUserId,PObjectId,PLikeCount,PCommentCount,PViewCount;
+	private int PIdCloth,PUserId,PObjectId,POwnerId,PLikeCount,PCommentCount,PViewCount;
 	private String PUserName,PUserImage,PUserDate,PTag,PImageUrl,PLikeStatus,PClothType;
 
 	public WardrobaItem()
@@ -32,6 +32,14 @@ public class WardrobaItem {
 
 	public void setPObjectId(int pObjectId) {
 		PObjectId = pObjectId;
+	}
+
+	public int getPOwnerId() {
+		return POwnerId;
+	}
+
+	public void setPOwnerId(int pOwnerId) {
+		POwnerId = pOwnerId;
 	}
 
 	public int getPLikeCount() {
@@ -113,6 +121,7 @@ public class WardrobaItem {
 	public void setPClothType(String pClothType) {
 		PClothType = pClothType;
 	}
+
 	
  	
 }

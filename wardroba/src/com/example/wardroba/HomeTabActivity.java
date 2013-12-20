@@ -28,7 +28,7 @@ public class HomeTabActivity  extends TabActivity{
         TabHost.TabSpec spec;  // Resusable TabSpec for each tab
         Intent intent;  // Reusable Intent for each tab
 
-        intent = new Intent().setClass(this, HomeActivity.class);
+        intent = new Intent().setClass(this, HomeActivityMain.class);
         spec = tabHost.newTabSpec("first").setIndicator("First").setContent(intent);
         tabHost.addTab(spec);
         intent = new Intent().setClass(this, ProductGallery.class);

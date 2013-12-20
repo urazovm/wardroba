@@ -11,7 +11,6 @@ import com.swipinglist.master.BaseSwipeListViewListener;
 import com.swipinglist.master.SwipeListView;
 
 import BaseAdapter.CommentBaseAdapter;
-import BaseAdapter.HomeProductBaseAdapter;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
