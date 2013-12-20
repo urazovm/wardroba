@@ -94,6 +94,7 @@ public class ProfileEditActivity extends Fragment
 			}
 			else
 			{
+				Log.d("EditProfile", "Hello:"+isImageChange);
 				if(isImageChange)
 				{
 					new ImageUploadTask().execute();

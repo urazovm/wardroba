@@ -235,6 +235,25 @@ public class WebAPIHelper extends AsyncTask<String, Integer, Long>
 
 			
 		}
+		else if (requestNumber == Constants.edit_profile)
+		{		
+			
+			int id=0;
+			String msg="";
+			if(response != null)
+			{
+				
+				Element node = (Element) response.getElementsByTagName("root").item(0);
+				NodeList nlist =  node.getElementsByTagName("result");				
+				Element childNode = (Element)nlist.item(0);
+				id=parseIntValue(getValueFromNode(childNode,"id"));
+				msg=getValueFromNode(childNode,"msg");
+				
+			}	
+			((ProfileEditActivity)myFragment).setResponseFromRequest(requestNumber,id,msg);
+
+			
+		}
 /*		else if (requestNumber == Constants.editprofile_list)
 		{			 
 			if(response != null)
