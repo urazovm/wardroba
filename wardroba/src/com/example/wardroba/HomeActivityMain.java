@@ -29,7 +29,7 @@ public class HomeActivityMain extends FragmentActivity implements OnProductSelec
 	
     FragmentManager fragmentManager;
     //HomeActivityFragment home_activity_fragment;
-    
+    ImageView btnBack;
     Fragment HomeFragment;
     public ListView lsvProductList;
     //List<Constants> arr_productGallery;
@@ -40,13 +40,15 @@ public class HomeActivityMain extends FragmentActivity implements OnProductSelec
         super.onCreate(savedInstanceState);       
         
 		setContentView(R.layout.home_activity_main); 
-		       
+		btnBack=(ImageView)findViewById(R.id.btnBackHome);
+		btnBack.setVisibility(View.GONE);
 		if(savedInstanceState!=null)
 		{
 			return;
 		}
         HomeActivityFragment home_activity_fragment=new HomeActivityFragment();
         home_activity_fragment.setArguments(getIntent().getExtras());
+        
         getSupportFragmentManager().beginTransaction().add(R.id.home_fragment_container, home_activity_fragment).commit();
 	}
 

@@ -110,6 +110,7 @@ public class ProfileEditActivity extends Fragment
 		email=edtEmail.getText().toString();
 		password=edtPassword.getText().toString();
 		repeatPassword=edtRepatPassword.getText().toString();
+		
 		if(name.equals("") || surname.equals("") || city.equals("") ||email.equals("") || password.equals("") || repeatPassword.equals(""))
 		{
 			return true;
@@ -131,6 +132,11 @@ public class ProfileEditActivity extends Fragment
 	{
     	ImageView btnBack;
 		btnBack=(ImageView)activity.findViewById(R.id.btnBack);
+		if(btnBack==null)
+		{
+			btnBack=(ImageView)activity.findViewById(R.id.btnBackHome);
+			
+		}
 		btnBack.setVisibility(View.VISIBLE);
 		btnBack.setOnClickListener(new View.OnClickListener()
 		{

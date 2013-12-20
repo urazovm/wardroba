@@ -69,6 +69,9 @@
         <activity android:name="com.example.wardroba.ProfileActivity" 
             android:screenOrientation="portrait">
         </activity>
+        <activity android:name="com.example.wardroba.ProfileOwnerViewFragment" 
+            android:screenOrientation="portrait">
+        </activity>
         <activity android:name="com.example.wardroba.ProductlistActivity" 
             android:screenOrientation="portrait">
         </activity>
@@ -86,8 +89,9 @@
         </activity>
         <activity android:name="com.example.wardroba.HomeTabActivity" 
             android:screenOrientation="portrait">
-            
+     
         </activity>
+        
         <activity android:name="com.example.wardroba.CommentViewActivity"
             android:screenOrientation="portrait"
             >
@@ -103,6 +107,7 @@
             android:label="@string/title_activity_product_detail" 
             android:screenOrientation="portrait">
         </activity>
+        
         <activity android:name="com.example.wardroba.CameraViewActivity"
             android:screenOrientation="portrait"></activity>
            </application>

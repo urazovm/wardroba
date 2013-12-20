@@ -5,7 +5,6 @@ import com.ImageLoader.ImageLoader;
 import com.connection.Constants;
 import com.connection.WebAPIHelper;
 import com.connection.WebAPIHelper1;
-import com.example.wardroba.ProductGalleryGridFragment.ProductGalleryAdapter;
 import com.example.wardroba.SmartImageView.onMyDoubleClickListener;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -19,22 +18,15 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Animation.AnimationListener;
-import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
-import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -42,8 +34,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AbsListView.OnScrollListener;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.TextView.OnEditorActionListener;
 
 public class HomeActivityFragment extends Fragment 
 {
@@ -109,7 +99,7 @@ public class HomeActivityFragment extends Fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) 
 	{
         ViewGroup root = (ViewGroup) inflater.inflate(R.layout.home_activity, null);
-        //getActivity().findViewById(R.id.btnBack).setVisibility(View.GONE);
+        getActivity().findViewById(R.id.btnBackHome).setVisibility(View.GONE);
         tf= Typeface.createFromAsset(getActivity().getAssets(),"fonts/GOTHIC.TTF");
         
         lsvProductList=(ListView)root.findViewById(R.id.product_list);
@@ -126,7 +116,8 @@ public class HomeActivityFragment extends Fragment
  	    shareDialog.setVisibility(View.GONE);
  	    btnCancel.setTypeface(tf);
  	    txtSharLable.setTypeface(tf);
- 	   lsvProductList.setOnScrollListener(new OnScrollListener() 
+ 	  
+ 	    lsvProductList.setOnScrollListener(new OnScrollListener() 
 		{
 	        int mScrollState = OnScrollListener.SCROLL_STATE_IDLE;
 	        public void onScrollStateChanged(AbsListView view, int scrollState) 
@@ -165,13 +156,30 @@ public class HomeActivityFragment extends Fragment
 	            }
 	        }
 	     });
- 	  CancelSharDialog();
+ 	  
+	    
+	    if(Constants.all_items.size()>0)
+  		{
+  			adapter=new HomeProductBaseAdapter(HomeActivityFragment.this, shareDialog);
+  			adapter.notifyDataSetChanged();
+  			
+ 	    	lsvProductList.setAdapter(adapter);
+ 	    	lsvProductList.invalidateViews();
+  		}
+  		else
+  		{
+  			lsvProductList.setAdapter(null);
+  			Toast.makeText(getActivity(), "No Record Found !", 5000).show();
+  		}
+	    
+	    
+	    CancelSharDialog();
 	    FacebookSharing();
 	    TwitterSharing();
 	    PinterestSharing();
 	    TumblerSharing();
 	    GooglePlusSharing();
-
+	    
         return root;
     }
     
@@ -206,7 +214,20 @@ public class HomeActivityFragment extends Fragment
 	   
 	    
     }
-
+    @Override
+    public void onAttach(Activity activity) 
+    {
+    	try 
+    	{
+        	activity.findViewById(R.id.btnBackHome).setVisibility(View.GONE);	
+        }
+    	catch (ClassCastException e) 
+        {
+            throw new ClassCastException(activity.toString() + " must implement onButtonPressed");
+        }
+		super.onAttach(activity);
+    }
+    
     public boolean isOnline()
 	{
 		ConnectivityManager cm = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -617,7 +638,7 @@ public class HomeActivityFragment extends Fragment
        			public void onClick(View v)
        			{
        				Constants.OWNERID= wardrobaItem.getPOwnerId();
-       				ProfileViewFragment secondFragment=new ProfileViewFragment();
+       				ProfileOwnerViewFragment secondFragment=new ProfileOwnerViewFragment();
     				
     	
     				FragmentTransaction transaction = getFragmentManager().beginTransaction();
