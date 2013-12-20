@@ -89,7 +89,7 @@ public class ProfileEditActivity extends Fragment
 				String repeatPassword=edtRepatPassword.getText().toString();
 				String URL= Constants.CHANGE_PASSWARD_URL+"&id="+Constants.REGISTER_USERID+"&password="+password+"&cpassword="+repeatPassword;
 				Log.d("update Passward URL= ", URL.toString());
-				JSONfunctions jsonCall=new JSONfunctions(ProfileEditActivity.this, "Please wait...", Constants.change_password_request);
+				JSONfunctions jsonCall=new JSONfunctions(ProfileEditActivity.this, "Please wait...", Constants.edit_profile_change_password);
 				jsonCall.execute(URL);
 			}
 			else

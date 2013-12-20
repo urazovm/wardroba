@@ -143,7 +143,7 @@ public class JSONfunctions  extends AsyncTask<String, Void,String>
 		    ((RegisterActivity)mContext).setResponseChangePassword(jArray);
 		    
 		}
-		else if(Constants.edit_profile==requestNo)
+		else if(Constants.edit_profile_change_password==requestNo)
 		{
 			try
 			{
