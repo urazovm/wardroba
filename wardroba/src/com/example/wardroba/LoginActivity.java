@@ -103,10 +103,8 @@ public class LoginActivity extends Activity
 		typeface = Typeface.createFromAsset(getAssets(),"fonts/GOTHIC.TTF");
 		Edt_email = (EditText)findViewById(R.id.edt_email);
 		Edt_passward = (EditText)findViewById(R.id.edt_passward);
-		Edt_email.setText("nilesh@amphee.com");
-		Edt_passward.setText("nilesh123");
-		Btn_login = (Button)findViewById(R.id.btn_login);
-		//btnFacebook=(LoginButton)findViewById(R.id.login_fb);
+
+		Btn_login = (Button)findViewById(R.id.btn_login);;
 		fb_login=(Button)findViewById(R.id.login_fb);
 		//fb_logout=(Button)findViewById(R.id.logout_fb);
 		btnBack = (ImageView)findViewById(R.id.btnBack);
@@ -115,10 +113,11 @@ public class LoginActivity extends Activity
 		Edt_passward.setTypeface(typeface);
 		Btn_login.setTypeface(typeface);
 		fb_login.setTypeface(typeface);
-		
-		/*txt_facebook.setTypeface(typeface);
-		
-		txt_facebook.setVisibility(View.VISIBLE);*/
+
+		if(! Constants.REMEBER_EMAIL.equals(""))
+		{
+			Edt_email.setText(Constants.REMEBER_EMAIL);
+		}
 		Btn_login.setOnClickListener(new View.OnClickListener() 
 		{	
 			@Override
@@ -406,6 +405,7 @@ public class LoginActivity extends Activity
 	   			Log.d("Json", "hello:"+json.toString());
 	   			if(success.equals("true"))
 	   			{
+	   				Constants.REMEBER_EMAIL=Edt_email.getText().toString().trim();
 		   			Constants.LOGIN_USERID=Integer.valueOf(json.getString("id").toString());
 		   			savePrefrences();
 	   				Intent ii = new Intent(LoginActivity.this,HomeTabActivity.class);

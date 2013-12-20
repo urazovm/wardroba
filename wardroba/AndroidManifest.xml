@@ -78,7 +78,10 @@
         <activity android:name="com.example.wardroba.AboutUsActivity" 
             android:screenOrientation="portrait">
         </activity>
-        <activity android:name="com.example.wardroba.HomeActivity" 
+        <activity android:name="com.example.wardroba.HomeActivityMain" 
+            android:screenOrientation="portrait">
+        </activity>
+        <activity android:name="com.example.wardroba.HomeActivityFragment" 
             android:screenOrientation="portrait">
         </activity>
         <activity android:name="com.example.wardroba.HomeTabActivity" 

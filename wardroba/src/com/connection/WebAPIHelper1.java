@@ -6,7 +6,7 @@ import org.w3c.dom.NodeList;
 
 import com.example.wardroba.Comment;
 import com.example.wardroba.CommentViewActivity;
-import com.example.wardroba.HomeActivity;
+import com.example.wardroba.HomeActivityFragment;
 import com.example.wardroba.ProductDetailFragment;
 
 import android.app.ProgressDialog;
@@ -24,6 +24,8 @@ public class WebAPIHelper1 extends AsyncTask<String, Integer, Long>
 	private int requestNumber;
 	private String loadingMessage="Please wait...";
 	private ProductDetailFragment mFragment;
+	private HomeActivityFragment home_fragment;
+	
 	Context myContext;
 	
 	private WebAPIRequest webAPIRequest = new WebAPIRequest();
@@ -51,7 +53,13 @@ public class WebAPIHelper1 extends AsyncTask<String, Integer, Long>
 		progressDlg = new ProgressDialog(context);
 		//loadingMessage = msg;
 	}
-	
+	public WebAPIHelper1(int requestNumber, HomeActivityFragment pFragment) 
+	{
+		this.requestNumber = requestNumber;
+		this.home_fragment=pFragment;
+		progressDlg = new ProgressDialog(home_fragment.getActivity());
+		//loadingMessage = msg;
+	}
 	public WebAPIHelper1(int requestNumber, ProductDetailFragment pFragment) 
 	{
 		this.requestNumber = requestNumber;
@@ -96,7 +104,7 @@ public class WebAPIHelper1 extends AsyncTask<String, Integer, Long>
 			{
 				Constants.LOGIN_USERID = 0;
 			}
-			((HomeActivity)myContext).setResponseFromRequest1(requestNumber);
+			home_fragment.setResponseFromRequest1(requestNumber);
 				//product_activity.setResponseFromRequest(productlist);
 		}
 

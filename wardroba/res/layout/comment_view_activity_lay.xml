@@ -59,9 +59,9 @@
 			        android:layout_width="0dp"
 			        android:layout_weight="0.3"
 			        android:layout_height="wrap_content"
-			        android:textColor="@color/grey"
+			        android:textColor="@color/comment_bg"
 			        android:gravity="right"
-			        android:textSize="16dp"
+			        android:textSize="14dp"
 			        android:singleLine="true"
 			        android:text="" />
 				</LinearLayout>
@@ -76,7 +76,7 @@
 				       android:id="@+id/txt_comment"
 				       android:layout_width="fill_parent"
 				       android:layout_height="wrap_content"
-				       android:textColor="@color/grey"
+				       android:textColor="@color/comment_bg"
 				       android:maxLines="2"
 				       android:lines="2"
 				       android:ellipsize="end"

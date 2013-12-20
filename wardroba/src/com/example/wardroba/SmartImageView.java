@@ -77,37 +77,37 @@ public class SmartImageView  extends ImageView
 
             Log.d("Double Tap", "Tapped at: (" + x + "," + y + ")");
             
-            imgDil.setVisibility(View.VISIBLE);
-			Animation anim=AnimationUtils.loadAnimation(getContext(), R.anim.fade_in);
+            //imgDil.setVisibility(View.VISIBLE);
+			//Animation anim=AnimationUtils.loadAnimation(getContext(), R.anim.fade_in);
 			//anim.setFillAfter(true);
 			//anim.setRepeatMode(Animation.REVERSE);
 			callback.setLikeProduct();
-			imgDil.startAnimation(anim);
-			anim.setAnimationListener(new AnimationListener() {
-				
-				@Override
-				public void onAnimationStart(Animation arg0) {
-					// TODO Auto-generated method stub
-					
-				}
-				
-				@Override
-				public void onAnimationRepeat(Animation arg0) {
-					// TODO Auto-generated method stub
-					
-				}
-				
-				@Override
-				public void onAnimationEnd(Animation arg0) {
-					// TODO Auto-generated method stub
-					
-					imgDil.setVisibility(View.GONE);
-					Animation anim=AnimationUtils.loadAnimation(getContext(), R.anim.fade_out);
-					
-					//anim.setRepeatMode(Animation.REVERSE);
-					imgDil.startAnimation(anim);
-				}
-			});
+//			imgDil.startAnimation(anim);
+//			anim.setAnimationListener(new AnimationListener() {
+//				
+//				@Override
+//				public void onAnimationStart(Animation arg0) {
+//					// TODO Auto-generated method stub
+//					
+//				}
+//				
+//				@Override
+//				public void onAnimationRepeat(Animation arg0) {
+//					// TODO Auto-generated method stub
+//					
+//				}
+//				
+//				@Override
+//				public void onAnimationEnd(Animation arg0) {
+//					// TODO Auto-generated method stub
+//					
+//					imgDil.setVisibility(View.GONE);
+//					Animation anim=AnimationUtils.loadAnimation(getContext(), R.anim.fade_out);
+//					
+//					//anim.setRepeatMode(Animation.REVERSE);
+//					imgDil.startAnimation(anim);
+//				}
+//			});
             return true;
         }
     }

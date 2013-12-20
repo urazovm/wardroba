@@ -21,11 +21,10 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:background="#FFFFFF"
-            android:hint="Search for items and tags"
+            android:textSize="14dp"
+            android:hint="Search for items and hashtags"
             android:paddingLeft="5dp"
-            
             android:singleLine="true"
-            
             android:textColorHint="@color/text_hint_color"
             />
     </LinearLayout>

@@ -100,8 +100,8 @@ public class CommentBaseAdapter extends BaseAdapter
 				public void onClick(View arg0) {
 					// TODO Auto-generated method stub
 					builder=new AlertDialog.Builder(activity);
-					builder.setMessage("Are you sure, You want to delete?");
-					builder.setPositiveButton("Yes", new OnClickListener() {
+					builder.setMessage("Are you sure you want to delete this comment?");
+					builder.setPositiveButton("YES", new OnClickListener() {
 						
 						@Override
 						public void onClick(DialogInterface dialog, int arg1) {
@@ -114,7 +114,7 @@ public class CommentBaseAdapter extends BaseAdapter
 							Log.d("CommentView", "comment delete url="+delete_url);
 							apiHelper1.execute(delete_url);
 						}
-					}).setNegativeButton("No", new OnClickListener() {
+					}).setNegativeButton("NO", new OnClickListener() {
 						
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
