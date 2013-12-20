@@ -24,6 +24,7 @@ import com.example.wardroba.WardrobaProfile;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 
 
@@ -39,7 +40,7 @@ public class WebAPIHelper extends AsyncTask<String, Integer, Long>
 	private ProductGallery product_activity;
 	private CommentViewActivity comment_view_activity;
 
-	private ProductGalleryGridFragment productGalleryGridFragment;
+	private Fragment myFragment;
 
 	private HomeActivity  home_activity;
 	private Dialogs mainActivity;
@@ -105,12 +106,18 @@ public class WebAPIHelper extends AsyncTask<String, Integer, Long>
 	
 	public WebAPIHelper(int requestNumber, ProductGalleryGridFragment activity, String msg) 
 	{
-		this.productGalleryGridFragment = activity;
-		progressDlg = new ProgressDialog(productGalleryGridFragment.getActivity());
+		this.myFragment = activity;
+		progressDlg = new ProgressDialog(myFragment.getActivity());
 		this.requestNumber = requestNumber;
 		loadingMessage = msg;
 	}
-	
+	public WebAPIHelper(int requestNumber, ProfileEditActivity activity, String msg) 
+	{
+		this.myFragment = activity;
+		progressDlg = new ProgressDialog(myFragment.getActivity());
+		this.requestNumber = requestNumber;
+		loadingMessage = msg;
+	}
 	public WebAPIHelper(int requestNumber, CommentViewActivity activity, String msg) 
 	{
 		this.comment_view_activity = activity;
@@ -188,6 +195,22 @@ public class WebAPIHelper extends AsyncTask<String, Integer, Long>
 				myProfile.setFollowing(parseIntValue(getValueFromNode(childNode,"following")));
 			}	
 			profileViewFragment.setResponseFromRequest(requestNumber,myProfile);
+		}
+		else if (requestNumber == Constants.edit_profile)
+		{		
+			
+			int id=0;
+			String msg=null;
+			if(response != null)
+			{
+				
+				Element node = (Element) response.getElementsByTagName("root").item(0);
+				NodeList nlist =  node.getElementsByTagName("result");				
+				Element childNode = (Element)nlist.item(0);
+				id=parseIntValue(getValueFromNode(childNode,"id"));
+				msg=getValueFromNode(childNode, "msg");
+			}	
+			((ProfileEditActivity)myFragment).setResponseFromRequest(requestNumber,id,msg);
 		}
 /*		else if (requestNumber == Constants.editprofile_list)
 		{			 
@@ -323,7 +346,7 @@ public class WebAPIHelper extends AsyncTask<String, Integer, Long>
                 	}
 				}
 
-				productGalleryGridFragment.setResponseFromRequest();
+				((ProductGalleryGridFragment)myFragment).setResponseFromRequest();
 			
 		}
 		else if(requestNumber==Constants.product_like)

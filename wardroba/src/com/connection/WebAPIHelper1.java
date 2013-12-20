@@ -8,10 +8,12 @@ import com.example.wardroba.Comment;
 import com.example.wardroba.CommentViewActivity;
 import com.example.wardroba.HomeActivity;
 import com.example.wardroba.ProductDetailFragment;
+import com.example.wardroba.ProfileEditActivity;
 
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 
 
@@ -23,7 +25,7 @@ public class WebAPIHelper1 extends AsyncTask<String, Integer, Long>
 	private Document response;
 	private int requestNumber;
 	private String loadingMessage="Please wait...";
-	private ProductDetailFragment mFragment;
+	private Fragment mFragment;
 	Context myContext;
 	
 	private WebAPIRequest webAPIRequest = new WebAPIRequest();
@@ -56,9 +58,10 @@ public class WebAPIHelper1 extends AsyncTask<String, Integer, Long>
 	{
 		this.requestNumber = requestNumber;
 		this.mFragment=pFragment;
-		progressDlg = new ProgressDialog(this.mFragment.getActivity());
+		//progressDlg = new ProgressDialog(this.mFragment.getActivity());
 		//loadingMessage = msg;
 	}
+	
 	protected void onPreExecute() 
 	{
 		/*progressDlg.setMessage(loadingMessage);
@@ -119,7 +122,7 @@ public class WebAPIHelper1 extends AsyncTask<String, Integer, Long>
 	  			}
 	  			Constants.my_items.get(Constants.SELECTED_ID).setPLikeCount(like_count);
 	  			
-	  			mFragment.setResponseFromRequest1(requestNumber);
+	  			((ProductDetailFragment)mFragment).setResponseFromRequest1(requestNumber);
 				
 			}
 		}

@@ -32,8 +32,7 @@ public class Constants implements Serializable
 	public final static int register_list = 50;
 	public final static int login_list = 51;
 	public final static int profile_list = 52;
-	public final static int editprofile_list = 53;
-	public final static int editprofile_list2 = 54;
+	
 	public final static int search_list = 56;
 	public final static int login_request = 58;
 	public final static int change_password_request = 59;
@@ -46,6 +45,7 @@ public class Constants implements Serializable
 	public final static int comment_add = 66;
 	public final static int produce_delete = 67;
 	public final static int comment_delete = 68;
+	public final static int edit_profile = 69;
 
 	
  	public static String USERNAME,MSG_LOGIN;

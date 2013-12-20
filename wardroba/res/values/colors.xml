@@ -2,11 +2,13 @@
 <resources>
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
-    <color name="grey">#555555</color>
+    <color name="grey">#C6C6C6</color>
     <color name="grey_light">#F2F2F2</color>
     <color name="textcolor">#C71255</color>
     <color name="textcolor2">#969696</color>
     <color name="text_hint_color">#CFCFCF</color>
     <color name="red_bg_close">#AC1F50</color>
     <color name="comment_divider">#D8D8D8</color>
+    <color name="comment_bg">#C6C6C6</color>
+    
 </resources>
