@@ -45,6 +45,7 @@ public class Constants implements Serializable
 	public final static int comment_add = 66;
 	public final static int produce_delete = 67;
 	public final static int comment_delete = 68;
+	public final static int profile_owner_list = 70;
 	public final static int edit_profile = 69;
 	public final static int edit_profile_change_password=70;
 	

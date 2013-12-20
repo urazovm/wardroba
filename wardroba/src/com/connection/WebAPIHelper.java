@@ -16,6 +16,7 @@ import com.example.wardroba.ProfileEditActivity;
 import com.example.wardroba.LoginActivity;
 import com.example.wardroba.ProductGallery;
 import com.example.wardroba.ProfileActivity;
+import com.example.wardroba.ProfileOwnerViewFragment;
 import com.example.wardroba.ProfileViewFragment;
 import com.example.wardroba.RegisterActivity;
 import com.example.wardroba.WardrobaItem;
@@ -35,6 +36,7 @@ public class WebAPIHelper extends AsyncTask<String, Integer, Long>
 	private RegisterActivity register_activity;
 	private ProfileActivity profile_activity;
 	private ProfileViewFragment profileViewFragment;
+	private ProfileOwnerViewFragment profile_owner_Fragment;
 	private ProfileEditActivity edit_profile_activity;
 	//private ProductDetailFragment product_detail_fragment;
 	private ProductGallery product_activity;
@@ -66,6 +68,15 @@ public class WebAPIHelper extends AsyncTask<String, Integer, Long>
 		this.requestNumber = requestNumber;
 		loadingMessage = msg;
 	}
+	
+	public WebAPIHelper(int requestNumber, ProfileOwnerViewFragment activity, String msg) 
+	{
+		this.profile_owner_Fragment = activity;
+		progressDlg = new ProgressDialog(profile_owner_Fragment.getActivity());
+		this.requestNumber = requestNumber;
+		loadingMessage = msg;
+	}
+	
 	public WebAPIHelper(int requestNumber, ProductGallery activity, String msg) 
 	{
 		this.product_activity = activity;
@@ -196,21 +207,33 @@ public class WebAPIHelper extends AsyncTask<String, Integer, Long>
 			}	
 			profileViewFragment.setResponseFromRequest(requestNumber,myProfile);
 		}
-		else if (requestNumber == Constants.edit_profile)
+
+		else if (requestNumber == Constants.profile_owner_list)
 		{		
-			
-			int id=0;
-			String msg=null;
+			WardrobaProfile myProfile=new WardrobaProfile();
+
 			if(response != null)
 			{
 				
 				Element node = (Element) response.getElementsByTagName("root").item(0);
 				NodeList nlist =  node.getElementsByTagName("result");				
 				Element childNode = (Element)nlist.item(0);
-				id=parseIntValue(getValueFromNode(childNode,"id"));
-				msg=getValueFromNode(childNode, "msg");
+
+				myProfile.setId(parseIntValue(getValueFromNode(childNode,"id")));
+				myProfile.setName(getValueFromNode(childNode,"name"));
+				myProfile.setLastname(getValueFromNode(childNode,"lastname"));
+				myProfile.setUsername(getValueFromNode(childNode,"username"));
+				myProfile.setCity(getValueFromNode(childNode,"city"));
+				myProfile.setAddress(getValueFromNode(childNode,"address"));
+				myProfile.setEmail(getValueFromNode(childNode,"email"));
+				myProfile.setUser_image(getValueFromNode(childNode,"user_image"));
+				myProfile.setItems(parseIntValue(getValueFromNode(childNode,"items")));
+				myProfile.setFollower(parseIntValue(getValueFromNode(childNode,"followers")));
+				myProfile.setFollowing(parseIntValue(getValueFromNode(childNode,"following")));
 			}	
-			((ProfileEditActivity)myFragment).setResponseFromRequest(requestNumber,id,msg);
+			profile_owner_Fragment.setResponseFromRequest(requestNumber,myProfile);
+
+			
 		}
 /*		else if (requestNumber == Constants.editprofile_list)
 		{			 
