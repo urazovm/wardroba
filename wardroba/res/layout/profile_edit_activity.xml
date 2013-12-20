@@ -33,21 +33,34 @@
 
 			 		<ImageView
 			 		    android:id="@+id/img_background"
-			 		    android:layout_width="wrap_content"
-			 		    android:layout_height="wrap_content"
+			 		    android:layout_width="101dp"
+			 		    android:layout_height="101dp"
 			 		    android:src="@drawable/profile_bg"/>
 
 			 		<ImageView
 			 		    android:id="@+id/img_profile"
-			 		    android:layout_width="wrap_content"
-			 		    android:layout_height="wrap_content"
-			 		    android:layout_centerInParent="true"
-			 		    android:src="@drawable/edit_profile_image" />
+			 		    android:layout_width="87dp"
+			 		    android:layout_height="87dp"
+			 		    android:layout_marginTop="6dp"
+			 		    android:layout_marginLeft="6dp"
+			 		    android:src="@drawable/profile_photo"
+			 		    
+			 		     />
 		  		    <ProgressBar 
 					    android:id="@+id/progLoader"
 					    android:layout_width="40dp"
 					    android:layout_height="40dp"
-					    android:layout_centerInParent="true"/>					  
+					    android:layout_centerInParent="true"/>
+		  		    <TextView
+			 		    android:id="@+id/img_add_profile"
+			 		    android:layout_width="87dp"
+			 		    android:layout_height="87dp"
+			 		    android:layout_centerInParent="true"
+			 		    android:text="+"
+			 		    android:textSize="32dp"
+			 		    android:gravity="center"
+			 		    android:textColor="#88FFFFFF"
+			 		     />					  
 					</RelativeLayout>					    				    				    
 			 	</LinearLayout>
 				

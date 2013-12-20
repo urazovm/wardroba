@@ -28,7 +28,7 @@ public class Constants implements Serializable
 	public static final String CHANGE_PASSWARD_URL="http://dev.wardroba.com/api-update-password?";
 	public static final String ITEM_COUNT_URL="http://dev.wardroba.com/serviceXml/product_count.php?";
 	public static final String PRODUCT_DELETE_URL="http://dev.wardroba.com/serviceXml/product_delete.php?";
-	
+	//http://dev.wardroba.com/api-update-password?id=15&password=nilesh&cpassword=nilesh
 	public final static int register_list = 50;
 	public final static int login_list = 51;
 	public final static int profile_list = 52;
@@ -46,7 +46,7 @@ public class Constants implements Serializable
 	public final static int produce_delete = 67;
 	public final static int comment_delete = 68;
 	public final static int edit_profile = 69;
-
+	public final static int edit_profile_change_password=70;
 	
  	public static String USERNAME,MSG_LOGIN;
  	public static int REGISTER_USERID;
@@ -86,7 +86,7 @@ public class Constants implements Serializable
  	public static ArrayList<WardrobaItem> my_items=new ArrayList<WardrobaItem>();
 
     public static int SELECTED_COMMENT;
- 	
+ 	public static boolean IS_PROFILE_CHANGED=false;
 	
 
 }

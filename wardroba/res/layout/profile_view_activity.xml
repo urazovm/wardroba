@@ -42,14 +42,14 @@
 
                             <ImageView
                                 android:id="@+id/imgProfile_bg"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
+                                android:layout_width="101dp"
+                                android:layout_height="101dp"
                                 android:src="@drawable/profile_bg" />
 
                              <ImageView
                                 android:id="@+id/imgProfilePhoto"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
+                                android:layout_width="87dp"
+                                android:layout_height="86dp"
                                 android:src="@drawable/profile_photo"
                                 android:layout_centerInParent="true" /> 
                             <ProgressBar 

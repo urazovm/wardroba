@@ -13,21 +13,31 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.example.wardroba.LoginActivity;
+import com.example.wardroba.ProfileEditActivity;
 import com.example.wardroba.RegisterActivity;
 
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 public class JSONfunctions  extends AsyncTask<String, Void,String> 
 {
 	ProgressDialog dialog;
 	Context mContext;
+	Fragment mFragment;
 	String message;
 	int requestNo;
 	public JSONfunctions(Context c,String msg,int req)
 	{
 		mContext=c;
+		message=msg;
+		this.requestNo=req;
+		
+	}
+	public JSONfunctions(ProfileEditActivity activity,String msg,int req)
+	{
+		this.mFragment=activity;
 		message=msg;
 		this.requestNo=req;
 		
@@ -131,6 +141,48 @@ public class JSONfunctions  extends AsyncTask<String, Void,String>
 		    }
 		    
 		    ((RegisterActivity)mContext).setResponseChangePassword(jArray);
+		    
+		}
+		else if(Constants.edit_profile==requestNo)
+		{
+			try
+			{
+	            HttpClient httpclient = new DefaultHttpClient();
+	            HttpPost httpget= new HttpPost(url);
+	            HttpResponse response = httpclient.execute(httpget);
+	            HttpEntity entity = response.getEntity();
+	            is = entity.getContent();
+		    }
+		    catch(Exception e)
+		    {
+		            Log.e("log_tag", "Error in http connection "+e.toString());
+		    }
+		    try
+		    {
+		            BufferedReader reader = new BufferedReader(new InputStreamReader(is,"iso-8859-1"),8);
+		            StringBuilder sb = new StringBuilder();
+		            String line = null;
+		            while ((line = reader.readLine()) != null) 
+		            {
+		                sb.append(line + "\n");      
+		            }
+		            is.close();
+		            result=sb.toString();
+		    }
+		    catch(Exception e)
+		    {
+		        Log.e("log_tag", "Error converting result "+e.toString());
+		    }
+		    try
+		    {
+		         jArray = new JSONObject(result); 
+		    }
+		    catch(JSONException e)
+		    {
+		            Log.e("jArray................", "Error parsing data "+e.toString());
+		    }
+		    
+		    ((ProfileEditActivity)mFragment).setResponseChangePassword(jArray);
 		    
 		}
 		dialog.dismiss();

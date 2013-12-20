@@ -63,7 +63,7 @@ public class ImageLoader {
         		//imageView.setScaleType(ScaleType.CENTER);
         	if(bitmap.getWidth()>=300 || bitmap.getHeight()>=300)
         	{
-        		imageView.setScaleType(ScaleType.FIT_XY);
+        		imageView.setScaleType(ScaleType.FIT_CENTER);
         		imageView.setImageBitmap(bitmap);
         		myLoader.setVisibility(View.GONE);
         	}
@@ -212,7 +212,7 @@ public class ImageLoader {
             		
             	if(bitmap.getWidth()>=300 || bitmap.getHeight()>=300)
             	{
-            		photoToLoad.imageView.setScaleType(ScaleType.FIT_XY);
+            		photoToLoad.imageView.setScaleType(ScaleType.FIT_CENTER);
             		photoToLoad.imageView.setImageBitmap(bitmap);
             		myLoader.setVisibility(View.GONE);
             	}

@@ -38,7 +38,7 @@ public class ProfileViewFragment extends Fragment
 	ImageLoader imageLoader;
 	ProgressBar imgLoader;
 	Typeface tf;
-	WardrobaProfile myProfile;
+	WardrobaProfile myProfile=null;
 	ViewGroup root;
 	public void setResponseFromRequest(int requestNumber,WardrobaProfile profile) 
 	{
@@ -50,7 +50,7 @@ public class ProfileViewFragment extends Fragment
 		txtItems.setText(String.valueOf(myProfile.getItems()));
 		txtFollower.setText(String.valueOf(myProfile.getFollower()));
 		txtFollowing.setText(String.valueOf(myProfile.getFollowing()));
-		imageLoader.DisplayImage("http://images.desimartini.com/media/versions/salman_khan_6._gallery_image_100_100.jpg", imgProfilePhoto,imgLoader);
+		imageLoader.DisplayImage(myProfile.getUser_image(), imgProfilePhoto,imgLoader);
 
 	}
 	@Override
@@ -89,6 +89,17 @@ public class ProfileViewFragment extends Fragment
 		Btn_edit_profile.setTypeface(tf);
 		Btn_logout.setTypeface(tf);
 		initButtonListener(root);
+		//Constants.IS_PROFILE_CHANGED=false;
+		if(myProfile!=null)
+		{
+			txtName.setText(myProfile.getName()+" "+myProfile.getLastname());
+			txtCityAddress.setText(myProfile.getAddress()+" "+myProfile.getCity());
+			txtEmail.setText(myProfile.getEmail());
+			txtItems.setText(String.valueOf(myProfile.getItems()));
+			txtFollower.setText(String.valueOf(myProfile.getFollower()));
+			txtFollowing.setText(String.valueOf(myProfile.getFollowing()));
+			imageLoader.DisplayImage(myProfile.getUser_image(), imgProfilePhoto,imgLoader);
+		}
 		return root;
 	}
 	public void initButtonListener(View root)
@@ -126,9 +137,10 @@ public class ProfileViewFragment extends Fragment
 	            FragmentTransaction transaction = getFragmentManager().beginTransaction();
 	            transaction.replace(R.id.fragment_container, secondFragment);
 	            transaction.addToBackStack(null);
-
+	            
 	            // Commit the transaction
 	            transaction.commit();
+	            Constants.IS_PROFILE_CHANGED=false;
 			}
 		});
 	}
@@ -137,30 +149,11 @@ public class ProfileViewFragment extends Fragment
     	
         super.onCreate(savedInstanceState);       
         
-		if(isOnline()==true)
+        if(isOnline()==true)
 		{
 			if(Constants.LOGIN_USERID != 0)
 			{
-//				//int OwnerID= Integer.valueOf(Constants.OWNERID.toString().trim());
-//				//Toast.makeText(getActivity(), "Owner ID ="+OwnerID, 5000).show();
-//				if(Constants.LOGIN_USERID == Constants.OWNERID || Constants.OWNERID == 0)
-//				{
-//					//Btn_edit_profile.setVisibility(View.VISIBLE);
-//					//Btn_logout.setVisibility(View.VISIBLE);
-//					
-//					WebAPIHelper webAPIHelper = new WebAPIHelper(Constants.profile_list,ProfileViewFragment.this ,"Please Wait....");
-//					String url = Constants.PROFILE_VIEW_URL+"id="+Constants.LOGIN_USERID;		
-//					webAPIHelper.execute(url);
-//				}else 
-//				{
-//					//Btn_edit_profile.setVisibility(View.GONE);
-//					//Btn_logout.setVisibility(View.GONE);
-//					
-//					WebAPIHelper webAPIHelper = new WebAPIHelper(Constants.profile_list,ProfileViewFragment.this ,"Please Wait....");
-//					String url = Constants.PROFILE_VIEW_URL+"id="+Constants.OWNERID;		
-//					webAPIHelper.execute(url);
-//				}
-				
+
 				WebAPIHelper webAPIHelper = new WebAPIHelper(Constants.profile_list,ProfileViewFragment.this ,"Please Wait....");
 				String url = Constants.PROFILE_VIEW_URL+"id="+Constants.LOGIN_USERID;		
 				webAPIHelper.execute(url);
@@ -178,6 +171,34 @@ public class ProfileViewFragment extends Fragment
 	
     }
     
+    @Override
+    public void onResume() {
+    	// TODO Auto-generated method stub
+    	super.onResume();
+    	if(Constants.IS_PROFILE_CHANGED)
+    	{
+    		if(isOnline()==true)
+    		{
+    			if(Constants.LOGIN_USERID != 0)
+    			{
+
+    				WebAPIHelper webAPIHelper = new WebAPIHelper(Constants.profile_list,ProfileViewFragment.this ,"Please Wait....");
+    				String url = Constants.PROFILE_VIEW_URL+"id="+Constants.LOGIN_USERID;		
+    				webAPIHelper.execute(url);
+    				
+    			}else
+    			{
+    				Toast.makeText(getActivity(), "User profile not found", 5000).show();
+    			}
+    		}
+    		else
+    		{
+    			netalert();
+    		}
+    	}
+    	
+    	//Toast.makeText(getActivity(), "hello", Toast.LENGTH_SHORT).show();
+    }
     @Override
     public void onAttach(Activity activity) 
     {
