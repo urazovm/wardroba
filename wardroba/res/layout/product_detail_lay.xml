@@ -36,6 +36,26 @@
 	        android:layout_height="wrap_content"
 	        android:layout_centerHorizontal="true"
 	        android:layout_centerVertical="true" />
+			<LinearLayout android:layout_width="wrap_content"
+			    android:layout_height="wrap_content"
+			    android:layout_centerInParent="true"
+			    android:id="@+id/lay_delete"
+			    >
+			    <RelativeLayout 
+		            
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content">
+		            <ImageView android:layout_width="70dp"
+		                android:layout_height="70dp"
+		                android:background="#88AA0000"
+		                />
+		            <ImageView android:layout_width="wrap_content"
+		                android:layout_height="wrap_content"
+		                android:background="@drawable/comment_close"
+		                android:layout_centerInParent="true"
+		                />
+		        </RelativeLayout>
+			</LinearLayout>
 		</RelativeLayout>
 	</LinearLayout>
 	

@@ -44,13 +44,16 @@ public class ProfileViewFragment extends Fragment
 	{
 		Constants.OWNERID=0;
 		myProfile=(WardrobaProfile)profile;
-		txtName.setText(myProfile.getName()+" "+myProfile.getLastname());
-		txtCityAddress.setText(myProfile.getAddress()+" "+myProfile.getCity());
-		txtEmail.setText(myProfile.getEmail());
-		txtItems.setText(String.valueOf(myProfile.getItems()));
-		txtFollower.setText(String.valueOf(myProfile.getFollower()));
-		txtFollowing.setText(String.valueOf(myProfile.getFollowing()));
-		imageLoader.DisplayImage(myProfile.getUser_image(), imgProfilePhoto,imgLoader);
+		if(myProfile!=null)
+		{
+			txtName.setText(myProfile.getName()+" "+myProfile.getLastname());
+			txtCityAddress.setText(myProfile.getCity());
+			txtEmail.setText(myProfile.getEmail());
+			txtItems.setText(String.valueOf(myProfile.getItems()));
+			txtFollower.setText(String.valueOf(myProfile.getFollower()));
+			txtFollowing.setText(String.valueOf(myProfile.getFollowing()));
+			imageLoader.DisplayImage(myProfile.getUser_image(), imgProfilePhoto,imgLoader);
+		}
 
 	}
 	@Override
@@ -93,7 +96,7 @@ public class ProfileViewFragment extends Fragment
 		if(myProfile!=null)
 		{
 			txtName.setText(myProfile.getName()+" "+myProfile.getLastname());
-			txtCityAddress.setText(myProfile.getAddress()+" "+myProfile.getCity());
+			txtCityAddress.setText(myProfile.getCity());
 			txtEmail.setText(myProfile.getEmail());
 			txtItems.setText(String.valueOf(myProfile.getItems()));
 			txtFollower.setText(String.valueOf(myProfile.getFollower()));
@@ -242,15 +245,23 @@ public class ProfileViewFragment extends Fragment
     public void LOGOUTALERT()
     {
  	   AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-		builder.setMessage("Are you sure you want to logout??")
+		builder.setMessage("Are you sure you want to logout?")
 		       .setCancelable(false)
-		       .setPositiveButton("Ok", new DialogInterface.OnClickListener() 
+		       .setPositiveButton("Yes", new DialogInterface.OnClickListener() 
 		       {
 		           public void onClick(DialogInterface dialog, int id) 
 		           {
+		        	   	dialog.dismiss();
 		                Constants.LOGIN_USERID = 0;
 		                Intent home = new Intent(getActivity(),WardrobaDashboardActivity.class);
 		                startActivity(home);
+		                getActivity().finish();
+		           }
+		       }).setNegativeButton("No", new DialogInterface.OnClickListener() 
+		       {
+		           public void onClick(DialogInterface dialog, int id) 
+		           {
+		                dialog.dismiss();
 		           }
 		       });
 		AlertDialog alert = builder.create();

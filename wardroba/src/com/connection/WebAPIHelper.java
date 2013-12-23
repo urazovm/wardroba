@@ -16,6 +16,7 @@ import com.example.wardroba.ProfileEditActivity;
 import com.example.wardroba.LoginActivity;
 import com.example.wardroba.ProductGallery;
 import com.example.wardroba.ProfileActivity;
+import com.example.wardroba.ProfileOwnerEditActivity;
 import com.example.wardroba.ProfileOwnerViewFragment;
 import com.example.wardroba.ProfileViewFragment;
 import com.example.wardroba.RegisterActivity;
@@ -129,6 +130,13 @@ public class WebAPIHelper extends AsyncTask<String, Integer, Long>
 		this.requestNumber = requestNumber;
 		loadingMessage = msg;
 	}
+	public WebAPIHelper(int requestNumber,ProfileOwnerEditActivity profileOwnerEditActivity, String msg) {
+		// TODO Auto-generated constructor stub
+		this.myFragment = profileOwnerEditActivity;
+		progressDlg = new ProgressDialog(myFragment.getActivity());
+		this.requestNumber = requestNumber;
+		loadingMessage = msg;
+	}
 	public WebAPIHelper(int requestNumber, CommentViewActivity activity, String msg) 
 	{
 		this.comment_view_activity = activity;
@@ -151,6 +159,8 @@ public class WebAPIHelper extends AsyncTask<String, Integer, Long>
 		this.requestNumber = requestNumber;
 		loadingMessage = msg;
 	}
+	
+
 	protected void onPreExecute() 	
 	{
 		progressDlg.setMessage(loadingMessage);
@@ -185,10 +195,10 @@ public class WebAPIHelper extends AsyncTask<String, Integer, Long>
 		
 		else if (requestNumber == Constants.profile_list)
 		{		
-			WardrobaProfile myProfile=new WardrobaProfile();
+			WardrobaProfile myProfile=null;
 			if(response != null)
 			{
-				
+				myProfile=new WardrobaProfile();
 				Element node = (Element) response.getElementsByTagName("root").item(0);
 				NodeList nlist =  node.getElementsByTagName("result");				
 				Element childNode = (Element)nlist.item(0);
@@ -210,11 +220,11 @@ public class WebAPIHelper extends AsyncTask<String, Integer, Long>
 
 		else if (requestNumber == Constants.profile_owner_list)
 		{		
-			WardrobaProfile myProfile=new WardrobaProfile();
+			WardrobaProfile myProfile=null;
 
 			if(response != null)
 			{
-				
+				myProfile=new WardrobaProfile();
 				Element node = (Element) response.getElementsByTagName("root").item(0);
 				NodeList nlist =  node.getElementsByTagName("result");				
 				Element childNode = (Element)nlist.item(0);
@@ -251,6 +261,25 @@ public class WebAPIHelper extends AsyncTask<String, Integer, Long>
 				
 			}	
 			((ProfileEditActivity)myFragment).setResponseFromRequest(requestNumber,id,msg);
+
+			
+		}
+		else if (requestNumber == Constants.edit_owner_profile)
+		{		
+			
+			int id=0;
+			String msg="";
+			if(response != null)
+			{
+				
+				Element node = (Element) response.getElementsByTagName("root").item(0);
+				NodeList nlist =  node.getElementsByTagName("result");				
+				Element childNode = (Element)nlist.item(0);
+				id=parseIntValue(getValueFromNode(childNode,"id"));
+				msg=getValueFromNode(childNode,"msg");
+				
+			}	
+			((ProfileOwnerEditActivity)myFragment).setResponseFromRequest(requestNumber,id,msg);
 
 			
 		}

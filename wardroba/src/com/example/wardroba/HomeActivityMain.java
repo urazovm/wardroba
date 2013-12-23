@@ -1,28 +1,15 @@
 package com.example.wardroba;
 
-import java.util.List;
-
-import com.ImageLoader.ImageLoader;
-import com.connection.Constants;
 import com.example.wardroba.ProductGalleryGridFragment.OnProductSelectListener;
 
-import android.content.Context;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.BaseAdapter;
-import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
 public class HomeActivityMain extends FragmentActivity implements OnProductSelectListener
 {

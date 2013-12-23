@@ -86,7 +86,8 @@
 				    android:hint="@string/register_name_hint"
 				    android:padding="3dp"
 				    android:layout_marginTop="5dp"
-				    android:textColor="@color/textcolor2"
+				    android:textColorHint="@color/text_hint_color"
+					android:textColor="@color/black"
 				    android:textSize="14dp" />
 				<ImageView
 						    android:id="@+id/textView1"
@@ -101,7 +102,8 @@
 				    android:gravity="center"
 				    android:hint="@string/register_surname_hint"
 				    android:padding="3dp"
-				    android:textColor="@color/textcolor2"
+				    android:textColorHint="@color/text_hint_color"
+					android:textColor="@color/black"
 				    android:textSize="14dp" />
 				<ImageView
 					    android:id="@+id/textView1"
@@ -118,7 +120,8 @@
 				    android:gravity="center"
 				    android:hint="@string/edit_city_hint"
 				    android:padding="3dp"			 		        
-				    android:textColor="@color/textcolor2"
+				    android:textColorHint="@color/text_hint_color"
+					android:textColor="@color/black"
 				    android:textSize="14dp" />
 				<ImageView
 					    android:id="@+id/textView1"
@@ -135,7 +138,8 @@
 				    android:ems="10"
 				    android:gravity="center"
 				    android:hint="@string/login_email_hint"			 		        
-				    android:textColor="@color/textcolor2"
+				    android:textColorHint="@color/text_hint_color"
+					android:textColor="@color/black"
 				    android:inputType="textEmailAddress"
 				    android:padding="3dp"
 				    android:textSize="14dp" />
@@ -155,7 +159,8 @@
 				    android:gravity="center"
 				    android:hint="@string/login_password_hint"
 				    android:inputType="textPassword"			 		        
-				    android:textColor="@color/textcolor2"
+				    android:textColorHint="@color/text_hint_color"
+					android:textColor="@color/black"
 				    android:padding="3dp"
 				    android:textSize="14dp" />
 				<ImageView
@@ -174,7 +179,8 @@
 				    android:gravity="center"
 				    android:hint="@string/edit_repeat_password_hint"
 				    android:inputType="textPassword"
-				    android:textColor="@color/textcolor2"
+				    android:textColorHint="@color/text_hint_color"
+					android:textColor="@color/black"
 				    android:padding="3dp"
 				    android:layout_marginBottom="3dp"
 				    android:textSize="14dp" />
@@ -190,10 +196,10 @@
 				    android:layout_marginRight="5dp"
 				    android:layout_marginTop="5dp"
 				    android:background="@drawable/edit_profile_save_button"
-				    android:text="Save"
+				    android:text="SAVE"
 				    android:layout_gravity="center_horizontal"
 				    android:textColor="@color/white"
-				    android:textSize="14dp" />
+				    android:textSize="16dp" />
 			</LinearLayout>
 		   
 	   </LinearLayout>

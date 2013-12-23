@@ -14,6 +14,7 @@ import org.json.JSONObject;
 
 import com.example.wardroba.LoginActivity;
 import com.example.wardroba.ProfileEditActivity;
+import com.example.wardroba.ProfileOwnerEditActivity;
 import com.example.wardroba.RegisterActivity;
 
 import android.app.ProgressDialog;
@@ -31,6 +32,7 @@ public class JSONfunctions  extends AsyncTask<String, Void,String>
 	public JSONfunctions(Context c,String msg,int req)
 	{
 		mContext=c;
+		dialog=new ProgressDialog(mContext);
 		message=msg;
 		this.requestNo=req;
 		
@@ -39,14 +41,23 @@ public class JSONfunctions  extends AsyncTask<String, Void,String>
 	{
 		this.mFragment=activity;
 		message=msg;
+		dialog=new ProgressDialog(mFragment.getActivity());
 		this.requestNo=req;
 		
+	}
+	public JSONfunctions(ProfileOwnerEditActivity profileOwnerEditActivity,
+			String msg, int req) {
+		// TODO Auto-generated constructor stub
+		this.mFragment=profileOwnerEditActivity;
+		message=msg;
+		dialog=new ProgressDialog(mFragment.getActivity());
+		this.requestNo=req;
 	}
 	@Override
 	protected void onPreExecute() {
 		// TODO Auto-generated method stub
 		super.onPreExecute();
-		dialog=new ProgressDialog(mContext);
+		
 		dialog.setMessage(message);
 		dialog.show();
 	}
@@ -144,6 +155,48 @@ public class JSONfunctions  extends AsyncTask<String, Void,String>
 		    
 		}
 		else if(Constants.edit_profile_change_password==requestNo)
+		{
+			try
+			{
+	            HttpClient httpclient = new DefaultHttpClient();
+	            HttpPost httpget= new HttpPost(url);
+	            HttpResponse response = httpclient.execute(httpget);
+	            HttpEntity entity = response.getEntity();
+	            is = entity.getContent();
+		    }
+		    catch(Exception e)
+		    {
+		            Log.e("log_tag", "Error in http connection "+e.toString());
+		    }
+		    try
+		    {
+		            BufferedReader reader = new BufferedReader(new InputStreamReader(is,"iso-8859-1"),8);
+		            StringBuilder sb = new StringBuilder();
+		            String line = null;
+		            while ((line = reader.readLine()) != null) 
+		            {
+		                sb.append(line + "\n");      
+		            }
+		            is.close();
+		            result=sb.toString();
+		    }
+		    catch(Exception e)
+		    {
+		        Log.e("log_tag", "Error converting result "+e.toString());
+		    }
+		    try
+		    {
+		         jArray = new JSONObject(result); 
+		    }
+		    catch(JSONException e)
+		    {
+		            Log.e("jArray................", "Error parsing data "+e.toString());
+		    }
+		    
+		    ((ProfileEditActivity)mFragment).setResponseChangePassword(jArray);
+		    
+		}
+		else if(Constants.edit_owner_profile_change_password==requestNo)
 		{
 			try
 			{

@@ -2,9 +2,6 @@ package com.example.wardroba;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.regex.Pattern;
 
@@ -14,7 +11,6 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.ByteArrayBody;
-import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
@@ -39,12 +35,8 @@ import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.provider.MediaStore;
-import android.provider.MediaStore.Images.Media;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -57,7 +49,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class ProfileEditActivity extends Fragment
+public class ProfileOwnerEditActivity extends Fragment
 {
 	ImageLoader imageLoader;
 	ProgressBar imgLoader1;
@@ -90,7 +82,7 @@ public class ProfileEditActivity extends Fragment
 				String repeatPassword=edtRepatPassword.getText().toString();
 				String URL= Constants.CHANGE_PASSWARD_URL+"&id="+Constants.LOGIN_USERID+"&password="+password+"&cpassword="+repeatPassword;
 				Log.d("update Passward URL= ", URL.toString());
-				JSONfunctions jsonCall=new JSONfunctions(ProfileEditActivity.this, "Please wait...", Constants.edit_profile_change_password);
+				JSONfunctions jsonCall=new JSONfunctions(ProfileOwnerEditActivity.this, "Please wait...", Constants.edit_owner_profile_change_password);
 				jsonCall.execute(URL);
 			}
 			else
@@ -159,6 +151,7 @@ public class ProfileEditActivity extends Fragment
         edtSurname.setText(bundle.getString("surname"));
         edttCityAddress.setText(bundle.getString("city"));
         edtEmail.setText(bundle.getString("Email"));
+        imageLoader.DisplayImage(bundle.getString("profileImage"), imgProfilePhoto, imgLoader1);
         edtName.setTypeface(tf);
         edtSurname.setTypeface(tf);
         edttCityAddress.setTypeface(tf);
@@ -166,7 +159,6 @@ public class ProfileEditActivity extends Fragment
         edtPassword.setTypeface(tf);
         edtRepatPassword.setTypeface(tf);
         btnSave.setTypeface(tf);
-        imageLoader.DisplayImage(bundle.getString("profileImage"), imgProfilePhoto, imgLoader1);
         btnSave.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
@@ -187,7 +179,7 @@ public class ProfileEditActivity extends Fragment
 					if((password.length()==0) && (repeatPassword.length()==0))
 					{
 						update_url=Constants.PROFILE_SAVE_URL+"id="+Constants.LOGIN_USERID+"&name="+name+"&lastname="+surname+"&city="+city;
-						WebAPIHelper apiHelper=new WebAPIHelper(Constants.edit_profile, ProfileEditActivity.this, "Please wait...");
+						WebAPIHelper apiHelper=new WebAPIHelper(Constants.edit_owner_profile, ProfileOwnerEditActivity.this, "Please wait...");
 						Log.d("UpdateProfile", "url:"+update_url);
 						apiHelper.execute(update_url);
 						isPasswordSet=false;
@@ -200,7 +192,7 @@ public class ProfileEditActivity extends Fragment
 					{
 						isPasswordSet=true;
 						//http://dev.wardroba.com/serviceXml/updateprofile.php?id=15&name=Nilesh&lastname=Pambhar&city=Rajkot&new_password=nilesh&confirm_password=nilesh
-						WebAPIHelper apiHelper=new WebAPIHelper(Constants.edit_profile, ProfileEditActivity.this, "Please wait...");
+						WebAPIHelper apiHelper=new WebAPIHelper(Constants.edit_owner_profile, ProfileOwnerEditActivity.this, "Please wait...");
 						update_url=Constants.PROFILE_SAVE_URL+"id="+Constants.LOGIN_USERID+"&name="+name+"&lastname="+surname+"&city="+city+"&new_password="+password+"&confirm_password="+repeatPassword;
 						Log.d("UpdateProfile", "url:"+update_url);
 						apiHelper.execute(update_url);

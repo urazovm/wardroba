@@ -164,12 +164,12 @@ public class HomeActivityFragment extends Fragment
   			adapter.notifyDataSetChanged();
   			
  	    	lsvProductList.setAdapter(adapter);
- 	    	lsvProductList.invalidateViews();
+ 	    	//lsvProductList.invalidateViews();
   		}
   		else
   		{
   			lsvProductList.setAdapter(null);
-  			Toast.makeText(getActivity(), "No Record Found !", 5000).show();
+  			//Toast.makeText(getActivity(), "No Record Found !", 5000).show();
   		}
 	    
 	    
@@ -217,6 +217,7 @@ public class HomeActivityFragment extends Fragment
     @Override
     public void onAttach(Activity activity) 
     {
+    	super.onAttach(activity);
     	try 
     	{
         	activity.findViewById(R.id.btnBackHome).setVisibility(View.GONE);	
@@ -225,7 +226,7 @@ public class HomeActivityFragment extends Fragment
         {
             throw new ClassCastException(activity.toString() + " must implement onButtonPressed");
         }
-		super.onAttach(activity);
+		
     }
     
     public boolean isOnline()
@@ -249,8 +250,29 @@ public class HomeActivityFragment extends Fragment
    public void onResume() 
    {
 	super.onResume();
-	
-	if(adapter!=null)
+	if(Constants.IS_PROFILE_CHANGED)
+	{
+		 if(isOnline()==true)
+			{
+				try
+				{
+					Constants.IS_PROFILE_CHANGED=false;
+					WebAPIHelper webAPIHelper = new WebAPIHelper(Constants.product_list,HomeActivityFragment.this ,"Please Wait....");
+					String url = Constants.HOME_PRODUCT_URL+"&id="+Constants.LOGIN_USERID;	
+					Log.d("Product_List= ",url.toString());
+					webAPIHelper.execute(url);    	
+				}
+				catch(Exception e)
+				{
+					
+				}				
+			}
+			else
+			{
+				alert();
+			}
+	}
+	else if(adapter!=null)
 	{
 		adapter.notifyDataSetChanged();
 		lsvProductList.refreshDrawableState();

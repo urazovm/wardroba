@@ -18,7 +18,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,13 +43,16 @@ public class ProfileOwnerViewFragment extends Fragment
 	public void setResponseFromRequest(int requestNumber,WardrobaProfile profile) 
 	{
 		myProfile=(WardrobaProfile)profile;
-		txtName.setText(myProfile.getName()+" "+myProfile.getLastname());
-		txtCityAddress.setText(myProfile.getAddress()+" "+myProfile.getCity());
-		txtEmail.setText(myProfile.getEmail());
-		txtItems.setText(String.valueOf(myProfile.getItems()));
-		txtFollower.setText(String.valueOf(myProfile.getFollower()));
-		txtFollowing.setText(String.valueOf(myProfile.getFollowing()));
-		imageLoader.DisplayImage("http://images.desimartini.com/media/versions/salman_khan_6._gallery_image_100_100.jpg", imgProfilePhoto,imgLoader);
+		if(myProfile!=null)
+		{
+			txtName.setText(myProfile.getName()+" "+myProfile.getLastname());
+			txtCityAddress.setText(myProfile.getCity());
+			txtEmail.setText(myProfile.getEmail());
+			txtItems.setText(String.valueOf(myProfile.getItems()));
+			txtFollower.setText(String.valueOf(myProfile.getFollower()));
+			txtFollowing.setText(String.valueOf(myProfile.getFollowing()));
+			imageLoader.DisplayImage(myProfile.getUser_image(), imgProfilePhoto,imgLoader);
+		}
 
 	}
 	@Override
@@ -97,9 +99,28 @@ public class ProfileOwnerViewFragment extends Fragment
 		txtFollowingLabel.setTypeface(tf);
 		Btn_edit_profile.setTypeface(tf);
 		Btn_logout.setTypeface(tf);
-		
+		Btn_back=(ImageView)getActivity().findViewById(R.id.btnBackHome);
+		Btn_back.setVisibility(View.VISIBLE);
+		Btn_back.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				getFragmentManager().popBackStack();
+			}
+		});
 		
 		initButtonListener(root);
+		if(myProfile!=null)
+		{
+			txtName.setText(myProfile.getName()+" "+myProfile.getLastname());
+			txtCityAddress.setText(myProfile.getCity());
+			txtEmail.setText(myProfile.getEmail());
+			txtItems.setText(String.valueOf(myProfile.getItems()));
+			txtFollower.setText(String.valueOf(myProfile.getFollower()));
+			txtFollowing.setText(String.valueOf(myProfile.getFollowing()));
+			imageLoader.DisplayImage(myProfile.getUser_image(), imgProfilePhoto,imgLoader);
+		}
 		return root;
 	}
 	public void initButtonListener(View root)
@@ -125,7 +146,7 @@ public class ProfileOwnerViewFragment extends Fragment
 			public void onClick(View v) 
 			{
 				
-				ProfileEditActivity secondFragment=new ProfileEditActivity();
+				ProfileOwnerEditActivity secondFragment=new ProfileOwnerEditActivity();
 				Bundle args=new Bundle();
 				args.putString("name",myProfile.getName());
 				args.putString("surname",myProfile.getLastname());
@@ -178,20 +199,37 @@ public class ProfileOwnerViewFragment extends Fragment
     }
 	public void onAttach(Activity activity) 
 	{
-    	ImageView btnBack;
-		btnBack=(ImageView)activity.findViewById(R.id.btnBackHome);
-		btnBack.setVisibility(View.VISIBLE);
-		
-		btnBack.setOnClickListener(new View.OnClickListener()
-		{
-			@Override
-			public void onClick(View arg0) 
-			{
-				getFragmentManager().popBackStack();
-			}
-		});
 		super.onAttach(activity);
+    	ImageView btnBack;
+    	
+		
    }
+	@Override
+	public void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
+		if(Constants.IS_PROFILE_CHANGED)
+    	{
+    		if(isOnline()==true)
+    		{
+    			if(Constants.LOGIN_USERID != 0)
+    			{
+
+    				WebAPIHelper webAPIHelper = new WebAPIHelper(Constants.profile_owner_list,ProfileOwnerViewFragment.this ,"Please Wait....");
+    				String url = Constants.PROFILE_VIEW_URL+"id="+Constants.LOGIN_USERID;		
+    				webAPIHelper.execute(url);
+    				
+    			}else
+    			{
+    				Toast.makeText(getActivity(), "User profile not found", 5000).show();
+    			}
+    		}
+    		else
+    		{
+    			netalert();
+    		}
+    	}
+	}
 	
     public boolean isOnline()
 	{
@@ -223,15 +261,23 @@ public class ProfileOwnerViewFragment extends Fragment
     public void LOGOUTALERT()
     {
  	   AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-		builder.setMessage("Are you sure you want to logout??")
+		builder.setMessage("Are you sure you want to logout?")
 		       .setCancelable(false)
-		       .setPositiveButton("Ok", new DialogInterface.OnClickListener() 
+		       .setPositiveButton("Yes", new DialogInterface.OnClickListener() 
 		       {
 		           public void onClick(DialogInterface dialog, int id) 
 		           {
+		        	   	dialog.dismiss();
 		                Constants.LOGIN_USERID = 0;
 		                Intent home = new Intent(getActivity(),WardrobaDashboardActivity.class);
 		                startActivity(home);
+		                getActivity().finish();
+		           }
+		       }).setNegativeButton("No", new DialogInterface.OnClickListener() 
+		       {
+		           public void onClick(DialogInterface dialog, int id) 
+		           {
+		                dialog.dismiss();
 		           }
 		       });
 		AlertDialog alert = builder.create();

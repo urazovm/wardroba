@@ -4,18 +4,24 @@ import com.ImageLoader.ImageLoader;
 import com.connection.Constants;
 import com.connection.WebAPIHelper;
 import com.connection.WebAPIHelper1;
+import com.example.wardroba.CommentViewActivity.Action;
+import com.example.wardroba.CommentViewActivity.SwipeDetector;
 
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -30,11 +36,19 @@ public class ProductDetailFragment extends Fragment
 	Button btnCancel;
 	TextView txtLike,txtComment,textDescription,txtSharLable;
 	ImageLoader imageLoader;
-	LinearLayout shareDialog;
+	LinearLayout shareDialog,lay_delete;
 	WardrobaItem selected_item;
 	ProgressBar progLoader;
 	public static int SELECTED_PRODUCT=0;
 	Typeface tf;
+	SwipeDetector swipeDetector;
+	public static enum Action {
+        LR, // Left to Right
+        RL, // Right to Left
+        TB, // Top to bottom
+        BT, // Bottom to Top
+        None // when no action was detected
+    }
 	@SuppressWarnings("unchecked")
   	public void setResponseFromRequest1(int requestNumber) 
   	{	
@@ -63,6 +77,8 @@ public class ProductDetailFragment extends Fragment
 			Bundle savedInstanceState) 
 	{
 		ViewGroup root = (ViewGroup) inflater.inflate(R.layout.product_detail_lay, null);
+	
+		swipeDetector=new SwipeDetector();
 		imgProductPhoto=(ImageView)root.findViewById(R.id.img_product_photo);
 		txtLike=(TextView)root.findViewById(R.id.txt_like);
 		txtComment=(TextView)root.findViewById(R.id.txt_comment);
@@ -71,6 +87,9 @@ public class ProductDetailFragment extends Fragment
 		imgLike=(ImageView)root.findViewById(R.id.img_like);
 		imgComment=(ImageView)root.findViewById(R.id.img_comment);
 		shareDialog=(LinearLayout)root.findViewById(R.id.dialogShare);
+		lay_delete=(LinearLayout)root.findViewById(R.id.lay_delete);
+		lay_delete.setVisibility(View.GONE);
+		
 		progLoader=(ProgressBar)root.findViewById(R.id.progLoader);
 		
 		btnFacebook=(ImageView)root.findViewById(R.id.btnFB);
@@ -246,27 +265,34 @@ public class ProductDetailFragment extends Fragment
 	
 	public void ProductDelete()
 	{
+		imgProductPhoto.setOnTouchListener(swipeDetector);
 		imgProductPhoto.setOnClickListener(new View.OnClickListener() 
 		{	
 			@Override
 			public void onClick(View v) 
 			{
-				Constants.CLOTHISID = String.valueOf(selected_item.getPIdCloth());
-				Toast.makeText(getActivity(), "FDF",5000).show();
-				try
+				if(swipeDetector.swipeDetected())
 				{
-//					WebAPIHelper1 webAPIHelper = new WebAPIHelper1(Constants.produce_delete,ProductDetailFragment.this,"Please wait...");
-//					String url = Constants.PRODUCT_DELETE_URL+"id_cloth="+Constants.CLOTHISID;
-//					Log.d("Product Delete URL= ",url.toString());
-//					webAPIHelper.execute(url);    
-					
-					//http://dev.wardroba.com/serviceXml/product_delete.php?id_cloth=50
-
+					Log.d("ProductDetailFragment", "Swipe detected");
+					if(swipeDetector.mSwipeDetected==Action.RL)
+					{
+						lay_delete.setVisibility(View.VISIBLE);
+						TranslateAnimation translateAnimation=new TranslateAnimation(100, 0, 0, 0);
+						translateAnimation.setDuration(700);
+						translateAnimation.setFillBefore(true);
+						lay_delete.startAnimation(translateAnimation);
+						
+					}
+					else if(swipeDetector.mSwipeDetected==Action.LR)
+					{	
+						lay_delete.setVisibility(View.GONE);
+						TranslateAnimation translateAnimation=new TranslateAnimation(0, 100, 0, 0);
+						translateAnimation.setDuration(700);
+						translateAnimation.setFillBefore(true);
+						lay_delete.startAnimation(translateAnimation);
+					}
 				}
-				catch(Exception e)
-				{
-					
-				}
+				
 			}
 		});
 	}
@@ -340,4 +366,73 @@ public class ProductDetailFragment extends Fragment
 			}
 		});
    }
+   class SwipeDetector implements View.OnTouchListener {
+
+	    
+
+	    private static final String logTag = "SwipeDetector";
+	    private static final int MIN_DISTANCE = 100;
+	    private float downX, downY, upX, upY;
+	    private Action mSwipeDetected = Action.None;
+
+	    public boolean swipeDetected() {
+	        return mSwipeDetected != Action.None;
+	    }
+
+	    public Action getAction() {
+	        return mSwipeDetected;
+	    }
+
+	    public boolean onTouch(View v, MotionEvent event) {
+	        switch (event.getAction()) {
+	        case MotionEvent.ACTION_DOWN: {
+	            downX = event.getX();
+	            downY = event.getY();
+	            mSwipeDetected = Action.None;
+	            return false; // allow other events like Click to be processed
+	        }
+	        case MotionEvent.ACTION_MOVE: {
+	            upX = event.getX();
+	            upY = event.getY();
+
+	            float deltaX = downX - upX;
+	            float deltaY = downY - upY;
+
+	            // horizontal swipe detection
+	            if (Math.abs(deltaX) > MIN_DISTANCE) {
+	                // left or right
+	                if (deltaX < 0) {
+	                    //Logger.show(Log.INFO,logTag, "Swipe Left to Right");
+	                    mSwipeDetected = Action.LR;
+	                    Log.i("CommentView", "swipe left to right");
+	                    return true;
+	                }
+	                if (deltaX > 0) {
+	                    //Logger.show(Log.INFO,logTag, "Swipe Right to Left");
+	                	Log.i("CommentView", "swipe left to right");
+	                	mSwipeDetected = Action.RL;
+	                    return true;
+	                }
+	            } else 
+
+	                // vertical swipe detection
+	                if (Math.abs(deltaY) > MIN_DISTANCE) {
+	                    // top or down
+	                    if (deltaY < 0) {
+	                        //Logger.show(Log.INFO,logTag, "Swipe Top to Bottom");
+	                        mSwipeDetected = Action.TB;
+	                        return false;
+	                    }
+	                    if (deltaY > 0) {
+	                        //Logger.show(Log.INFO,logTag, "Swipe Bottom to Top");
+	                        mSwipeDetected = Action.BT;
+	                        return false;
+	                    }
+	                } 
+	            return true;
+	        }
+	        }
+	        return false;
+	    }
+	}
 }
