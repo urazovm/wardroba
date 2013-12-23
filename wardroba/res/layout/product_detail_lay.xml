@@ -18,8 +18,7 @@
 	    android:orientation="vertical"
 	    >
 	    <RelativeLayout android:layout_width="fill_parent"
-        	android:layout_height="fill_parent"
-        	>
+        	android:layout_height="fill_parent">
 			<ImageView 
 			    android:id="@+id/img_product_photo"
 			    android:layout_width="fill_parent"
@@ -36,6 +35,7 @@
 	        android:layout_height="wrap_content"
 	        android:layout_centerHorizontal="true"
 	        android:layout_centerVertical="true" />
+
 			<LinearLayout android:layout_width="wrap_content"
 			    android:layout_height="wrap_content"
 			    android:layout_centerInParent="true"
@@ -47,7 +47,7 @@
 		            android:layout_height="wrap_content">
 		            <ImageView android:layout_width="70dp"
 		                android:layout_height="70dp"
-		                android:background="#88AA0000"
+		                android:background="@color/red_bg_close"
 		                />
 		            <ImageView android:layout_width="wrap_content"
 		                android:layout_height="wrap_content"

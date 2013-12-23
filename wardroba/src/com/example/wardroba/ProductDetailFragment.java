@@ -2,13 +2,12 @@ package com.example.wardroba;
 
 import com.ImageLoader.ImageLoader;
 import com.connection.Constants;
-import com.connection.WebAPIHelper;
 import com.connection.WebAPIHelper1;
-import com.example.wardroba.CommentViewActivity.Action;
-import com.example.wardroba.CommentViewActivity.SwipeDetector;
-
 import android.app.Activity;
-import android.app.AlarmManager;
+
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -18,7 +17,6 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.TranslateAnimation;
@@ -32,7 +30,7 @@ import android.widget.Toast;
 public class ProductDetailFragment extends Fragment
 {
 	ImageView imgProductPhoto,imgShare,imgLike,imgComment;
-	ImageView btnFacebook,btnTwitter,btnPinterest,btnTumbler,btnGooglePlus;
+	ImageView btnFacebook,btnTwitter,btnPinterest,btnTumbler,btnGooglePlus,btnProductDelete;
 	Button btnCancel;
 	TextView txtLike,txtComment,textDescription,txtSharLable;
 	ImageLoader imageLoader;
@@ -41,6 +39,7 @@ public class ProductDetailFragment extends Fragment
 	ProgressBar progLoader;
 	public static int SELECTED_PRODUCT=0;
 	Typeface tf;
+
 	SwipeDetector swipeDetector;
 	public static enum Action {
         LR, // Left to Right
@@ -49,6 +48,7 @@ public class ProductDetailFragment extends Fragment
         BT, // Bottom to Top
         None // when no action was detected
     }
+
 	@SuppressWarnings("unchecked")
   	public void setResponseFromRequest1(int requestNumber) 
   	{	
@@ -63,14 +63,56 @@ public class ProductDetailFragment extends Fragment
   					int id=temp.getPIdCloth();
   					if(id==cloth_id)
   						break;
-  				
+
   					count++;	
   				}
-  				
   			}
   			Constants.all_items.get(count).setPLikeStatus(status);
   			Constants.all_items.get(count).setPLikeCount(like_count);
   			updateProductDetail();
+  	}
+	public void setResponseFromRequest2(int requestNumber) 
+  	{	
+
+		if(Constants.PRODUCT_DELETED != 0)
+		{
+			if(Constants.all_items.size()>0)
+  			{
+				int count=0;
+  				for(WardrobaItem temp:Constants.all_items)
+  				{
+  					int id=temp.getPIdCloth();
+  					if(id==Constants.PRODUCT_DELETED)
+  					{
+  						Constants.all_items.remove(count);
+  						Log.d("Count ID=", String.valueOf(count));
+  						break;
+  					}	
+  					count++;
+  				}
+  			}
+			
+			if(Constants.my_items.size()>0)
+  			{
+  				for(WardrobaItem temp:Constants.my_items)
+  				{
+  					int id=temp.getPIdCloth();
+  					if(id==Constants.PRODUCT_DELETED)
+  					{
+  						Constants.my_items.remove(Constants.PRODUCT_DELETED_SELECTED_ID);
+  						Log.d("Selected ID=", String.valueOf(Constants.PRODUCT_DELETED_SELECTED_ID));
+  						break;
+  					}	
+  				}
+  			}
+			
+			Toast.makeText(getActivity(), "Product has been deleted successfully.", 5000).show();
+			getFragmentManager().popBackStack();
+			
+		}else
+		{
+			Toast.makeText(getActivity(), "Product not deleted..", 5000).show();
+		}
   	}
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -86,6 +128,7 @@ public class ProductDetailFragment extends Fragment
 		textDescription=(TextView)root.findViewById(R.id.txt_short_description);
 		imgLike=(ImageView)root.findViewById(R.id.img_like);
 		imgComment=(ImageView)root.findViewById(R.id.img_comment);
+		
 		shareDialog=(LinearLayout)root.findViewById(R.id.dialogShare);
 		lay_delete=(LinearLayout)root.findViewById(R.id.lay_delete);
 		lay_delete.setVisibility(View.GONE);
@@ -108,6 +151,9 @@ public class ProductDetailFragment extends Fragment
 		textDescription.setTypeface(tf);
 		txtSharLable.setTypeface(tf);
 		
+		//Toast.makeText(getActivity(), String.valueOf(Constants.PRODUCT_DELETED_SELECTED_ID), 5000).show();
+		btnProductDelete.setVisibility(View.GONE);
+        		
 		CancelDialog();
 		FacebookSharing();
 		TwitterSharing();
@@ -173,7 +219,6 @@ public class ProductDetailFragment extends Fragment
 			@Override
 			public void onClick(View arg0) 
 			{
-				// TODO Auto-generated method stub
 				String url;
 				String LikeStatus;
 				String Cloth_Id,User_Id,ObjectId1,Cloth_type;
@@ -241,7 +286,6 @@ public class ProductDetailFragment extends Fragment
 	}
 	public void setProductArray(int position)
 	{
-		
 		SELECTED_PRODUCT=position;
 	}
 	@Override
@@ -271,8 +315,10 @@ public class ProductDetailFragment extends Fragment
 			@Override
 			public void onClick(View v) 
 			{
+
 				if(swipeDetector.swipeDetected())
 				{
+					
 					Log.d("ProductDetailFragment", "Swipe detected");
 					if(swipeDetector.mSwipeDetected==Action.RL)
 					{
@@ -295,7 +341,47 @@ public class ProductDetailFragment extends Fragment
 				
 			}
 		});
+		lay_delete.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+				ProductDeletealert();
+			}
+		});
 	}
+	
+	
+ 
+	public void ProductDeletealert()
+    {
+ 	   AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+ 			builder.setMessage("Are you sure you want to delete item ?")
+ 			       .setCancelable(false)
+ 			       .setPositiveButton("YES", new DialogInterface.OnClickListener() 
+ 			       {
+ 			           public void onClick(DialogInterface dialog, int id) 
+ 			           {
+ 			        	 // Toast.makeText(getActivity(), "FDF",5000).show();
+ 			        	    WebAPIHelper1 webAPIHelper = new WebAPIHelper1(Constants.produce_delete,ProductDetailFragment.this,"Please wait...");
+ 							String url = Constants.PRODUCT_DELETE_URL+"id_cloth="+Constants.CLOTHISID;
+ 							Log.d("Product Delete URL= ",url.toString());
+ 							webAPIHelper.execute(url);
+ 			        	   
+ 			        	   //http://dev.wardroba.com/serviceXml/product_delete.php?id_cloth=50
+
+ 			           }
+ 			       }).setNegativeButton("NO", new DialogInterface.OnClickListener() 
+ 			       {
+ 			           public void onClick(DialogInterface dialog, int id) 
+ 			           {
+ 			        	   dialog.dismiss();
+ 			           }
+ 			       });
+ 			AlertDialog alert = builder.create();
+ 			alert.show();
+    } 
+	
 	public void CancelDialog()
 	{
 		btnCancel.setOnClickListener(new View.OnClickListener() 
