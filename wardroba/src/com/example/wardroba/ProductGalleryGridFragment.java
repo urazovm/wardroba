@@ -120,8 +120,8 @@ public class ProductGalleryGridFragment extends Fragment
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				String data=txtKeyward.getText().toString();
-				if(!data.equals(""))
-				{
+//				if(!data.equals(""))
+//				{
 					 try {
 						 InputMethodManager inputManager = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE); 
 						 inputManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
@@ -134,11 +134,11 @@ public class ProductGalleryGridFragment extends Fragment
 							// TODO: handle exception
 							
 						}
-				}
-				else
-				{
-					Toast.makeText(getActivity(), "Please enter keyword", Toast.LENGTH_SHORT).show();
-				}
+//				}
+//				else
+//				{
+//					Toast.makeText(getActivity(), "Please enter keyword", Toast.LENGTH_SHORT).show();
+//				}
 			}
 		});
     	

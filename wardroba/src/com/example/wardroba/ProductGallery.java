@@ -63,20 +63,13 @@ public class ProductGallery extends FragmentActivity implements OnProductSelectL
   	@Override
 	public void OnProductSelected(int position) 
 	{
-		// TODO Auto-generated method stub
-		
-            // If the frag is not available, we're in the one-pane layout and must swap frags...
 
-            // Create fragment and give it an argument for the selected article
 			ProductDetailFragment secondFragment=new ProductDetailFragment();
 			secondFragment.setProductArray(position);
+			Constants.PRODUCT_DELETED_SELECTED_ID =position;
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-
-            // Replace whatever is in the fragment_container view with this fragment,
-            // and add the transaction to the back stack so the user can navigate back
             transaction.replace(R.id.fragment_container, secondFragment);
             transaction.addToBackStack(null);
-            // Commit the transaction
             transaction.commit();
         
 	}

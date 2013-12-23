@@ -58,6 +58,7 @@ public class Constants implements Serializable
  	public static String REMEBER_EMAIL="";
  	public static String CLOTHISID,CLOTH_USERID,OBJECT_ID,CLOTH_TYPE;
  	public static int OWNERID;
+ 	public static int PRODUCT_DELETED,PRODUCT_DELETED_SELECTED_ID;
  	
  	public static String USEREMAIL;
  	public static String USERGENDER;

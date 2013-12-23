@@ -9,6 +9,7 @@ import com.example.wardroba.CommentViewActivity;
 import com.example.wardroba.HomeActivityFragment;
 import com.example.wardroba.ProductDetailFragment;
 import com.example.wardroba.ProfileEditActivity;
+import com.example.wardroba.WardrobaProfile;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -20,7 +21,7 @@ import android.util.Log;
 public class WebAPIHelper1 extends AsyncTask<String, Integer, Long>
 {
 	private ProgressDialog progressDlg;
-
+	private ProductDetailFragment productDetailFragment;
 	private Dialogs mainActivity;
 	private Document response;
 	private int requestNumber;
@@ -31,14 +32,6 @@ public class WebAPIHelper1 extends AsyncTask<String, Integer, Long>
 	Context myContext;
 	
 	private WebAPIRequest webAPIRequest = new WebAPIRequest();
-	
-//	public WebAPIHelper1(int requestNumber, Context context, String msg) 
-//	{
-//		this.requestNumber = requestNumber;
-//		this.myContext=context;
-//		//progressDlg = new ProgressDialog(context);
-//		//loadingMessage = msg;
-//	}
 	
 	public WebAPIHelper1(int requestNumber, Dialogs activity, String msg) 
 	{
@@ -69,6 +62,15 @@ public class WebAPIHelper1 extends AsyncTask<String, Integer, Long>
 		//progressDlg = new ProgressDialog(this.mFragment.getActivity());
 		//loadingMessage = msg;
 	}
+
+	public WebAPIHelper1(int requestNumber, ProductDetailFragment productDetailFragment, String msg) 
+	{
+		this.requestNumber = requestNumber;
+		this.productDetailFragment=productDetailFragment;
+		progressDlg = new ProgressDialog(productDetailFragment.getActivity());
+		loadingMessage = msg;
+	}
+	
 	
 	protected void onPreExecute() 
 	{
@@ -173,6 +175,23 @@ public class WebAPIHelper1 extends AsyncTask<String, Integer, Long>
 			}
 
 			((CommentViewActivity)myContext).setResponseForDelete();
+		}
+		else if (requestNumber == Constants.produce_delete)
+		{		
+			if(response != null)
+			{
+				Element node = (Element) response.getElementsByTagName("root").item(0);
+				NodeList nlist =  node.getElementsByTagName("result");
+				Element childNode = (Element)nlist.item(0);
+				Constants.PRODUCT_DELETED=parseIntValue(getValueFromNode(childNode,"id_cloth"));
+				
+				Log.d("WebApiHelper1", "Product Comment:");
+			}
+			else
+			{
+				Constants.LOGIN_USERID = 0;
+			}
+			productDetailFragment.setResponseFromRequest2(requestNumber);
 		}
 		
 		progressDlg.dismiss();
