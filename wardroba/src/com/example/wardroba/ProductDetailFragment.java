@@ -150,9 +150,7 @@ public class ProductDetailFragment extends Fragment
 		btnCancel.setTypeface(tf);
 		textDescription.setTypeface(tf);
 		txtSharLable.setTypeface(tf);
-		
-		//Toast.makeText(getActivity(), String.valueOf(Constants.PRODUCT_DELETED_SELECTED_ID), 5000).show();
-		
+
         		
 		CancelDialog();
 		FacebookSharing();
@@ -363,7 +361,9 @@ public class ProductDetailFragment extends Fragment
  			           public void onClick(DialogInterface dialog, int id) 
  			           {
  			        	 // Toast.makeText(getActivity(), "FDF",5000).show();
+
  			        	   	Constants.CLOTHISID = String.valueOf(selected_item.getPIdCloth());
+
  			        	    WebAPIHelper1 webAPIHelper = new WebAPIHelper1(Constants.produce_delete,ProductDetailFragment.this,"Please wait...");
  							String url = Constants.PRODUCT_DELETE_URL+"id_cloth="+Constants.CLOTHISID;
  							Log.d("Product Delete URL= ",url.toString());
