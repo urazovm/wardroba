@@ -109,7 +109,7 @@
             android:screenOrientation="portrait">
         </activity>
         
-        <activity android:name="com.example.wardroba.CameraViewActivity"
+        <activity android:name="com.example.wardroba.CameraViewMain"
             android:screenOrientation="portrait"></activity>
            </application>
 

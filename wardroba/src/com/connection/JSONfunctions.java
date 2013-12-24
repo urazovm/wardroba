@@ -26,7 +26,8 @@ public class JSONfunctions  extends AsyncTask<String, Void,String>
 {
 	ProgressDialog dialog;
 	Context mContext;
-	Fragment mFragment;
+	ProfileEditActivity profileEditActivity;
+	ProfileOwnerEditActivity profileOwnerEditActivity;
 	String message;
 	int requestNo;
 	public JSONfunctions(Context c,String msg,int req)
@@ -39,18 +40,18 @@ public class JSONfunctions  extends AsyncTask<String, Void,String>
 	}
 	public JSONfunctions(ProfileEditActivity activity,String msg,int req)
 	{
-		this.mFragment=activity;
+		this.profileEditActivity=activity;
 		message=msg;
-		dialog=new ProgressDialog(mFragment.getActivity());
+		dialog=new ProgressDialog(profileEditActivity.getActivity());
 		this.requestNo=req;
 		
 	}
 	public JSONfunctions(ProfileOwnerEditActivity profileOwnerEditActivity,
 			String msg, int req) {
 		// TODO Auto-generated constructor stub
-		this.mFragment=profileOwnerEditActivity;
+		this.profileOwnerEditActivity=profileOwnerEditActivity;
 		message=msg;
-		dialog=new ProgressDialog(mFragment.getActivity());
+		dialog=new ProgressDialog(profileOwnerEditActivity.getActivity());
 		this.requestNo=req;
 	}
 	@Override
@@ -193,7 +194,7 @@ public class JSONfunctions  extends AsyncTask<String, Void,String>
 		            Log.e("jArray................", "Error parsing data "+e.toString());
 		    }
 		    
-		    ((ProfileEditActivity)mFragment).setResponseChangePassword(jArray);
+		    profileEditActivity.setResponseChangePassword(jArray);
 		    
 		}
 		else if(Constants.edit_owner_profile_change_password==requestNo)
@@ -235,7 +236,7 @@ public class JSONfunctions  extends AsyncTask<String, Void,String>
 		            Log.e("jArray................", "Error parsing data "+e.toString());
 		    }
 		    
-		    ((ProfileEditActivity)mFragment).setResponseChangePassword(jArray);
+		    profileOwnerEditActivity.setResponseChangePassword(jArray);
 		    
 		}
 		dialog.dismiss();
@@ -245,7 +246,6 @@ public class JSONfunctions  extends AsyncTask<String, Void,String>
 	protected void onPostExecute(String result) {
 		// TODO Auto-generated method stub
 		super.onPostExecute(result);
-		if(dialog.isShowing())
-			dialog.dismiss();
+		
 	}
 }

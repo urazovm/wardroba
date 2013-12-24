@@ -100,6 +100,7 @@ public class ProfileEditActivity extends Fragment
 				{
 					new ImageUploadTask().execute();
 				}
+				 Toast.makeText(getActivity(), "Profile update successfully", Toast.LENGTH_SHORT).show();
 				Constants.IS_PROFILE_CHANGED=true;
 			}
 		}
@@ -114,7 +115,7 @@ public class ProfileEditActivity extends Fragment
  				 response=json.getString("success").toString();
 				 if(response.equals("true"))
 	 			 {
-	 				 //Toast.makeText(getActivity(), "Profile update successfully", Toast.LENGTH_SHORT).show();
+	 				 Toast.makeText(getActivity(), "Profile update successfully", Toast.LENGTH_SHORT).show();
 	 				 Constants.LOGIN_USERID=Integer.valueOf(json.getString("id").toString());
 	 			 }
 				 else
@@ -351,7 +352,7 @@ public class ProfileEditActivity extends Fragment
 		 protected void onPostExecute(String result) {
 		  dialog.dismiss();
 		  
-		  Toast.makeText(getActivity(), "file uploaded",Toast.LENGTH_LONG).show();
+		  Toast.makeText(getActivity(), "Profile update successfully", Toast.LENGTH_SHORT).show();
 		 }
 		}
 	public boolean checkEmpty()
