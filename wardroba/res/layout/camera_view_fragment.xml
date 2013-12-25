@@ -25,11 +25,12 @@
 	    android:id="@+id/bottom_lay"
 	    android:layout_width="fill_parent"
 	    android:layout_height="wrap_content"
-	    android:background="#AA000000"
+	    android:background="@drawable/crop_bottom_bg"
 	    android:layout_alignParentBottom="true">
 	    <RelativeLayout android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
-	        android:layout_margin="5dp">
+	        android:layout_margin="5dp"
+	        android:layout_gravity="center_vertical">
 	        <ImageView 
 	            android:id="@+id/btnAlbum"
 	            android:layout_width="wrap_content"

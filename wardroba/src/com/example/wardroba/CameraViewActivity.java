@@ -124,7 +124,7 @@ public class CameraViewActivity extends Fragment implements Callback
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) 
 	{
-		super.onActivityResult(requestCode, resultCode, data);
+		//super.onActivityResult(requestCode, resultCode, data);
 		//this.onActivityResult(requestCode, resultCode, data);
 		if(resultCode==Activity.RESULT_OK)
 		{
@@ -132,19 +132,27 @@ public class CameraViewActivity extends Fragment implements Callback
 			 Toast.makeText(getActivity(), "selected image"+selectedImage.toString(), Toast.LENGTH_SHORT).show();
 			 Bundle bundle=new Bundle();
 			 bundle.putString("imageUri", selectedImage.toString());
+			 bundle.putString("imageTakenFrom", "gallery");
 			 CameraCropViewFragment cropFragment=new CameraCropViewFragment();
 			 cropFragment.setArguments(bundle);
 			 FragmentTransaction transaction = getFragmentManager().beginTransaction();
 	            transaction.replace(R.id.camera_fragment_container, cropFragment);
 	            transaction.addToBackStack(null);
-	            
+	            transaction.commitAllowingStateLoss();
 	            // Commit the transaction
-	            transaction.commit();
-			 
+	            //transaction.commit();
+	
 			 
 		     
 		}
 	}
+	@Override
+	public void onSaveInstanceState(Bundle outState) 
+	{
+		super.onSaveInstanceState(outState);
+		
+	}
+	
 		PictureCallback myPictureCallback=new PictureCallback() {
 		
 		@Override
@@ -154,12 +162,23 @@ public class CameraViewActivity extends Fragment implements Callback
 		     try {
 		    	 
 		    	    
-		    	 Bitmap bitmapPicture = BitmapFactory.decodeByteArray(data, 0, data.length);
-		    	 Bitmap correctBmp = Bitmap.createBitmap(bitmapPicture, 0, 0, bitmapPicture.getWidth(), bitmapPicture.getHeight(), null, false);
-			     saveImage(correctBmp);
+		    	 //Bitmap bitmapPicture = BitmapFactory.decodeByteArray(data, 0, data.length);
+		    	 //Bitmap correctBmp = Bitmap.createBitmap(bitmapPicture, 0, 0, bitmapPicture.getWidth(), bitmapPicture.getHeight(), null, false);
+		    	 
+			     //saveImage(correctBmp);
+		    	 
 			     camera.stopPreview();
 			     isPriviewing=false;
-			     Toast.makeText(getActivity(), "Picture saved", Toast.LENGTH_SHORT).show();
+			     Bundle bundle=new Bundle();
+				 bundle.putByteArray("data", data);
+				 bundle.putString("imageTakenFrom", "camera");
+				 CameraCropViewFragment cropFragment=new CameraCropViewFragment();
+				 cropFragment.setArguments(bundle);
+				 FragmentTransaction transaction = getFragmentManager().beginTransaction();
+		            transaction.replace(R.id.camera_fragment_container, cropFragment);
+		            transaction.addToBackStack(null);
+		            transaction.commitAllowingStateLoss();
+			     //Toast.makeText(getActivity(), "Picture saved", Toast.LENGTH_SHORT).show();
 			} catch (Exception e) {
 				// TODO: handle exception
 			}

@@ -27,25 +27,45 @@
 	            android:layout_marginLeft="10dp"
 	            android:layout_alignParentLeft="true"/>
 	        <ImageView 
-	            android:id="@+id/btnCrop"
+	            android:id="@+id/btnDone"
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
-	            android:background="@drawable/cut_icon"
+	            android:background="@drawable/done"
 	            android:layout_centerInParent="true"/>
-	        
+	        <LinearLayout android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_alignParentRight="true"
+	            android:layout_centerVertical="true">
+	            <Button android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:background="@drawable/zoom_in_button"/>
+   	            <Button android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:background="@drawable/zoom_out_button"/>
+	            
+	        </LinearLayout>
 	    </RelativeLayout>
 	</LinearLayout>
 	<LinearLayout android:layout_width="fill_parent"
 	    android:layout_height="fill_parent"
 	    android:layout_above="@id/bottom_lay"
 	    android:gravity="center">
-		 <com.edmodo.cropper.CropImageView
-            xmlns:custom="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/CropImageView"
+		 <ImageView
+            
+            android:id="@+id/imgDone"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_gravity="center"
-             ></com.edmodo.cropper.CropImageView>    
+            />    
 	</LinearLayout>
-	
+	<Button 
+	    android:id="@+id/btnReset"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:background="@drawable/reset"
+	    android:layout_centerHorizontal="true"
+	    android:text="Reset"
+	    android:textColor="@color/white"
+	    android:textSize="16dp"
+	    />
 </RelativeLayout>

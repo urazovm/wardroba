@@ -30,7 +30,7 @@ public class TabbarView extends TabHostProvider
 	public TabView getTabHost() 
 	{
 		tabView = new TabView(context);
-		tabView.setBackgroundID(R.drawable.tab);
+		tabView.setBackgroundID(R.drawable.menu_bg);
 		
 		HomeTab = new Tab(context, "Home");
 		HomeTab.setIntent(new Intent(context,HomeActivityFragment.class));
