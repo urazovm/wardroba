@@ -19,7 +19,7 @@
 		    android:layout_height="wrap_content" 
 		    android:orientation="horizontal">
 	        <TextView
-	            android:id="@+id/txt_"
+	            android:id="@+id/txt_tags_lable"
 	            android:layout_width="fill_parent"
 				android:layout_height="wrap_content"
 				android:gravity="center_horizontal"
@@ -33,13 +33,13 @@
 		    android:layout_height="wrap_content" 
 		    android:orientation="horizontal">
 	        <TextView
-	            android:id="@+id/txt_"
+	            android:id="@+id/txt_select_type_lable"
 	            android:layout_width="fill_parent"
 				android:layout_height="wrap_content"
 	            android:textColor="@color/textcolor2"
 	            android:textSize="16dp"
 	            android:text="Select the type:" 
-	            android:layout_marginLeft="5dp"/>
+	            android:layout_marginLeft="10dp"/>
 	    </LinearLayout>
 	    <LinearLayout
 		    android:layout_width="fill_parent"
@@ -51,7 +51,7 @@
 		    	android:layout_marginLeft="20dp"
 		    	android:layout_marginRight="22dp">
 		        <TextView
-		            android:id="@+id/txt_"
+		            android:id="@+id/txt_topwear"
 		            android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 		            android:textColor="@color/textcolor2"
@@ -60,7 +60,7 @@
 		            android:text="topwear" 
 		            android:layout_marginLeft="5dp"/>
 		        <TextView
-		            android:id="@+id/txt_"
+		            android:id="@+id/txt_bottamwear"
 		            android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 		            android:textColor="@color/textcolor2"
@@ -80,7 +80,7 @@
 		    	android:layout_marginLeft="20dp"
 		    	android:layout_marginRight="20dp">
 		        <TextView
-		            android:id="@+id/txt_"
+		            android:id="@+id/txt_shoes"
 		            android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 		            android:textColor="@color/textcolor2"
@@ -89,7 +89,7 @@
 		            android:text="shoes" 
 		            android:layout_marginLeft="5dp"/>
 		        <TextView
-		            android:id="@+id/txt_"
+		            android:id="@+id/txt_accessories"
 		            android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 		            android:textColor="@color/textcolor2"
@@ -104,7 +104,7 @@
           android:id="@+id/textView1" 
 	      android:layout_width="fill_parent" 
 	      android:background="@color/textcolor2"  
-	      android:layout_margin="5dp"
+	      android:layout_margin="10dp"
 	      android:layout_height="0.5dip"/>  
 	    
 	     <LinearLayout
@@ -112,26 +112,31 @@
 		    android:layout_height="wrap_content" 
 		    android:orientation="horizontal">
 	        <TextView
-	            android:id="@+id/txt_"
+	            android:id="@+id/txt_hint_lable"
 	            android:layout_width="fill_parent"
 				android:layout_height="wrap_content"
 	            android:textColor="@color/textcolor2"
 	            android:textSize="16dp"
 	            android:text="Add #tags,Like , Brand, Catagory, Colour, Size, Material,Price and Other." 
-	            android:layout_marginLeft="5dp"/>
+	            android:layout_marginLeft="10dp"
+	            android:layout_marginRight="10dp"/>
 	    </LinearLayout>
 	     <LinearLayout
 		    android:layout_width="fill_parent"
 		    android:layout_height="fill_parent"
-		    android:layout_margin="5dp"
+		    android:layout_margin="10dp"
 		    android:background="@drawable/border" 
 		    android:orientation="horizontal">
-	        <LinearLayout
+	        <EditText
+			    android:id="@+id/edt_tags"
 			    android:layout_width="fill_parent"
-			    android:layout_height="wrap_content"
-			    
-			    android:orientation="horizontal">
-	    </LinearLayout>
+			    android:layout_height="fill_parent"
+	    	    android:background="@color/white"
+			    android:inputType="textMultiLine"
+			    android:gravity="top"
+			    android:textSize="16dp"
+			    android:textColor="@color/textcolor"/>
+	    
 	    </LinearLayout>
 	    
 	</LinearLayout>
@@ -149,9 +154,10 @@
 	        android:layout_height="wrap_content"
 	        android:layout_margin="5dp">
 	        <ImageView 
-	            android:id="@+id/btn_refresh"
+	            android:id="@+id/btn_undo"
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
+	            android:layout_marginLeft="10dp"
 	            android:background="@drawable/refresh_icon"
 	            android:layout_centerVertical="true"
 	            android:layout_alignParentLeft="true"/>

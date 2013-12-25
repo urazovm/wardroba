@@ -38,16 +38,14 @@
         <activity
             android:name="com.example.wardroba.SplashActivity"
             android:label="@string/app_name" 
-            android:screenOrientation="portrait"
-            >
-            
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.example.wardroba.WardrobaDashboardActivity"
+        <activity 
+            android:name="com.example.wardroba.WardrobaDashboardActivity"
             android:screenOrientation="portrait" >
         </activity>
         <activity
@@ -62,41 +60,46 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" >
         </activity>
-        <activity android:name="com.example.wardroba.ProfileEditActivity" 
+        <activity 
+            android:name="com.example.wardroba.ProfileEditActivity" 
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize"
-            >
+            android:windowSoftInputMode="adjustResize">
         </activity>
-        <activity android:name="com.example.wardroba.ProfileActivity" 
+        <activity 
+            android:name="com.example.wardroba.ProfileActivity" 
             android:screenOrientation="portrait">
         </activity>
-        <activity android:name="com.example.wardroba.ProfileOwnerViewFragment" 
+        <activity 
+            android:name="com.example.wardroba.ProfileOwnerViewFragment" 
             android:screenOrientation="portrait">
         </activity>
-        <activity android:name="com.example.wardroba.ProductlistActivity" 
+        <activity 
+            android:name="com.example.wardroba.ProductlistActivity" 
             android:screenOrientation="portrait">
         </activity>
-        <activity android:name="com.example.wardroba.ProductGallery" 
+        <activity 
+            android:name="com.example.wardroba.ProductGallery" 
             android:screenOrientation="portrait">
         </activity>
-        <activity android:name="com.example.wardroba.AboutUsActivity" 
+        <activity 
+            android:name="com.example.wardroba.AboutUsActivity" 
             android:screenOrientation="portrait">
         </activity>
-        <activity android:name="com.example.wardroba.HomeActivityMain" 
+        <activity 
+            android:name="com.example.wardroba.HomeActivityMain" 
             android:screenOrientation="portrait">
         </activity>
-        <activity android:name="com.example.wardroba.HomeActivityFragment" 
+        <activity 
+            android:name="com.example.wardroba.HomeActivityFragment" 
             android:screenOrientation="portrait">
         </activity>
-        <activity android:name="com.example.wardroba.HomeTabActivity" 
+        <activity 
+            android:name="com.example.wardroba.HomeTabActivity" 
             android:screenOrientation="portrait">
-     
         </activity>
-        
-        <activity android:name="com.example.wardroba.CommentViewActivity"
-            android:screenOrientation="portrait"
-            >
-            
+        <activity 
+            android:name="com.example.wardroba.CommentViewActivity"
+            android:screenOrientation="portrait">
         </activity>
         <activity
             android:name="com.example.wardroba.ProductList_new"
@@ -108,9 +111,14 @@
             android:label="@string/title_activity_product_detail" 
             android:screenOrientation="portrait">
         </activity>
-        
-        <activity android:name="com.example.wardroba.CameraViewMain"
+        <activity 
+            android:name="com.example.wardroba.CameraViewMain"
             android:screenOrientation="portrait"></activity>
-           </application>
+        <activity 
+            android:name="com.example.wardroba.CamaraSaveFragment"
+            android:screenOrientation="portrait">
+        </activity>
+           
+   	</application>
 
 </manifest>
