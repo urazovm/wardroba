@@ -9,10 +9,12 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.PointF;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.util.FloatMath;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -46,16 +48,18 @@ public class CameraImageDoneFragment extends Fragment  implements OnTouchListene
 	PointF start = new PointF();
 	PointF mid = new PointF();
 	float oldDist = 1f;
+	Typeface tf;
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		root = (ViewGroup) inflater.inflate(R.layout.camera_image_done_fragment,null);
+		tf= Typeface.createFromAsset(getActivity().getAssets(),"fonts/GOTHIC.TTF");
 		imgDone=(ImageView)root.findViewById(R.id.imgDone);
 		btnUndo=(ImageView)root.findViewById(R.id.btnUndo);
 		btnDone=(ImageView)root.findViewById(R.id.btnDone);
 		btnReset=(Button)root.findViewById(R.id.btnReset);
-		
+		btnReset.setTypeface(tf);
 		bundle=getArguments();
 		productBitmap=(Bitmap)bundle.getParcelable("croppedImage");
 		imgDone.setImageBitmap(productBitmap);
@@ -71,7 +75,13 @@ public class CameraImageDoneFragment extends Fragment  implements OnTouchListene
 			@Override
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
-				
+				CamaraSaveFragment saveFragment=new CamaraSaveFragment();
+				 
+				 saveFragment.setArguments(bundle);
+				 FragmentTransaction transaction = getFragmentManager().beginTransaction();
+		            transaction.replace(R.id.camera_fragment_container, saveFragment);
+		            transaction.addToBackStack(null);
+		            transaction.commit();
 				
 			}
 		});
@@ -115,8 +125,8 @@ public class CameraImageDoneFragment extends Fragment  implements OnTouchListene
 				{
 		
 					case MotionEvent.ACTION_DOWN: //first finger down only
-							/*savedMatrix.set(matrix);
-							start.set(event.getX(), event.getY());*/
+							savedMatrix.set(matrix);
+							start.set(event.getX(), event.getY());
 							Log.d("CameraDone", "mode=DRAG" );
 							mode = DRAG;
 							break;

@@ -77,6 +77,14 @@ public class CameraCropViewFragment extends Fragment
 		            transaction.commit();
 			}
 		});
+		btnUndo.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+				getFragmentManager().popBackStack();
+			}
+		});
 	}
 	public String getPath(Uri uri) 
 	 {
