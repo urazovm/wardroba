@@ -3,8 +3,11 @@ package com.example.wardroba;
 
 import com.ImageLoader.ImageLoader;
 import com.connection.Constants;
+import com.connection.LoadingListHelper;
 import com.connection.WebAPIHelper;
 import com.connection.WebAPIHelper1;
+import com.costum.android.widget.LoadMoreListView;
+import com.costum.android.widget.LoadMoreListView.OnLoadMoreListener;
 import com.example.wardroba.SmartImageView.onMyDoubleClickListener;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -37,7 +40,7 @@ import android.widget.AbsListView.OnScrollListener;
 
 public class HomeActivityFragment extends Fragment 
 {
-	public ListView lsvProductList;
+	public LoadMoreListView lsvProductList;
 	public ImageView imgUserPhoto;
 	public TextView txtNameSurname,txtDate,txtSharLable;
 	LinearLayout linOwnerHeader;
@@ -56,6 +59,32 @@ public class HomeActivityFragment extends Fragment
   			
  	    	lsvProductList.setAdapter(adapter);
  	    	lsvProductList.invalidateViews();
+ 	    	//lsvProductList.onLoadMoreComplete();
+  		}
+  		else
+  		{
+  			lsvProductList.setAdapter(null);
+  			Toast.makeText(getActivity(), "No Record Found !", 5000).show();
+  		}
+  	} 	
+  	public void setResponseOfLoadingMore(int requestNumber) 
+  	{		  		 		
+  		if(Constants.all_items.size()>0)
+  		{
+//  			txtNameSurname.setText(Constants.USER_NAME.toString());
+//  			txtDate.setText(Constants.USER_DATE.toString());
+  			adapter=new HomeProductBaseAdapter(HomeActivityFragment.this, shareDialog);
+  			adapter.notifyDataSetChanged();
+  			
+  			lsvProductList.requestLayout();
+  			lsvProductList.onLoadMoreComplete();
+  			//adapter.notifyAll();
+ 	    	/*lsvProductList.setAdapter(adapter);
+ 	    	lsvProductList.invalidateViews();*/
+  			
+  			//
+  			//lsvProductList.refreshDrawableState();
+ 	    	
   		}
   		else
   		{
@@ -103,7 +132,7 @@ public class HomeActivityFragment extends Fragment
         getActivity().findViewById(R.id.btnBackHome).setVisibility(View.GONE);
         tf= Typeface.createFromAsset(getActivity().getAssets(),"fonts/GOTHIC.TTF");
         
-        lsvProductList=(ListView)root.findViewById(R.id.product_list);
+        lsvProductList=(LoadMoreListView)root.findViewById(R.id.product_list);
  	     
  		btnFacebook=(ImageView)root.findViewById(R.id.btnFB);
  		btnTwitter=(ImageView)root.findViewById(R.id.btnTwitter);
@@ -117,7 +146,19 @@ public class HomeActivityFragment extends Fragment
  	    shareDialog.setVisibility(View.GONE);
  	    btnCancel.setTypeface(tf);
  	    txtSharLable.setTypeface(tf);
- 	  
+ 	    lsvProductList.setDrawingCacheEnabled(true);
+ 	    lsvProductList.setOnLoadMoreListener(new OnLoadMoreListener() {
+			
+			@Override
+			public void onLoadMore() {
+				// TODO Auto-generated method stub
+				Toast.makeText(getActivity(), "load moere",Toast.LENGTH_SHORT).show();
+				LoadingListHelper webAPIHelper = new LoadingListHelper(Constants.product_list,HomeActivityFragment.this ,"Please Wait....");
+				String url = Constants.HOME_PRODUCT_URL+"&id=3&page=2";	
+				Log.d("Product_List= ",url.toString());
+				webAPIHelper.execute(url);
+			}
+		});
  	    lsvProductList.setOnScrollListener(new OnScrollListener() 
 		{
 	        int mScrollState = OnScrollListener.SCROLL_STATE_IDLE;
@@ -148,8 +189,11 @@ public class HomeActivityFragment extends Fragment
 	                    if (top < 0) topMargin = linOwnerHeader.getHeight() < (top + height) ? -top : (height - linOwnerHeader.getHeight());
 	                }
 
+	                // set the margin.
+	                if(linOwnerHeader!=null)
+	                {
 	                ((ViewGroup.MarginLayoutParams) linOwnerHeader.getLayoutParams()).topMargin = topMargin;
-
+	                }
 	                listItem.requestLayout();
 
 	            }
@@ -193,7 +237,7 @@ public class HomeActivityFragment extends Fragment
 			try
 			{
 				WebAPIHelper webAPIHelper = new WebAPIHelper(Constants.product_list,HomeActivityFragment.this ,"Please Wait....");
-				String url = Constants.HOME_PRODUCT_URL+"&id="+Constants.LOGIN_USERID;	
+				String url = Constants.HOME_PRODUCT_URL+"&id=3&page=1";	
 				Log.d("Product_List= ",url.toString());
 				webAPIHelper.execute(url);    	
 			}
