@@ -40,21 +40,22 @@ public class CameraCropViewFragment extends Fragment
 		imageTakenFrom=bundle.getString("imageTakenFrom");
 		if(imageTakenFrom.equals("gallery"))
 		{
-			imageUrl=bundle.getString("imageUri");
-			picUri=Uri.parse(imageUrl);
-			String fileUrl=getPath(picUri);
-			productBitmap=BitmapFactory.decodeFile(fileUrl);
+			
+			productBitmap=(Bitmap)bundle.getParcelable("galleryImage");
 			//imgCrop.setImageURI();
 			imgCrop.setImageBitmap(productBitmap);
 			//performCrop();
 		}
 		else
 		{
-			data=bundle.getByteArray("data");
-			Bitmap bitmapPicture = BitmapFactory.decodeByteArray(data, 0, data.length);
-	    	Bitmap correctBmp = Bitmap.createBitmap(bitmapPicture, 0, 0, bitmapPicture.getWidth(), bitmapPicture.getHeight(), null, false);
-	    	productBitmap=correctBmp;
-	    	imgCrop.setImageBitmap(productBitmap);
+			byte[] data=bundle.getByteArray("data");
+	    	productBitmap=BitmapFactory.decodeByteArray(data, 0, data.length);
+	    	if(productBitmap!=null)
+	    		imgCrop.setImageBitmap(productBitmap);
+	    	else
+	    	{
+	    		Toast.makeText(getActivity(), "Bitmap is null", Toast.LENGTH_SHORT).show();
+	    	}
 		}	
 		setUpButtonClick();
 		return root;
@@ -86,14 +87,6 @@ public class CameraCropViewFragment extends Fragment
 			}
 		});
 	}
-	public String getPath(Uri uri) 
-	 {
-
-	        String[] projection = { MediaStore.Images.Media.DATA };
-	        Cursor cursor = getActivity().managedQuery(uri, projection, null, null, null);
-	        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-	        cursor.moveToFirst();
-	        return cursor.getString(column_index);
-   }
+	
 	
 }
