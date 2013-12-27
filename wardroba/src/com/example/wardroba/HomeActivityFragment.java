@@ -47,13 +47,10 @@ public class HomeActivityFragment extends Fragment
 	Button btnCancel;
 	HomeProductBaseAdapter adapter=null;
 	
-	
   	public void setResponseFromRequest(int requestNumber) 
   	{		  		 		
   		if(Constants.all_items.size()>0)
   		{
-//  			txtNameSurname.setText(Constants.USER_NAME.toString());
-//  			txtDate.setText(Constants.USER_DATE.toString());
   			adapter=new HomeProductBaseAdapter(HomeActivityFragment.this, shareDialog);
   			adapter.notifyDataSetChanged();
   			
@@ -65,6 +62,10 @@ public class HomeActivityFragment extends Fragment
   			lsvProductList.setAdapter(null);
   			Toast.makeText(getActivity(), "No Record Found !", 5000).show();
   		}
+
+  		
+  		
+ 
   	} 	
   	public void setResponseFromRequest1(int requestNumber) 
   	{		
@@ -144,11 +145,9 @@ public class HomeActivityFragment extends Fragment
 	                {
 	                    int top = listItem.getTop();
 	                    int height = listItem.getHeight();
-	                    if (top < 0)
-	                        topMargin = linOwnerHeader.getHeight() < (top + height) ? -top : (height - linOwnerHeader.getHeight());
+	                    if (top < 0) topMargin = linOwnerHeader.getHeight() < (top + height) ? -top : (height - linOwnerHeader.getHeight());
 	                }
 
-	                // set the margin.
 	                ((ViewGroup.MarginLayoutParams) linOwnerHeader.getLayoutParams()).topMargin = topMargin;
 
 	                listItem.requestLayout();
@@ -164,7 +163,6 @@ public class HomeActivityFragment extends Fragment
   			adapter.notifyDataSetChanged();
   			
  	    	lsvProductList.setAdapter(adapter);
- 	    	//lsvProductList.invalidateViews();
   		}
   		else
   		{
@@ -172,6 +170,7 @@ public class HomeActivityFragment extends Fragment
   			//Toast.makeText(getActivity(), "No Record Found !", 5000).show();
   		}
 	    
+	   
 	    
 	    CancelSharDialog();
 	    FacebookSharing();
@@ -187,10 +186,7 @@ public class HomeActivityFragment extends Fragment
  
     public void onCreate(Bundle savedInstanceState) 
     {
-		//getActivity().requestWindowFeature(Window.FEATURE_NO_TITLE);
 	    super.onCreate(savedInstanceState);       
-	    
-	    
 	    
 	    if(isOnline()==true)
 		{
@@ -209,9 +205,8 @@ public class HomeActivityFragment extends Fragment
 		else
 		{
 			alert();
-		}
-
-	   
+		}	    
+	    
 	    
     }
     @Override
@@ -226,7 +221,6 @@ public class HomeActivityFragment extends Fragment
         {
             throw new ClassCastException(activity.toString() + " must implement onButtonPressed");
         }
-		
     }
     
     public boolean isOnline()
@@ -240,7 +234,6 @@ public class HomeActivityFragment extends Fragment
 		return false;
 	}
         
-    
     
    public void onPause() 
    {
