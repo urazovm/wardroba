@@ -7,6 +7,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import com.example.wardroba.CamaraSaveFragment;
 import com.example.wardroba.Comment;
 import com.example.wardroba.CommentViewActivity;
 import com.example.wardroba.HomeActivityFragment;
@@ -39,6 +40,7 @@ public class WebAPIHelper extends AsyncTask<String, Integer, Long>
 	private ProfileViewFragment profileViewFragment;
 	private ProfileOwnerViewFragment profile_owner_Fragment;
 	private ProfileEditActivity edit_profile_activity;
+	private CamaraSaveFragment saveFragment;
 	//private ProductDetailFragment product_detail_fragment;
 	private ProductGallery product_activity;
 	private CommentViewActivity comment_view_activity;
@@ -74,6 +76,13 @@ public class WebAPIHelper extends AsyncTask<String, Integer, Long>
 	{
 		this.profile_owner_Fragment = activity;
 		progressDlg = new ProgressDialog(profile_owner_Fragment.getActivity());
+		this.requestNumber = requestNumber;
+		loadingMessage = msg;
+	}
+	public WebAPIHelper(int requestNumber, CamaraSaveFragment fragment, String msg) 
+	{
+		this.saveFragment = fragment;
+		progressDlg = new ProgressDialog(saveFragment.getActivity());
 		this.requestNumber = requestNumber;
 		loadingMessage = msg;
 	}
@@ -283,37 +292,6 @@ public class WebAPIHelper extends AsyncTask<String, Integer, Long>
 
 			
 		}
-/*		else if (requestNumber == Constants.editprofile_list)
-		{			 
-			if(response != null)
-			{
-				Element node = (Element) response.getElementsByTagName("root").item(0);
-				NodeList nlist =  node.getElementsByTagName("result");				
-				Element childNode = (Element)nlist.item(0);
-
-				Constants.EDITUSERID = parseIntValue(getValueFromNode(childNode,"id_user"));
-				Constants.EDITUSEREMAIL = getValueFromNode(childNode,"email");
-				Constants.EDITUSERGENDER = getValueFromNode(childNode,"gender");
-			}	
-			edit_profile_activity.setResponseFromRequest(requestNumber);
-		}*/
-		/*else if (requestNumber == Constants.editprofile_list2)
-		{			 
-			if(response != null)
-			{
-				Element node = (Element) response.getElementsByTagName("root").item(0);
-				NodeList nlist =  node.getElementsByTagName("result");				
-				Element childNode = (Element)nlist.item(0);
-				
-				Constants.EDITEDUSERID = parseIntValue(getValueFromNode(childNode,"user_id"));
-				Constants.EDITUSEREMSG = getValueFromNode(childNode,"msg");
-			}
-			else
-			{
-				Constants.EDITEDUSERID = 0;
-			}
-			edit_profile_activity.setResponseFromRequest2(requestNumber);
-		}*/
 		else if (requestNumber == Constants.fblogin_request)
 		{			 
 			if(response != null)
@@ -376,6 +354,9 @@ public class WebAPIHelper extends AsyncTask<String, Integer, Long>
 					item.setPLikeCount(parseIntValue(getValueFromNode(optionchildNode,"like_count")));
 					item.setPCommentCount(parseIntValue(getValueFromNode(optionchildNode,"comment_count")));
 					item.setPViewCount(parseIntValue(getValueFromNode(optionchildNode,"view_count")));
+					item.setPTag1(getValueFromNode(optionchildNode,"tags1"));
+					item.setPPrice(getValueFromNode(optionchildNode,"price"));
+					item.setPDiscountedPrice(getValueFromNode(optionchildNode,"discounted_price"));
 					item.setPTag( getValueFromNode(optionchildNode,"tags"));
 					item.setPImageUrl( getValueFromNode(optionchildNode,"img_url"));
 					item.setPLikeStatus(getValueFromNode(optionchildNode,"like_statue"));
@@ -409,6 +390,9 @@ public class WebAPIHelper extends AsyncTask<String, Integer, Long>
                         wardrobaItem.setPLikeCount(parseIntValue(getValueFromNode(optionchildNode,"like_count")));
                         wardrobaItem.setPCommentCount(parseIntValue(getValueFromNode(optionchildNode,"comment_count")));
                         wardrobaItem.setPViewCount(parseIntValue(getValueFromNode(optionchildNode,"view_count")));
+                        wardrobaItem.setPTag1(getValueFromNode(optionchildNode,"tags1"));
+                        wardrobaItem.setPPrice(getValueFromNode(optionchildNode,"price"));
+                        wardrobaItem.setPDiscountedPrice(getValueFromNode(optionchildNode,"discounted_price"));
                         wardrobaItem.setPTag( getValueFromNode(optionchildNode,"tags"));
                         wardrobaItem.setPImageUrl( getValueFromNode(optionchildNode,"img_url"));
                         wardrobaItem.setPLikeStatus( getValueFromNode(optionchildNode,"like_statue"));
@@ -467,10 +451,29 @@ public class WebAPIHelper extends AsyncTask<String, Integer, Long>
 	                        arr_CommentList.add(comment);
                         
                 	}
-				}
+			}
 
 				comment_view_activity.setResponseFromRequest(requestNumber,arr_CommentList);
 			
+		}
+		else if(requestNumber==Constants.product_add_request)
+		{
+			String msg=null;
+			String id_cloth=null;
+			if(response != null)
+			{
+				Element node = (Element) response.getElementsByTagName("root").item(0);
+				NodeList nlist =  node.getElementsByTagName("result");
+				Element childNode = (Element)nlist.item(0);
+				if(nlist!=null)
+				{
+					id_cloth=getValueFromNode(childNode, "id_cloth");
+					msg=getValueFromNode(childNode, "msg");
+				}
+				
+			}
+				
+			saveFragment.setResponseFromRequest(requestNumber,id_cloth,msg);
 		}
 		progressDlg.dismiss();
 	}
@@ -480,11 +483,7 @@ public class WebAPIHelper extends AsyncTask<String, Integer, Long>
 		// TODO Auto-generated method stub
 		return 0;
 	}
-	private String gtValueFromNode(Element node, String string) 
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
+	
 	String getValueFromNode(Element childNode, String tagName)
 	{
 		String strValue = "";

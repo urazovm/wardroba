@@ -1,6 +1,15 @@
 package com.example.wardroba;
 
 
+import java.io.InputStream;
+import java.lang.ref.WeakReference;
+import java.net.URLEncoder;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.methods.HttpGet;
+
 import com.ImageLoader.ImageLoader;
 import com.connection.Constants;
 import com.connection.LoadingListHelper;
@@ -14,12 +23,21 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.http.AndroidHttpClient;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.text.Html;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.StrikethroughSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,6 +67,7 @@ public class HomeActivityFragment extends Fragment
 	ImageView btnFacebook,btnTwitter,btnPinterest,btnTumbler,btnGooglePlus;
 	Button btnCancel;
 	HomeProductBaseAdapter adapter=null;
+	private int PAGE=1;
 	
   	public void setResponseFromRequest(int requestNumber) 
   	{		  		 		
@@ -59,6 +78,7 @@ public class HomeActivityFragment extends Fragment
   			
  	    	lsvProductList.setAdapter(adapter);
  	    	lsvProductList.invalidateViews();
+ 	    	 
  	    	//lsvProductList.onLoadMoreComplete();
   		}
   		else
@@ -67,24 +87,26 @@ public class HomeActivityFragment extends Fragment
   			Toast.makeText(getActivity(), "No Record Found !", 5000).show();
   		}
   	} 	
-  	public void setResponseOfLoadingMore(int requestNumber) 
+  	public void setResponseOfLoadingMore(int requestNumber,int no_of_prod,String msg) 
   	{		  		 		
   		if(Constants.all_items.size()>0)
   		{
-//  			txtNameSurname.setText(Constants.USER_NAME.toString());
-//  			txtDate.setText(Constants.USER_DATE.toString());
-  			adapter=new HomeProductBaseAdapter(HomeActivityFragment.this, shareDialog);
-  			adapter.notifyDataSetChanged();
-  			
-  			lsvProductList.requestLayout();
-  			lsvProductList.onLoadMoreComplete();
-  			//adapter.notifyAll();
- 	    	/*lsvProductList.setAdapter(adapter);
- 	    	lsvProductList.invalidateViews();*/
-  			
-  			//
-  			//lsvProductList.refreshDrawableState();
- 	    	
+  			Log.i("HomeActivity", "Product  found on page:"+PAGE+" is = "+no_of_prod);
+  			if(no_of_prod>0)
+  			{
+  				adapter=new HomeProductBaseAdapter(HomeActivityFragment.this, shareDialog);
+  				adapter.notifyDataSetChanged();
+  				lsvProductList.requestLayout();
+  				lsvProductList.onLoadMoreComplete();
+  				
+  			}
+  			else
+  			{
+  				adapter.notifyDataSetChanged();
+  				lsvProductList.requestLayout();
+  				lsvProductList.onLoadMoreComplete();
+  				lsvProductList.setHasMoreItems(false);
+  			}
   		}
   		else
   		{
@@ -103,6 +125,7 @@ public class HomeActivityFragment extends Fragment
 			adapter.notifyDataSetChanged();
 		}
 		if(Constants.my_items.size()>0)
+			
 		{
   			int cloth_id=Constants.all_items.get(Constants.SELECTED_ID).getPIdCloth();
 			String status=Constants.all_items.get(Constants.SELECTED_ID).getPLikeStatus();
@@ -152,11 +175,11 @@ public class HomeActivityFragment extends Fragment
 			@Override
 			public void onLoadMore() {
 				// TODO Auto-generated method stub
-				Toast.makeText(getActivity(), "load moere",Toast.LENGTH_SHORT).show();
-				LoadingListHelper webAPIHelper = new LoadingListHelper(Constants.product_list,HomeActivityFragment.this ,"Please Wait....");
-				String url = Constants.HOME_PRODUCT_URL+"&id=3&page=2";	
-				Log.d("Product_List= ",url.toString());
-				webAPIHelper.execute(url);
+					LoadingListHelper webAPIHelper = new LoadingListHelper(Constants.product_list,HomeActivityFragment.this ,"Please Wait....");
+					String url = Constants.HOME_PRODUCT_URL+"&id="+Constants.LOGIN_USERID+"&page="+(PAGE++);
+					//Log.d("Product_List= ",url.toString());
+					webAPIHelper.execute(url);
+				
 			}
 		});
  	    lsvProductList.setOnScrollListener(new OnScrollListener() 
@@ -237,7 +260,7 @@ public class HomeActivityFragment extends Fragment
 			try
 			{
 				WebAPIHelper webAPIHelper = new WebAPIHelper(Constants.product_list,HomeActivityFragment.this ,"Please Wait....");
-				String url = Constants.HOME_PRODUCT_URL+"&id=3&page=1";	
+				String url = Constants.HOME_PRODUCT_URL+"&id="+Constants.LOGIN_USERID+"&page="+(PAGE++);	
 				Log.d("Product_List= ",url.toString());
 				webAPIHelper.execute(url);    	
 			}
@@ -423,12 +446,14 @@ public class HomeActivityFragment extends Fragment
    	WardrobaItem wardrobaItem;
    	
 
-     	public HomeProductBaseAdapter(HomeActivityFragment context , LinearLayout dialog1)
+    HomeProductBaseAdapter(HomeActivityFragment context , LinearLayout dialog1)
    	{
    		this.mContext=context;
    		this.SharDialog=dialog1;
-   		mInflater = (LayoutInflater)mContext.getActivity().getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+   		mInflater = LayoutInflater.from(mContext.getActivity());
    		imageLoader=new ImageLoader(mContext.getActivity());
+   		imageLoader.clearCache();
+   		
    		tf= Typeface.createFromAsset(mContext.getActivity().getAssets(),"fonts/GOTHIC.TTF");
    		 
    		
@@ -452,7 +477,7 @@ public class HomeActivityFragment extends Fragment
    		// TODO Auto-generated method stub
    		return position;
    	}
-   	class GroupItem
+   	 class GroupItem
    	{
    		public ImageView imgUserPhoto;
    		public TextView txtNameSurname,txtDate;
@@ -461,25 +486,31 @@ public class HomeActivityFragment extends Fragment
    	
    	public View getView(final int position, View convertView, ViewGroup parent) 
    	{
-   		 	final TextView txtLikeCount,txtCommentCount,txtShortDiscription;
-   		 	SmartImageView imgProductImage;
-   		 	  //int like_count=0;
-   		 	 
-   		 	final ProgressBar progressBar,progressBarUserPhoto;
-   		 	final ImageView btnLike,btnComment,btnShare;
-   		 	final ImageView imgLikeDil;
-   		 	final WardrobaItem wardrobaItem=Constants.all_items.get(position);
-   		 	View vi=null;
-   			item =new GroupItem();
-
-   	         
-   			vi=mInflater.inflate(R.layout.home_activity_lay, parent,false);
-   			item.linOwnerHeader = (LinearLayout)vi.findViewById(R.id.header);
-   			item.imgUserPhoto=(ImageView)vi.findViewById(R.id.img_user_photo);
-   		    item.txtNameSurname=(TextView)vi.findViewById(R.id.txt_name_surname);
-   		    item.txtDate=(TextView)vi.findViewById(R.id.txt_date);
-   		    
-   			vi.setTag(item);			
+   		 	
+   		 	
+   		 	View vi=convertView;
+   			
+   			
+	   			vi=mInflater.inflate(R.layout.home_activity_lay,null);
+	   			item =new GroupItem();
+	   			item.linOwnerHeader = (LinearLayout)vi.findViewById(R.id.header);
+	   			item.imgUserPhoto=(ImageView)vi.findViewById(R.id.img_user_photo);
+	   		    item.txtNameSurname=(TextView)vi.findViewById(R.id.txt_name_surname);
+	   		    item.txtDate=(TextView)vi.findViewById(R.id.txt_date);
+	   		    
+	   			vi.setTag(item);
+   			
+   			
+   			
+   	        final TextView txtLikeCount,txtCommentCount,txtShortDiscription;
+ 		 	 SmartImageView imgProductImage;
+ 		 	  //int like_count=0;
+ 		 	
+ 		 	final ProgressBar progressBar,progressBarUserPhoto;
+ 		 	final ImageView btnLike,btnComment,btnShare;
+ 		 	final ImageView imgLikeDil;
+ 		 	final WardrobaItem wardrobaItem=Constants.all_items.get(position);
+   						
    			
    			txtLikeCount =(TextView) vi.findViewById(R.id.txt_like);
    			txtCommentCount =(TextView) vi.findViewById(R.id.txt_comment);
@@ -503,13 +534,71 @@ public class HomeActivityFragment extends Fragment
 
    			item.txtNameSurname.setText(wardrobaItem.getPUserName().toString().trim());
    			item.txtDate.setText(wardrobaItem.getPUserDate().toString().trim());
+   			String temp=wardrobaItem.getPImageUrl();
    			
-   			imageLoader.DisplayImage(wardrobaItem.getPUserImage().toString().trim(),item.imgUserPhoto,progressBarUserPhoto);
-   			progressBar.setVisibility(View.GONE);
+   				//Log.d("HomeActivity", "My Product image:"+URLEncoder.encode(temp.trim()));
+   			
+   				progressBar.setVisibility(View.GONE);
+   				imageLoader.DisplayImage(temp,imgProductImage,progressBar);
+   				
+   				if(item.imgUserPhoto!=null)
+   				{
+   					progressBarUserPhoto.setVisibility(View.GONE);
+   					imageLoader.DisplayImage(wardrobaItem.getPUserImage().toString().trim(),item.imgUserPhoto,progressBarUserPhoto);
+   				 //new ImageDownloaderTask(item.imgUserPhoto,progressBarUserPhoto).execute(wardrobaItem.getPUserImage());
+   				}
+   				
+
+			
+     			 			
+   			
+   			
+   			
    			
    			txtLikeCount.setText(String.valueOf(wardrobaItem.getPLikeCount()));
    			txtCommentCount.setText(String.valueOf(wardrobaItem.getPCommentCount()));
-   			txtShortDiscription.setText(wardrobaItem.getPTag().toString().trim());
+   			String tag1="",price="",discount="",tags="",shortDiscription = "";
+   			/*if(wardrobaItem!=null)
+   			{
+   			tag1=wardrobaItem.getPTag1().toString().trim()+" ";
+   			price=wardrobaItem.getPPrice().toString().trim()+" ";
+			tags=" "+wardrobaItem.getPTag().toString().trim();
+   			discount=wardrobaItem.getPDiscountedPrice().toString().trim();
+   			shortDiscription=tag1+price+discount+tags;
+   			StrikethroughSpan strikethroughSpan=new StrikethroughSpan();
+   			int len2=tag1.length()+price.length();
+   			Spannable priceSpan=new SpannableString(shortDiscription);
+   			if(discount.length()>0)
+   			{
+					priceSpan.setSpan(strikethroughSpan, len2, len2+discount.length(), Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+   					txtShortDiscription.setText(priceSpan);
+   			}
+   			else
+   			{
+   				txtShortDiscription.setText(shortDiscription);
+   			}
+   			   			
+   			}*/
+   			if(wardrobaItem.getPTag1()!=null)
+   			{
+   			tag1=wardrobaItem.getPTag1().toString().trim()+" ";
+   			price=wardrobaItem.getPPrice().toString().trim()+" ";
+			tags=" "+wardrobaItem.getPTag().toString().trim();
+   			discount=wardrobaItem.getPDiscountedPrice().toString().trim();
+   			shortDiscription=tag1+price+discount+tags;
+   			StrikethroughSpan strikethroughSpan=new StrikethroughSpan();
+   			int len2=tag1.length()+price.length();
+   			Spannable priceSpan=new SpannableString(shortDiscription);
+   			if(discount.length()>0)
+   			{
+					priceSpan.setSpan(strikethroughSpan, len2, len2+discount.length(), Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+   					txtShortDiscription.setText(priceSpan);
+   			}
+   			else
+   			{
+   				txtShortDiscription.setText(shortDiscription);
+   			}
+   			}
    			
    			String Status=wardrobaItem.getPLikeStatus().toString().trim();
    			if(Status.equals("LIKE"))
@@ -521,11 +610,8 @@ public class HomeActivityFragment extends Fragment
    	        }
    			
 
-   			String temp=wardrobaItem.getPImageUrl();
-
-   			 imageLoader.DisplayImage(temp,imgProductImage,progressBar);
-   			 progressBar.setVisibility(View.GONE);
-
+   			
+   			 
    			 imgProductImage.callback=new onMyDoubleClickListener() {
    					
    					@Override
@@ -539,10 +625,10 @@ public class HomeActivityFragment extends Fragment
    						Constants.CLOTH_USERID = String.valueOf(wardrobaItem.getPUserId());
    						Constants.OBJECT_ID = String.valueOf(wardrobaItem.getPObjectId());
    						Constants.CLOTH_TYPE= wardrobaItem.getPClothType().toString().trim();
-   						Log.d("Object id:", "object id:"+Constants.OBJECT_ID+" user id:"+Constants.CLOTH_USERID);
+   						//Log.d("Object id:", "object id:"+Constants.OBJECT_ID+" user id:"+Constants.CLOTH_USERID);
    						
    						LikeStatus = wardrobaItem.getPLikeStatus().toString().trim();
-   						Log.d("BaseAdapter", "Like status:"+LikeStatus.toString());
+   						//Log.d("BaseAdapter", "Like status:"+LikeStatus.toString());
 
    						Constants.SELECTED_ID=position;
    						int count_like = (wardrobaItem.getPLikeCount());
@@ -556,7 +642,7 @@ public class HomeActivityFragment extends Fragment
    							try
    							{
    								WebAPIHelper1 webAPIHelper = new WebAPIHelper1(Constants.product_like,mContext);
-   								Log.d("Like URL= ",url.toString());
+   								//Log.d("Like URL= ",url.toString());
    								webAPIHelper.execute(url);    
    								imgLikeDil.setVisibility(View.VISIBLE);
    								Animation anim=AnimationUtils.loadAnimation(mContext.getActivity(), R.anim.fade_in);
@@ -616,10 +702,10 @@ public class HomeActivityFragment extends Fragment
    								Constants.CLOTH_USERID = String.valueOf(wardrobaItem.getPUserId());
    								Constants.OBJECT_ID = String.valueOf(wardrobaItem.getPObjectId());
    								Constants.CLOTH_TYPE= wardrobaItem.getPClothType().toString().trim();
-   								Log.d("Object id:", "object id:"+Constants.OBJECT_ID+" user id:"+Constants.CLOTH_USERID);
+   								//Log.d("Object id:", "object id:"+Constants.OBJECT_ID+" user id:"+Constants.CLOTH_USERID);
    								
    								LikeStatus = wardrobaItem.getPLikeStatus().toString().trim();
-   								Log.d("BaseAdapter", "Like status:"+LikeStatus.toString());
+   								//Log.d("BaseAdapter", "Like status:"+LikeStatus.toString());
 
    								Constants.SELECTED_ID=position;
    								int count_like = (wardrobaItem.getPLikeCount());
@@ -668,8 +754,8 @@ public class HomeActivityFragment extends Fragment
    					Constants.CLOTH_USERID = String.valueOf(wardrobaItem.getPUserId());
    					Constants.OBJECT_ID = String.valueOf(wardrobaItem.getPObjectId());
    					Constants.CLOTH_TYPE= wardrobaItem.getPClothType().toString().trim();
-   					Log.d("Object id:", "object id:"+Constants.OBJECT_ID+" user id:"+Constants.CLOTH_USERID.toString());
-   					Log.d("BaseAdapter", "Object ID:"+String.valueOf(Constants.all_items.get(position).getPObjectId()));
+   					//Log.d("Object id:", "object id:"+Constants.OBJECT_ID+" user id:"+Constants.CLOTH_USERID.toString());
+   					//Log.d("BaseAdapter", "Object ID:"+String.valueOf(Constants.all_items.get(position).getPObjectId()));
    					Intent intent=new Intent(mContext.getActivity(),CommentViewActivity.class);
    					mContext.startActivity(intent);
    				}
@@ -714,7 +800,83 @@ public class HomeActivityFragment extends Fragment
    		return vi;	
    	}	
    	
+   	class ImageDownloaderTask extends AsyncTask<String, Void, Bitmap> {
+   	    private final WeakReference<ImageView> imageViewReference;
+   	    ProgressBar mProgressBar;
+   	    public ImageDownloaderTask(ImageView imageView,ProgressBar progressBar) {
+   	    	this.mProgressBar=progressBar;
+   	        imageViewReference = new WeakReference(imageView);
+   	    }
+   	 
+   	    @Override
+   	    // Actual download method, run in the task thread
+   	    protected Bitmap doInBackground(String... params) {
+   	        // params comes from the execute() call: params[0] is the url.
+   	        return downloadBitmap(params[0]);
+   	    }
+   	 
+   	    @Override
+   	    // Once the image is downloaded, associates it to the imageView
+   	    protected void onPostExecute(Bitmap bitmap) {
+   	        if (isCancelled()) {
+   	            bitmap = null;
+   	        }
+   	 
+   	        if (imageViewReference != null) {
+   	            ImageView imageView = imageViewReference.get();
+   	            if (imageView != null) {
+   	 
+   	                if (bitmap != null) {
+   	                    imageView.setImageBitmap(bitmap);
+   	                    mProgressBar.setVisibility(View.GONE);
+   	                } else {
+   	                   mProgressBar.setVisibility(View.VISIBLE);
+   	                }
+   	            }
+   	 
+   	        }
+   	    }
+   	 
+   	}
    	
+   	 Bitmap downloadBitmap(String url) {
+        final AndroidHttpClient client = AndroidHttpClient.newInstance("Android");
+        final HttpGet getRequest = new HttpGet(url);
+        try {
+            HttpResponse response = client.execute(getRequest);
+            final int statusCode = response.getStatusLine().getStatusCode();
+            if (statusCode != HttpStatus.SC_OK) {
+                Log.w("ImageDownloader", "Error " + statusCode
+                        + " while retrieving bitmap from " + url);
+                return null;
+            }
+ 
+            final HttpEntity entity = response.getEntity();
+            if (entity != null) {
+                InputStream inputStream = null;
+                try {
+                    inputStream = entity.getContent();
+                    final Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                    return bitmap;
+                } finally {
+                    if (inputStream != null) {
+                        inputStream.close();
+                    }
+                    entity.consumeContent();
+                }
+            }
+        } catch (Exception e) {
+            // Could provide a more explicit error message for IOException or
+            // IllegalStateException
+            getRequest.abort();
+            Log.w("ImageDownloader", "Error while retrieving bitmap from " + url);
+        } finally {
+            if (client != null) {
+                client.close();
+            }
+        }
+        return null;
+    }
 //   	private static class ViewHolder 
 //   	{
 //   		TextView header;

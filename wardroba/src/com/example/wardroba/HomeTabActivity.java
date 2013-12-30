@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TabHost;
+import android.widget.Toast;
 
 public class HomeTabActivity  extends TabActivity{
 	Button firstButton,secondButton,thirdButton,fourthButton;
@@ -104,4 +105,10 @@ public class HomeTabActivity  extends TabActivity{
 
         
     }
+	@Override
+	protected void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
+		Toast.makeText(getApplicationContext(), "on home resume", Toast.LENGTH_SHORT).show();
+	}
 }

@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 public class HomeActivityMain extends FragmentActivity implements OnProductSelectListener
 {
@@ -66,4 +67,10 @@ public class HomeActivityMain extends FragmentActivity implements OnProductSelec
 //            transaction.commit();
 //        
 //	}
+	@Override
+	protected void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
+		Toast.makeText(getApplicationContext(), "on home fragment activity resume", Toast.LENGTH_SHORT).show();
+	}
 }

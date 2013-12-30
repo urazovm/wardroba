@@ -3,12 +3,36 @@ package com.example.wardroba;
 public class WardrobaItem {
 
 	private int PIdCloth,PUserId,PObjectId,POwnerId,PLikeCount,PCommentCount,PViewCount;
-	private String PUserName,PUserImage,PUserDate,PTag,PImageUrl,PLikeStatus,PClothType;
-
+	private String PUserName,PUserImage,PUserDate,PTag,PImageUrl,PLikeStatus,PClothType,PTag1,PPrice,PDiscountedPrice;
 	public WardrobaItem()
 	{
 		
 	}
+	public String getPTag1() {
+		return PTag1;
+	}
+
+	public void setPTag1(String pTag1) {
+		PTag1 = pTag1;
+	}
+
+	public String getPPrice() {
+		return PPrice;
+	}
+
+	public void setPPrice(String pPrice) {
+		PPrice = pPrice;
+	}
+
+	public String getPDiscountedPrice() {
+		return PDiscountedPrice;
+	}
+
+	public void setPDiscountedPrice(String pDiscountedPrice) {
+		PDiscountedPrice = pDiscountedPrice;
+	}
+
+	
 
 	public int getPIdCloth() {
 		return PIdCloth;

@@ -64,6 +64,8 @@ public class LoginActivity extends Activity
   	SharedPreferences preferences;
   	public static Session session;
   	ProgressDialog progressDialog;
+  	private static String KEY_EMAIL="user_email";
+  	private static String KEY_PASSWORD="password";
   	//String[] permissions = { "email", "offline_access", "publish_stream", "user_photos", "publish_checkins","photo_upload"};
   	String[] permissions = { "email", "offline_access", "publish_stream", "user_photos", "publish_checkins","photo_upload","user_birthday","user_relationship_details"};     
 	
@@ -114,10 +116,9 @@ public class LoginActivity extends Activity
 		Btn_login.setTypeface(typeface);
 		fb_login.setTypeface(typeface);
 
-		if(! Constants.REMEBER_EMAIL.equals(""))
-		{
-			Edt_email.setText(Constants.REMEBER_EMAIL);
-		}
+		loadPrefrences();
+			
+		
 		Btn_login.setOnClickListener(new View.OnClickListener() 
 		{	
 			@Override
@@ -498,7 +499,16 @@ public class LoginActivity extends Activity
 	{
 		SharedPreferences.Editor editor = preferences.edit();
 		editor.putInt(Constants.KEY_LOGIN_ID, Constants.LOGIN_USERID);
+		editor.putString(KEY_EMAIL, Edt_email.getText().toString());
+		editor.putString(KEY_PASSWORD, Edt_passward.getText().toString());
 		editor.commit();
+	}
+	private void loadPrefrences()
+	{
+		String email=preferences.getString(KEY_EMAIL, "");
+		String password=preferences.getString(KEY_PASSWORD, "");
+		Edt_email.setText(email);
+		Edt_passward.setText(password);
 	}
 
 }

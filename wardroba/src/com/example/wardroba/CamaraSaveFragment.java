@@ -3,8 +3,15 @@ package com.example.wardroba;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URLEncoder;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
@@ -14,8 +21,13 @@ import org.apache.http.entity.mime.content.ByteArrayBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
+import org.apache.http.util.EntityUtils;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 import com.connection.Constants;
+import com.connection.WebAPIHelper;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -55,6 +67,19 @@ public class CamaraSaveFragment extends Fragment
 	private static boolean CLOTH_TYPE_SELECTED=false;
 	private int clothtype,clothsex;
 	private String description;
+	public void setResponseFromRequest(int requestNo,String id_cloth,String msg)
+	{
+		if(id_cloth!=null && msg!=null)
+		{
+			Toast.makeText(getActivity(), "Product saved successfully", Toast.LENGTH_SHORT).show();
+			Toast.makeText(getActivity(), "Cloth ID:"+id_cloth, Toast.LENGTH_SHORT).show();
+		}
+		else
+		{
+			Toast.makeText(getActivity(), "Product not saved", Toast.LENGTH_SHORT).show();
+		}
+
+	}
   	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) 
 	{
@@ -76,7 +101,7 @@ public class CamaraSaveFragment extends Fragment
 	    overrideFonts(getActivity(), layTop);
 	    bundle=getArguments();
 	    productBitmap=(Bitmap)bundle.getParcelable("croppedImage");
-	    
+	    clothsex=1;
         return root;
     }
     
@@ -118,7 +143,8 @@ public class CamaraSaveFragment extends Fragment
 				}
 				else
 				{
-					showAlert("Success", "Product added successfully");
+					description=tags;
+					new ImageUploadTask().execute();
 				}
 			}
 		});
@@ -249,7 +275,7 @@ public class CamaraSaveFragment extends Fragment
    
    class ImageUploadTask extends AsyncTask<Void, Void, String> {
 		 private String webAddressToPost = "http://dev.wardroba.com/serviceXml/productimage.php?login_id="+Constants.LOGIN_USERID;
-
+		 private String imageID=null;
 		 // private ProgressDialog dialog;
 		 private ProgressDialog dialog = new ProgressDialog(getActivity());
 
@@ -278,12 +304,18 @@ public class CamaraSaveFragment extends Fragment
 
 		   httpPost.setEntity(entity);
 		   HttpResponse response = httpClient.execute(httpPost,localContext);
-		   BufferedReader reader = new BufferedReader(new InputStreamReader(
-		     response.getEntity().getContent(), "UTF-8"));
-		   
-		   String sResponse = reader.readLine();
-		   Log.e("HttpResponse", "Response:"+sResponse);
-		   return sResponse;
+		   InputStream is = response.getEntity().getContent();
+			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+			DocumentBuilder db = dbf.newDocumentBuilder();
+			Document doc = db.parse(is);
+			
+			Element node = (Element) doc.getElementsByTagName("root").item(0);
+			Element image_id = (Element) node.getElementsByTagName("image_id").item(0);
+			Element image_url = (Element) node.getElementsByTagName("img_url").item(0);
+			 imageID=image_id.getTextContent();
+			String imageUrl=image_url.getTextContent();
+			Log.e("HttpResponse", "Response:Image ID"+imageID+" Image URL:"+imageUrl);
+		   return imageID;
 		  } catch (Exception e) {
 		   // something went wrong. connection with the server error
 			  e.printStackTrace();
@@ -294,8 +326,19 @@ public class CamaraSaveFragment extends Fragment
 		 @Override
 		 protected void onPostExecute(String result) {
 		  dialog.dismiss();
+		  	try 
+		  	{
+				  WebAPIHelper apiHelper=new WebAPIHelper(Constants.product_add_request, CamaraSaveFragment.this, "Please wait...");
+				  String url=Constants.PROUCTADDURL+"login_id="+Constants.LOGIN_USERID+"&clothsex="+clothsex+"&clothtype="+clothtype+"&description="+URLEncoder.encode(description)+"&image_id="+imageID;
+				  Log.d("CameraSaveFragment", url);
+				  apiHelper.execute(url);
+			} 
+		  	catch (Exception e) 
+		  	{
+				e.printStackTrace();
+			}
 		  
-		  Toast.makeText(getActivity(), "Product added successfully", Toast.LENGTH_SHORT).show();
+		  //Toast.makeText(getActivity(), "Product added successfully", Toast.LENGTH_SHORT).show();
 		 }
 		}
 }

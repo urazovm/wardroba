@@ -50,6 +50,8 @@ public class Constants implements Serializable
 	public final static int edit_profile_change_password=71;
 	public final static int edit_owner_profile_change_password=72;
 	public final static int edit_owner_profile = 73;
+	public final static int product_add_request = 74;
+	
  	public static String USERNAME,MSG_LOGIN;
  	public static int REGISTER_USERID;
  	public static String MSG_REGISTER;	

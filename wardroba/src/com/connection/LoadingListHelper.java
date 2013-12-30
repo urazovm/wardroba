@@ -65,41 +65,54 @@ public class LoadingListHelper extends AsyncTask<String, Integer, Long>
 		 if (requestNumber == Constants.product_list)
 		{		
 			//Constants.all_items.clear();
+			 String msg=null;
+				int no_of_prod=0;
 			if(response != null)
 			{				
+				
 				Element node = (Element) response.getElementsByTagName("root").item(0);
 				NodeList noderesult=  node.getElementsByTagName("result");
 				Element result = (Element) noderesult.item(0);
 				
 				NodeList cloth =  result.getElementsByTagName("cloth");
-				
-				for(int j=0; j<cloth.getLength(); j++)
+				if(cloth!=null)
 				{
-									
-					WardrobaItem item=new WardrobaItem();
-					Element optionchildNode = (Element) cloth.item(j);
-
-					item.setPUserName( getValueFromNode(optionchildNode,"username"));
-					item.setPUserImage( getValueFromNode(optionchildNode,"user_image"));
-					item.setPUserDate( getValueFromNode(optionchildNode,"date"));
-					
-					item.setPIdCloth(parseIntValue(getValueFromNode(optionchildNode,"id_cloth")));
-					item.setPUserId(parseIntValue(getValueFromNode(optionchildNode,"user_id")));
-					item.setPOwnerId(parseIntValue(getValueFromNode(optionchildNode,"owner_id")));
-					item.setPObjectId(parseIntValue(getValueFromNode(optionchildNode,"object_id")));
-					item.setPLikeCount(parseIntValue(getValueFromNode(optionchildNode,"like_count")));
-					item.setPCommentCount(parseIntValue(getValueFromNode(optionchildNode,"comment_count")));
-					item.setPViewCount(parseIntValue(getValueFromNode(optionchildNode,"view_count")));
-					item.setPTag( getValueFromNode(optionchildNode,"tags"));
-					item.setPImageUrl( getValueFromNode(optionchildNode,"img_url"));
-					item.setPLikeStatus(getValueFromNode(optionchildNode,"like_statue"));
-					item.setPClothType(getValueFromNode(optionchildNode,"cloth_type"));
-					Log.d("Like status:", "status:"+item.getPLikeStatus()+".");
-					Constants.all_items.add(item);
+					for(int j=0; j<cloth.getLength(); j++)
+					{
+										
+						WardrobaItem item=new WardrobaItem();
+						Element optionchildNode = (Element) cloth.item(j);
+	
+						item.setPUserName( getValueFromNode(optionchildNode,"username"));
+						item.setPUserImage( getValueFromNode(optionchildNode,"user_image"));
+						item.setPUserDate( getValueFromNode(optionchildNode,"date"));
+						
+						item.setPIdCloth(parseIntValue(getValueFromNode(optionchildNode,"id_cloth")));
+						item.setPUserId(parseIntValue(getValueFromNode(optionchildNode,"user_id")));
+						item.setPOwnerId(parseIntValue(getValueFromNode(optionchildNode,"owner_id")));
+						item.setPObjectId(parseIntValue(getValueFromNode(optionchildNode,"object_id")));
+						item.setPLikeCount(parseIntValue(getValueFromNode(optionchildNode,"like_count")));
+						item.setPCommentCount(parseIntValue(getValueFromNode(optionchildNode,"comment_count")));
+						item.setPViewCount(parseIntValue(getValueFromNode(optionchildNode,"view_count")));
+						item.setPTag( getValueFromNode(optionchildNode,"tags"));
+						item.setPImageUrl( getValueFromNode(optionchildNode,"img_url"));
+						item.setPLikeStatus(getValueFromNode(optionchildNode,"like_statue"));
+						item.setPClothType(getValueFromNode(optionchildNode,"cloth_type"));
+						Log.d("Like status:", "status:"+item.getPLikeStatus()+".");
+						Constants.all_items.add(item);
+						
+					}
+					no_of_prod=cloth.getLength();
+					msg="product found";
+				}
+				else
+				{
+					no_of_prod = parseIntValue(getValueFromNode(result,"id_cloth"));
+					msg= getValueFromNode(result,"msg");
 				}
 			}
 			Log.d("hello", "total records:"+Constants.all_items.size());
-			home_activity.setResponseOfLoadingMore(requestNumber);
+			home_activity.setResponseOfLoadingMore(requestNumber,no_of_prod,msg);
 		}
 		
 	}
