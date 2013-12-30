@@ -18,6 +18,8 @@ import com.connection.WebAPIHelper1;
 import com.costum.android.widget.LoadMoreListView;
 import com.costum.android.widget.LoadMoreListView.OnLoadMoreListener;
 import com.example.wardroba.SmartImageView.onMyDoubleClickListener;
+import com.pinterest.pinit.PinItButton;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -64,11 +66,17 @@ public class HomeActivityFragment extends Fragment
 	LinearLayout linOwnerHeader;
 	Typeface tf;
 	LinearLayout shareDialog;
-	ImageView btnFacebook,btnTwitter,btnPinterest,btnTumbler,btnGooglePlus;
+	ImageView btnFacebook,btnTwitter,btnTumbler,btnGooglePlus;
+	PinItButton btnPinterest;
 	Button btnCancel;
 	HomeProductBaseAdapter adapter=null;
+
 	private int PAGE=1;
 	
+
+	String Sharing_Tag,Sharing_URL;
+	String PINTEREST_CLIENT_ID = "1433818";
+
   	public void setResponseFromRequest(int requestNumber) 
   	{		  		 		
   		if(Constants.all_items.size()>0)
@@ -159,25 +167,26 @@ public class HomeActivityFragment extends Fragment
  	     
  		btnFacebook=(ImageView)root.findViewById(R.id.btnFB);
  		btnTwitter=(ImageView)root.findViewById(R.id.btnTwitter);
- 		btnPinterest=(ImageView)root.findViewById(R.id.btnPinterest);
+ 		btnPinterest=(PinItButton)root.findViewById(R.id.btnPinterest);
  		btnTumbler=(ImageView)root.findViewById(R.id.btnTumbler);
  		btnGooglePlus=(ImageView)root.findViewById(R.id.btnGplus);
  		btnCancel=(Button)root.findViewById(R.id.btnCancel);
  		txtSharLable=(TextView)root.findViewById(R.id.txt_share_lable);
-
+ 		
  	    shareDialog=(LinearLayout)root.findViewById(R.id.dialogShare);
  	    shareDialog.setVisibility(View.GONE);
  	    btnCancel.setTypeface(tf);
  	    txtSharLable.setTypeface(tf);
  	    lsvProductList.setDrawingCacheEnabled(true);
- 	    lsvProductList.setOnLoadMoreListener(new OnLoadMoreListener() {
-			
+ 	    lsvProductList.setOnLoadMoreListener(new OnLoadMoreListener() 
+ 	    {	
 			@Override
+
 			public void onLoadMore() {
 				// TODO Auto-generated method stub
 					LoadingListHelper webAPIHelper = new LoadingListHelper(Constants.product_list,HomeActivityFragment.this ,"Please Wait....");
 					String url = Constants.HOME_PRODUCT_URL+"&id="+Constants.LOGIN_USERID+"&page="+(PAGE++);
-					//Log.d("Product_List= ",url.toString());
+					Log.d("Product_List= ",url.toString());
 					webAPIHelper.execute(url);
 				
 			}
@@ -234,7 +243,6 @@ public class HomeActivityFragment extends Fragment
   		else
   		{
   			lsvProductList.setAdapter(null);
-  			//Toast.makeText(getActivity(), "No Record Found !", 5000).show();
   		}
 	    
 	   
@@ -396,10 +404,16 @@ public class HomeActivityFragment extends Fragment
    {
 		btnPinterest.setOnClickListener(new View.OnClickListener() 
 		{
+			@SuppressWarnings("static-access")
 			@Override
 			public void onClick(View arg0) 
 			{
 				Toast.makeText(getActivity(), "Pinterest", 5000).show();
+		 		btnPinterest.setPartnerId(PINTEREST_CLIENT_ID); // required
+		 		btnPinterest.setDebugMode(true); // optional
+				btnPinterest.setImageUrl(Sharing_URL);
+				btnPinterest.setUrl("http://dev.wardroba.com/"); // optional
+				btnPinterest.setDescription(Sharing_Tag);
 			}
 		});
    }
@@ -766,7 +780,9 @@ public class HomeActivityFragment extends Fragment
    			{
    				public void onClick(View v) 
    				{
-   					//Toast.makeText(activity,"Share", 5000).show();
+   					Sharing_Tag=String.valueOf(wardrobaItem.getPImageUrl());
+   					Sharing_URL=String.valueOf(wardrobaItem.getPTag());
+   					
    					SharDialog.setVisibility(View.VISIBLE);
    					Animation anim=AnimationUtils.loadAnimation(mContext.getActivity(), R.anim.slide_up_anim);
    					anim.setFillAfter(true);
