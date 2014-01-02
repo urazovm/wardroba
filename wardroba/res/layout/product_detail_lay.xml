@@ -60,6 +60,9 @@
 		                android:background="@drawable/comment_close"
 		                android:layout_centerInParent="true"
 		                />
+
+
+
 		        </RelativeLayout>
 			</LinearLayout>
 		</RelativeLayout>
@@ -253,7 +256,17 @@
 	            android:layout_marginRight="15dp"/>
 	    </LinearLayout>
 	</LinearLayout>
+
 	
 	
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:indeterminateDrawable="@drawable/progress_drawable"
+        android:layout_centerVertical="true" />
+
 </RelativeLayout>
 </ScrollView>

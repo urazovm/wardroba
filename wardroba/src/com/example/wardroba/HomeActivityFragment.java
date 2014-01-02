@@ -1,13 +1,14 @@
 package com.example.wardroba;
 
 
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.io.InputStream;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +25,6 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
@@ -32,7 +32,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import twitter4j.StatusUpdate;
+
 import com.ImageLoader.ImageLoader;
+import com.android.sot.twitter.TwitterApp;
+import com.android.sot.twitter.TwitterApp.TwDialogListener;
 import com.connection.Constants;
 import com.connection.LoadingListHelper;
 import com.connection.WebAPIHelper;
@@ -48,7 +52,6 @@ import com.facebook.android.FacebookError;
 import com.facebook.android.Util;
 import com.google.android.gms.plus.PlusShare;
 import com.pinterest.pinit.PinItButton;
-import com.tumblr.api.UploadImageActivity;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -65,9 +68,12 @@ import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
+
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.text.Html;
@@ -109,6 +115,7 @@ public class HomeActivityFragment extends Fragment
 	HomeProductBaseAdapter adapter=null;
 
 	private int PAGE=1;
+
 	// facebook sharing...
 	SharedPreferences preferences;
 	public static final String APP_ID = "335736383227858";
@@ -145,10 +152,24 @@ public class HomeActivityFragment extends Fragment
 
   	///
   	
+
 	String Sharing_Tag,Sharing_URL;
 	String PINTEREST_CLIENT_ID = "1433818";
 
-  	public void setResponseFromRequest(int requestNumber) 
+	//TWITTER
+
+	static final String TWITTER_CONSUMER_KEY = "NJC4QxSTuMxIbPYsTj5xoA";
+	static final String TWITTER_SECRET_KEY = "BsYApRSdctPi8EckamqRr3uHh5ikjDRwFRgWimI62I";
+	public static String shareLink = "http://www.google.com";
+	Handler mHandler;
+	TwitterApp mTwitter;
+	private ProgressDialog progressdialog;
+	StringBuffer buffer;
+	String MSG;
+	private ProgressBar mProgress;
+	
+	///////////////////////////////////////////////
+    public void setResponseFromRequest(int requestNumber) 
   	{		  		 		
   		if(Constants.all_items.size()>0)
   		{
@@ -156,7 +177,12 @@ public class HomeActivityFragment extends Fragment
   			adapter.notifyDataSetChanged();
   			lsvProductList.setAdapter(adapter);
  	    	lsvProductList.invalidateViews();
+
  	    }
+
+ 	    	 
+
+
   		else
   		{
   			lsvProductList.setAdapter(null);
@@ -174,7 +200,6 @@ public class HomeActivityFragment extends Fragment
   				adapter.notifyDataSetChanged();
   				lsvProductList.requestLayout();
   				lsvProductList.onLoadMoreComplete();
-  				
   			}
   			else
   			{
@@ -236,6 +261,10 @@ public class HomeActivityFragment extends Fragment
  		btnGooglePlus=(ImageView)root.findViewById(R.id.btnGplus);
  		btnCancel=(Button)root.findViewById(R.id.btnCancel);
  		txtSharLable=(TextView)root.findViewById(R.id.txt_share_lable);
+
+ 		mProgress = (ProgressBar)root.findViewById(R.id.progress_bar);
+ 		mProgress.setVisibility(View.GONE);
+
  	    shareDialog=(LinearLayout)root.findViewById(R.id.dialogShare);
  	    shareDialog.setVisibility(View.GONE);
  	    btnCancel.setTypeface(tf);
@@ -305,6 +334,14 @@ public class HomeActivityFragment extends Fragment
   			lsvProductList.setAdapter(null);
   		}
 	    
+
+        ///////////////////////////////////// FOR TWITTER ////////////////////////////////////////////
+
+		mHandler = new Handler();
+		mTwitter = new TwitterApp(getActivity(), TWITTER_CONSUMER_KEY,TWITTER_SECRET_KEY);
+		mTwitter.setListener(mTwLoginDialogListener);
+	    
+
 	    CancelSharDialog();
 	    FacebookSharing();
 	    TwitterSharing();
@@ -315,8 +352,6 @@ public class HomeActivityFragment extends Fragment
 	    initTumblr();
         return root;
     }
-    
-  	
  
     public void onCreate(Bundle savedInstanceState) 
     {
@@ -377,6 +412,11 @@ public class HomeActivityFragment extends Fragment
    public void onResume() 
    {
 	super.onResume();
+	//Twitter
+	mHandler = new Handler();
+	mTwitter = new TwitterApp(getActivity(), TWITTER_CONSUMER_KEY,TWITTER_SECRET_KEY);
+	mTwitter.setListener(mTwLoginDialogListener);
+	
 	if(Constants.IS_PROFILE_CHANGED)
 	{
 		 if(isOnline()==true)
@@ -733,7 +773,17 @@ public void createNewAlbum()
 			@Override
 			public void onClick(View arg0) 
 			{
-				Toast.makeText(getActivity(), "Twitter", 5000).show();
+				shareDialog.setVisibility(View.GONE);
+				Animation anim=AnimationUtils.loadAnimation(getActivity(), R.anim.slide_down_anim);
+				anim.setFillBefore(true);
+				shareDialog.startAnimation(anim);
+
+				if (mTwitter.hasAccessToken())
+					postMsgOnTwitter(Sharing_Tag);
+				else
+				{
+					mTwitter.authorize();
+				}
 			}
 		});
    }
@@ -794,7 +844,22 @@ public void createNewAlbum()
 		});
    }
    
+   //Twitter
+   private TwDialogListener mTwLoginDialogListener = new TwDialogListener() {
+		@Override
+		public void onComplete(String value) 
+		{
+			postMsgOnTwitter(Sharing_Tag);
+		}
+
+		@Override
+		public void onError(String value) {
+			showToast("Twitter login failed");
+			mTwitter.resetAccessToken();
+		}
+	};
    
+
    
    public void loginToTumblr()
    {
@@ -1098,8 +1163,127 @@ public void createNewAlbum()
 	}
    
    
-   class HomeProductBaseAdapter extends BaseAdapter 
+   
+	private void postMsgOnTwitter(final String msg) 
+	{
+		showProgressDialog("Sending tweet..");
+
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				
+				try 
+				{
+					
+					StatusUpdate status = new StatusUpdate(msg);
+					
+					URL url=new URL(Sharing_URL);
+					InputStream is=url.openStream();
+					
+					status.setMedia(Uri.decode(Sharing_Tag), is);
+					
+					mTwitter.updateStatus(status);
+					
+					showToast("Posted successfully.");
+					mProgress.setVisibility(View.GONE);
+					//hideProgressDialog();
+					
+				} catch (Exception e) 
+				{
+					//showToast("Oops!You have already twitted that.");
+					mProgress.setVisibility(View.GONE);
+					//hideProgressDialog();
+					e.printStackTrace();
+				}
+			}
+		}).start();
+	}
+
+	public void showToast(final String msg) 
+	{
+		mHandler.post(new Runnable() 
+		{
+			@Override
+			public void run() 
+			{
+				Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
+			}
+		});
+	}
+	/**
+	 * This will shows a progress dialog with loading text, this is useful to
+	 * call when some other functionality is taking place.
+	 **/
+	public void showProgressDialog(String msg) 
+	{
+		mProgress.setVisibility(View.VISIBLE);
+		//runOnUiThread(new RunShowLoader(msg, false));
+	}
+
+
+	/**
+	 * Implementing Runnable for runOnUiThread(), This will show a progress
+	 * dialog
+	 */
+	class RunShowLoader implements Runnable 
+	{
+		private String strMsg;
+		private boolean isCancalable;
+
+		public RunShowLoader(String strMsg, boolean isCancalable) 
+		{
+			this.strMsg = strMsg;
+			this.isCancalable = isCancalable;
+		}
+
+		@Override
+		public void run() 
+		{
+			try 
+			{
+				if (progressdialog == null|| (progressdialog != null && !progressdialog.isShowing())) 
+				{
+					progressdialog = ProgressDialog.show(getActivity(),"", strMsg);
+					progressdialog.setCancelable(isCancalable);
+				}
+			} catch (Exception e) 
+			{
+				progressdialog = null;
+				e.printStackTrace();
+			}
+		}
+	}
+
+	/** For hiding progress dialog **/
+	public void hideProgressDialog() 
+	{
+		//Toast.makeText(getActivity(), MSG, 5000).show();
+		mProgress.setVisibility(View.GONE);
+//		runOnUiThread(new Runnable() 
+//		{
+//			@Override
+//			public void run() {
+//				try {
+//					if (progressdialog != null && progressdialog.isShowing()) 
+//					{
+//						progressdialog.dismiss();
+//					}
+//					progressdialog = null;
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		});
+	}
+	
+	
+//////////////////////////////////////////////////	
+
+
+	class HomeProductBaseAdapter extends BaseAdapter 
+
    {
+		
    	LayoutInflater mInflater;
    	
    	LinearLayout SharDialog;
@@ -1109,6 +1293,8 @@ public void createNewAlbum()
    	HomeActivityFragment mContext;
    	String CommentId;
    	WardrobaItem wardrobaItem;
+
+
     HomeProductBaseAdapter(HomeActivityFragment context , LinearLayout dialog1)
    	{
    		this.mContext=context;
@@ -1125,7 +1311,6 @@ public void createNewAlbum()
 
    	public Object getItem(int position)  
    	{
-   		// TODO Auto-generated method stub
    		return null;
    	}
    	public long getItemId(int position) 
@@ -1142,7 +1327,6 @@ public void createNewAlbum()
    	
    	public View getView(final int position, View convertView, ViewGroup parent) 
    	{
-   		 	
    		 	
    		 	View vi=convertView;
    			
@@ -1203,6 +1387,7 @@ public void createNewAlbum()
    					imageLoader.DisplayImage(wardrobaItem.getPUserImage().toString().trim(),item.imgUserPhoto,progressBarUserPhoto);
    				 //new ImageDownloaderTask(item.imgUserPhoto,progressBarUserPhoto).execute(wardrobaItem.getPUserImage());
    				}
+
    			
    			txtLikeCount.setText(String.valueOf(wardrobaItem.getPLikeCount()));
    			txtCommentCount.setText(String.valueOf(wardrobaItem.getPCommentCount()));
@@ -1226,7 +1411,6 @@ public void createNewAlbum()
 	   			{
 	   				txtShortDiscription.setText(shortDiscription);
 	   			}
-   			   			
    			}
    			
    			
@@ -1240,9 +1424,6 @@ public void createNewAlbum()
    	        	btnLike.setBackgroundResource(R.drawable.like_h);
    	        }
    			
-
-   			
-   			 
    			 imgProductImage.callback=new onMyDoubleClickListener() {
    					
    					@Override
@@ -1368,10 +1549,6 @@ public void createNewAlbum()
    								{
    									
    								}	
-   							
-   					
-   					
-   					
    				}
    			});
    		
@@ -1397,9 +1574,9 @@ public void createNewAlbum()
    			{
    				public void onClick(View v) 
    				{
-   					Sharing_URL=String.valueOf(wardrobaItem.getPImageUrl());
-   					Sharing_Tag=String.valueOf(txtShortDiscription.getText());
-   					
+
+   					Sharing_Tag=txtShortDiscription.getText().toString();
+   					Sharing_URL=String.valueOf(wardrobaItem.getPImageUrl().toString().trim());
    					SharDialog.setVisibility(View.VISIBLE);
    					Animation anim=AnimationUtils.loadAnimation(mContext.getActivity(), R.anim.slide_up_anim);
    					anim.setFillAfter(true);
@@ -1407,9 +1584,6 @@ public void createNewAlbum()
    				}
    			});
    			imgProductImage.setDilImage(imgLikeDil);
-   			//gestureListener=new GestureListener();
-   			
-   			
    			
                item.linOwnerHeader.setOnClickListener(new View.OnClickListener() 
            	{
@@ -1425,7 +1599,6 @@ public void createNewAlbum()
 
     	            // Commit the transaction
     	            transaction.commit();
-       				
        			}
        		});
    			
@@ -1433,7 +1606,6 @@ public void createNewAlbum()
    		return vi;	
    	}	
    	
-   	   	
         
    }
 }

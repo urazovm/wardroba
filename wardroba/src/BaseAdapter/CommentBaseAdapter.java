@@ -133,7 +133,6 @@ public class CommentBaseAdapter extends BaseAdapter
 		    
 			vi.setTag(item);			
 		
-			//progressBar=(ProgressBar)vi.findViewById(R.id.progressBar1);
 			item.txtName.setTypeface(tf);
 			item.txtDate.setTypeface(tf);
 			item.txtComment.setTypeface(tf);
@@ -143,6 +142,4 @@ public class CommentBaseAdapter extends BaseAdapter
 			item.txtComment.setText(commentData.getComment().toString().trim());
 			return vi;	
 	}	
-	
-	
 }
