@@ -1,17 +1,40 @@
 package com.example.wardroba;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.MalformedURLException;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.ImageLoader.ImageLoader;
 import com.connection.Constants;
 import com.connection.WebAPIHelper1;
+import com.facebook.android.AsyncFacebookRunner;
+import com.facebook.android.DialogError;
+import com.facebook.android.Facebook;
+import com.facebook.android.FacebookError;
+import com.facebook.android.Util;
+import com.facebook.android.AsyncFacebookRunner.RequestListener;
+import com.google.android.gms.plus.PlusShare;
+
 import android.app.Activity;
+import android.app.ProgressDialog;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.StrikethroughSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -39,8 +62,17 @@ public class ProductDetailFragment extends Fragment
 	ProgressBar progLoader;
 	public static int SELECTED_PRODUCT=0;
 	Typeface tf;
-
+	// facebook sharing...
+		SharedPreferences preferences;
+		public static final String APP_ID = "335736383227858";
+		Facebook facebook;
+	  	AsyncFacebookRunner asyncRunner;
+	  	String[] permissions = { "email", "offline_access","publish_actions", "publish_stream", "user_photos", "publish_checkins","photo_upload","user_birthday","user_relationship_details"};
+	  	private static String ALBUM_NAME="wardroba";
+	  	ProgressDialog progressDialog;
+	  	///  **************************
 	SwipeDetector swipeDetector;
+	String Sharing_Tag,Sharing_URL;
 	public static enum Action {
         LR, // Left to Right
         RL, // Right to Left
@@ -119,7 +151,8 @@ public class ProductDetailFragment extends Fragment
 			Bundle savedInstanceState) 
 	{
 		ViewGroup root = (ViewGroup) inflater.inflate(R.layout.product_detail_lay, null);
-	
+		preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+		progressDialog=new ProgressDialog(getActivity());
 		swipeDetector=new SwipeDetector();
 		imgProductPhoto=(ImageView)root.findViewById(R.id.img_product_photo);
 		txtLike=(TextView)root.findViewById(R.id.txt_like);
@@ -159,6 +192,8 @@ public class ProductDetailFragment extends Fragment
 		TumblerSharing();
 		GooglePlusSharing();
 		ProductDelete();
+		initFacebook();
+		
 		return root;
 	}
 	@Override
@@ -198,11 +233,30 @@ public class ProductDetailFragment extends Fragment
 		likeCount=selected_item.getPLikeCount();
 		commentCount=selected_item.getPCommentCount();
 		imageLoader.DisplayImage(imageUrl, imgProductPhoto,progLoader);
-		shortDesc=selected_item.getPTag();
-
+		
+		String tag1="",price="",discount="",tags="",shortDiscription = "";
 		txtLike.setText(String.valueOf(likeCount));
 		txtComment.setText(String.valueOf(commentCount));
-		textDescription.setText(shortDesc.trim());
+		
+		tag1=selected_item.getPTag1().toString().trim()+" ";
+		price=selected_item.getPPrice().toString().trim()+" ";
+		tags=" "+selected_item.getPTag().toString().trim();
+		discount=selected_item.getPDiscountedPrice().toString().trim();
+		shortDiscription=tag1+price+discount+tags;
+		StrikethroughSpan strikethroughSpan=new StrikethroughSpan();
+		int len2=tag1.length()+price.length();
+		Spannable priceSpan=new SpannableString(shortDiscription);
+		if(discount.length()>0)
+		{
+			priceSpan.setSpan(strikethroughSpan, len2, len2+discount.length(), Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+				textDescription.setText(priceSpan);
+		}
+		else
+		{
+			textDescription.setText(shortDiscription);
+		}
+			
+		//textDescription.setText(shortDesc.trim());
 		shareDialog.setVisibility(View.GONE);
 		String LikeStatus = selected_item.getPLikeStatus().toString().trim();
 		if(LikeStatus.equals("LIKE"))
@@ -274,6 +328,8 @@ public class ProductDetailFragment extends Fragment
 			@Override
 			public void onClick(View v) 
 			{
+				Sharing_URL=selected_item.getPImageUrl();
+				Sharing_Tag=textDescription.getText().toString();
 				shareDialog.setVisibility(View.VISIBLE);
 				Animation anim=AnimationUtils.loadAnimation(getActivity(), R.anim.slide_up_anim);
 				anim.setFillAfter(true);
@@ -397,18 +453,264 @@ public class ProductDetailFragment extends Fragment
 			}
 		});
 	}
+	@SuppressWarnings("deprecation")
+	private void initFacebook()
+	{
+		facebook=new Facebook(APP_ID);
+		asyncRunner=new AsyncFacebookRunner(facebook);
+	}
    public void FacebookSharing()
    {
 		btnFacebook.setOnClickListener(new View.OnClickListener() 
 		{
+			@SuppressWarnings("deprecation")
 			@Override
 			public void onClick(View arg0) 
 			{
 					Toast.makeText(getActivity(), "Facebook", 5000).show();
+					String access_token = preferences.getString("access_token", null);
+				    long expires = preferences.getLong("access_expires", 0);
+				    if (access_token != null) {
+				        facebook.setAccessToken(access_token);
+				        
+				    }
+				 
+				    if (expires != 0) {
+				        facebook.setAccessExpires(expires);
+				    }
+					if(!facebook.isSessionValid())
+					{
+						facebook.authorize(getActivity(), permissions, Facebook.FORCE_DIALOG_AUTH, new Facebook.DialogListener() {
+						
+							@Override
+							public void onFacebookError(FacebookError e) {
+								// TODO Auto-generated method stub
+								Toast.makeText(getActivity(), "FB Error:"+e.getMessage(), Toast.LENGTH_SHORT).show();
+							}
+							
+							@Override
+							public void onError(DialogError e) {
+								// TODO Auto-generated method stub
+								Toast.makeText(getActivity(), "Dailog Error:"+e.getMessage(), Toast.LENGTH_SHORT).show();
+							}
+							
+							@Override
+							public void onComplete(Bundle values) {
+								// TODO Auto-generated method stub
+								//Toast.makeText(getApplicationContext(), "Success", Toast.LENGTH_SHORT).show();
+								SharedPreferences.Editor editor = preferences.edit();
+		                        editor.putString("access_token",facebook.getAccessToken());
+		                        editor.putLong("access_expires",facebook.getAccessExpires());
+		                        editor.commit();
+								createNewFacebookAlbum();
+							}
+							
+							@Override
+							public void onCancel() {
+								// TODO Auto-generated method stub
+								Toast.makeText(getActivity(), "Cancel", Toast.LENGTH_SHORT).show();
+							}
+						});
+					}
+					else
+					{
+						createNewFacebookAlbum();
+					}
 			}
 		});
    }
-   
+   @SuppressWarnings("deprecation")
+   public void createNewFacebookAlbum()
+      {
+   	   final Bundle params = new Bundle();
+   	   
+   	   /*progressDialog.setMessage("Creating album");
+   	    progressDialog.show();*/
+   	   Toast.makeText(getActivity(), "Uploading photo", Toast.LENGTH_SHORT).show();
+   	   asyncRunner.request("me/albums", params, "GET", new RequestListener() {
+   		
+   		@Override
+   		public void onMalformedURLException(MalformedURLException e, Object state) {
+   			// TODO Auto-generated method stub
+   			e.printStackTrace();
+   		}
+   		
+   		@Override
+   		public void onIOException(IOException e, Object state) {
+   			// TODO Auto-generated method stub
+   			e.printStackTrace();
+   		}
+   		
+   		@Override
+   		public void onFileNotFoundException(FileNotFoundException e, Object state) {
+   			// TODO Auto-generated method stub
+   			e.printStackTrace();
+   		}
+   		
+   		@Override
+   		public void onFacebookError(FacebookError e, Object state) {
+   			// TODO Auto-generated method stub
+   			e.printStackTrace();
+   		}
+   		
+   		@Override
+   		public void onComplete(String response, Object state) {
+   			// TODO Auto-generated method stub
+   			progressDialog.dismiss();
+   			try {
+   				boolean flag=false;
+   				JSONObject jsonObject=Util.parseJson(response);
+   				JSONArray jsonArray=(JSONArray)jsonObject.getJSONArray("data");
+   				String albumName="",albumID="";
+   				for(int i=0;i<jsonArray.length();i++)
+   				{
+   					JSONObject object=jsonArray.getJSONObject(i);
+   					Log.d("HomeActivity", "ID:"+object.getString("id"));
+   					Log.d("HomeActivity", "Name:"+object.getString("name"));
+   					albumName=object.getString("name");
+   					albumID=object.getString("id");
+   					if(albumName.equals(ALBUM_NAME))
+   					{
+   						
+   						flag=true;
+   						break;
+   					}
+   				}
+   				if(flag==true)
+   				{
+   					uploadPhoto(albumID);
+   				}
+   				else
+   				{
+   					createNewAlbum();
+   				}
+   				
+   			} catch (FacebookError e) {
+   				// TODO Auto-generated catch block
+   				e.printStackTrace();
+   			} catch (JSONException e) {
+   				// TODO Auto-generated catch block
+   				e.printStackTrace();
+   			}
+   		}
+   	}, null);
+   	
+      }
+      @SuppressWarnings("deprecation")
+   public void createNewAlbum()
+      {
+   	   final Bundle params = new Bundle();
+   	   params.putString("name", ALBUM_NAME);
+   	   params.putString("message", "Wardroba store product sharing album");
+   	  /* getActivity().runOnUiThread(new Runnable() {
+   		
+   		@Override
+   		public void run() {
+   			// TODO Auto-generated method stub
+   			progressDialog.setMessage("Creating album...");
+   			   progressDialog.show();
+   		}
+   	});*/
+   	   
+   	   asyncRunner.request("me/albums", params,"POST",new RequestListener() {
+   		
+   		@Override
+   		public void onMalformedURLException(MalformedURLException e, Object state) {
+   			// TODO Auto-generated method stub
+   			e.printStackTrace();
+   		}
+   		
+   		@Override
+   		public void onIOException(IOException e, Object state) {
+   			// TODO Auto-generated method stub
+   			e.printStackTrace();
+   		}
+   		
+   		@Override
+   		public void onFileNotFoundException(FileNotFoundException e, Object state) {
+   			// TODO Auto-generated method stub
+   			e.printStackTrace();
+   		}
+   		
+   		@Override
+   		public void onFacebookError(FacebookError e, Object state) {
+   			// TODO Auto-generated method stub
+   			e.printStackTrace();
+   		}
+   		
+   		@Override
+   		public void onComplete(String response, Object state) {
+   			// TODO Auto-generated method stub
+   			progressDialog.dismiss();
+   			Log.d("HomeActivity", "Create new album ---> Response:"+response);
+   			try {
+   				String albumID=Util.parseJson(response).getString("id");
+   				if(albumID!=null)
+   					uploadPhoto(albumID);
+   				else
+   					Log.d("HomeActivity", "Photo upload fail");
+   			} catch (FacebookError e) {
+   				// TODO Auto-generated catch block
+   				e.printStackTrace();
+   			} catch (JSONException e) {
+   				// TODO Auto-generated catch block
+   				e.printStackTrace();
+   			}
+   			
+   		}
+   	},null);
+      }
+      @SuppressWarnings("deprecation")
+      public void uploadPhoto(String albumID)
+      {
+   	   Bundle params = new Bundle();
+   	   params.putString("url", Sharing_URL);
+   	   params.putString("message", Sharing_Tag);
+   	  
+   	   /*getActivity().runOnUiThread(new Runnable() {
+   		
+   		@Override
+   		public void run() {
+   			// TODO Auto-generated method stub
+   			 progressDialog.setMessage("Uploading photo to album");
+   			    progressDialog.show();
+   		}
+   	});*/
+   	  
+   	   asyncRunner.request(albumID+"/photos", params, "POST", new RequestListener() {
+   		
+   		@Override
+   		public void onMalformedURLException(MalformedURLException e, Object state) {
+   			// TODO Auto-generated method stub
+   			e.printStackTrace();
+   		}
+   		
+   		@Override
+   		public void onIOException(IOException e, Object state) {
+   			// TODO Auto-generated method stub
+   			e.printStackTrace();
+   		}
+   		
+   		@Override
+   		public void onFileNotFoundException(FileNotFoundException e, Object state) {
+   			// TODO Auto-generated method stub
+   			e.printStackTrace();
+   		}
+   		
+   		@Override
+   		public void onFacebookError(FacebookError e, Object state) {
+   			// TODO Auto-generated method stub
+   			e.printStackTrace();
+   		}
+   		
+   		@Override
+   		public void onComplete(String response, Object state) {
+   			// TODO Auto-generated method stub
+   			progressDialog.dismiss();
+   			Log.d("HomeActivity", "Photo upload successfully response:---->"+response);
+   		}
+   	}, null);
+      }
    public void TwitterSharing()
    {
 		btnTwitter.setOnClickListener(new View.OnClickListener() 
@@ -450,6 +752,15 @@ public class ProductDetailFragment extends Fragment
 			public void onClick(View arg0) 
 			{
 				Toast.makeText(getActivity(), "GooglePlus", 5000).show();
+				Intent shareIntent = new PlusShare.Builder(getActivity())
+				
+		          .setText(Sharing_Tag)
+		          .setType("image/*")
+		          .setContentUrl(Uri.parse(Sharing_URL))
+		          
+		          .getIntent();
+				
+		      startActivityForResult(shareIntent, 0);
 			}
 		});
    }

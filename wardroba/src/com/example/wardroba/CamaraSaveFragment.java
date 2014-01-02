@@ -71,8 +71,25 @@ public class CamaraSaveFragment extends Fragment
 	{
 		if(id_cloth!=null && msg!=null)
 		{
-			Toast.makeText(getActivity(), "Product saved successfully", Toast.LENGTH_SHORT).show();
-			Toast.makeText(getActivity(), "Cloth ID:"+id_cloth, Toast.LENGTH_SHORT).show();
+			//Toast.makeText(getActivity(), "Product saved successfully", Toast.LENGTH_SHORT).show();
+			
+			AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+			builder.setMessage("Product added successfully");
+			builder.setTitle("Success")
+			       .setCancelable(false)
+			       .setPositiveButton("Ok", new DialogInterface.OnClickListener() 
+			       {
+			           public void onClick(DialogInterface dialog, int id) 
+			           {
+			                dialog.dismiss();
+			                Constants.IS_PRODUCT_ADDED=true;
+			                getActivity().finish();
+			                
+			           }
+			       });
+			AlertDialog alert = builder.create();
+			alert.show();
+			//Toast.makeText(getActivity(), "Cloth ID:"+id_cloth, Toast.LENGTH_SHORT).show();
 		}
 		else
 		{
@@ -102,6 +119,7 @@ public class CamaraSaveFragment extends Fragment
 	    bundle=getArguments();
 	    productBitmap=(Bitmap)bundle.getParcelable("croppedImage");
 	    clothsex=1;
+	    Constants.IS_PRODUCT_ADDED=false;
         return root;
     }
     

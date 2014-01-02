@@ -21,6 +21,7 @@ import android.graphics.BitmapFactory;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.ImageView.ScaleType;
 
 public class ImageLoader {
     
@@ -43,7 +44,16 @@ public class ImageLoader {
         Bitmap bitmap=memoryCache.get(url);
         if(bitmap!=null)
         {
-            imageView.setImageBitmap(bitmap);
+        	if(bitmap.getWidth()>=300 || bitmap.getHeight()>=300)
+        	{
+        		imageView.setScaleType(ScaleType.FIT_CENTER);
+        		imageView.setImageBitmap(bitmap);
+        	}
+        	else
+        	{
+        		imageView.setScaleType(ScaleType.CENTER);
+        		imageView.setImageBitmap(bitmap);
+        	}
             progressBar.setVisibility(View.GONE);
         }
         else
@@ -102,7 +112,7 @@ public class ImageLoader {
             stream1.close();
             
             //Find the correct scale value. It should be the power of 2.
-            final int REQUIRED_SIZE=70;
+            final int REQUIRED_SIZE=300;
             int width_tmp=o.outWidth, height_tmp=o.outHeight;
             int scale=1;
             while(true){
@@ -183,7 +193,17 @@ public class ImageLoader {
                 return;
             if(bitmap!=null)
             {
-                photoToLoad.imageView.setImageBitmap(bitmap);
+            	if(bitmap.getWidth()>=300 || bitmap.getHeight()>=300)
+            	{
+            		photoToLoad.imageView.setScaleType(ScaleType.FIT_CENTER);
+            		photoToLoad.imageView.setImageBitmap(bitmap);
+            	}
+            	else
+            	{
+            		photoToLoad.imageView.setScaleType(ScaleType.CENTER);
+            		photoToLoad.imageView.setImageBitmap(bitmap);
+            	}
+            	
             	photoToLoad.progressBar.setVisibility(View.GONE);
             }
             else

@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<ScrollView 
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    android:fillViewport="true">
+<RelativeLayout 
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    
     android:orientation="vertical" >
-
 <LinearLayout 
         android:layout_width="fill_parent"
 	    android:layout_height="fill_parent"
@@ -30,6 +36,7 @@
 			    android:layout_gravity="center_horizontal" />
 			<ProgressBar
 	        android:id="@+id/progLoader"
+	        android:indeterminateDrawable="@drawable/progress_drawable"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:layout_centerHorizontal="true"
@@ -246,4 +253,7 @@
 	            android:layout_marginRight="15dp"/>
 	    </LinearLayout>
 	</LinearLayout>
+	
+	
 </RelativeLayout>
+</ScrollView>

@@ -94,6 +94,9 @@ public class LoadingListHelper extends AsyncTask<String, Integer, Long>
 						item.setPLikeCount(parseIntValue(getValueFromNode(optionchildNode,"like_count")));
 						item.setPCommentCount(parseIntValue(getValueFromNode(optionchildNode,"comment_count")));
 						item.setPViewCount(parseIntValue(getValueFromNode(optionchildNode,"view_count")));
+						item.setPTag1(getValueFromNode(optionchildNode,"tags1"));
+						item.setPPrice(getValueFromNode(optionchildNode,"price"));
+						item.setPDiscountedPrice(getValueFromNode(optionchildNode,"discounted_price"));
 						item.setPTag( getValueFromNode(optionchildNode,"tags"));
 						item.setPImageUrl( getValueFromNode(optionchildNode,"img_url"));
 						item.setPLikeStatus(getValueFromNode(optionchildNode,"like_statue"));

@@ -1,14 +1,36 @@
 package com.example.wardroba;
 
 
-import java.io.InputStream;
-import java.lang.ref.WeakReference;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.apache.http.HttpEntity;
+import oauth.signpost.commonshttp.CommonsHttpOAuthConsumer;
+import oauth.signpost.commonshttp.CommonsHttpOAuthProvider;
+import oauth.signpost.exception.OAuthCommunicationException;
+import oauth.signpost.exception.OAuthExpectationFailedException;
+import oauth.signpost.exception.OAuthMessageSignerException;
+import oauth.signpost.exception.OAuthNotAuthorizedException;
+
 import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.mime.content.StringBody;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.ImageLoader.ImageLoader;
 import com.connection.Constants;
@@ -18,22 +40,34 @@ import com.connection.WebAPIHelper1;
 import com.costum.android.widget.LoadMoreListView;
 import com.costum.android.widget.LoadMoreListView.OnLoadMoreListener;
 import com.example.wardroba.SmartImageView.onMyDoubleClickListener;
+import com.facebook.android.AsyncFacebookRunner;
+import com.facebook.android.AsyncFacebookRunner.RequestListener;
+import com.facebook.android.DialogError;
+import com.facebook.android.Facebook;
+import com.facebook.android.FacebookError;
+import com.facebook.android.Util;
+import com.google.android.gms.plus.PlusShare;
 import com.pinterest.pinit.PinItButton;
+import com.tumblr.api.UploadImageActivity;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.http.AndroidHttpClient;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.text.Html;
@@ -44,19 +78,22 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Animation.AnimationListener;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AbsListView.OnScrollListener;
+import android.widget.LinearLayout.LayoutParams;
 
 public class HomeActivityFragment extends Fragment 
 {
@@ -72,8 +109,42 @@ public class HomeActivityFragment extends Fragment
 	HomeProductBaseAdapter adapter=null;
 
 	private int PAGE=1;
-	
+	// facebook sharing...
+	SharedPreferences preferences;
+	public static final String APP_ID = "335736383227858";
+	Facebook facebook;
+  	AsyncFacebookRunner asyncRunner;
+  	String[] permissions = { "email", "offline_access","publish_actions", "publish_stream", "user_photos", "publish_checkins","photo_upload","user_birthday","user_relationship_details"};
+  	private static String ALBUM_NAME="wardroba";
+  	ProgressDialog progressDialog;
+  	///  **************************
+  	// Tumblr sharing....
+  	private static final String TAG = "TumblrDemo";
+  	private static final String REQUEST_TOKEN_URL = "https://www.tumblr.com/oauth/request_token";
+    private static final String ACCESS_TOKEN_URL = "https://www.tumblr.com/oauth/access_token";
+    private static final String AUTH_URL = "https://www.tumblr.com/oauth/authorize";
 
+    // Taken from Tumblr app registration
+    public static final String CONSUMER_KEY = "sjxqXmPAI4UEDylObEXPMSlE8jIeEZlyFPaa4yTq8hoMdYomPT";
+	public static final String CONSUMER_SECRET = "Ba1cyBnsdf5wzB6UEDXNrSK6rQYfVtn8L86YJYT1x65Hl98hrL";
+
+    public static final String	OAUTH_CALLBACK_SCHEME	= "oauthflow-tumblr";
+	public static final String	OAUTH_CALLBACK_HOST		= "callback";
+	public static final String	OAUTH_CALLBACK_URL		= OAUTH_CALLBACK_SCHEME + "://" + OAUTH_CALLBACK_HOST;
+	
+	public static String TUMBLR_ACCESS_TOKEN="tumblr_access_token";
+	public static String TUMBLR_TOKEN_SECRET="tumblr_token_secret";
+	private String TUMBLR_USER_INFO_URI="http://api.tumblr.com/v2/user/info";
+	private String TUMBLR_POST_PHOTO_URI="http://api.tumblr.com/v2/blog/";
+	
+	String authUrl,token,secret;
+	CommonsHttpOAuthProvider provider;
+	CommonsHttpOAuthConsumer consumer;
+	
+	Dialog tumblrDialog;
+
+  	///
+  	
 	String Sharing_Tag,Sharing_URL;
 	String PINTEREST_CLIENT_ID = "1433818";
 
@@ -83,12 +154,9 @@ public class HomeActivityFragment extends Fragment
   		{
   			adapter=new HomeProductBaseAdapter(HomeActivityFragment.this, shareDialog);
   			adapter.notifyDataSetChanged();
-  			
- 	    	lsvProductList.setAdapter(adapter);
+  			lsvProductList.setAdapter(adapter);
  	    	lsvProductList.invalidateViews();
- 	    	 
- 	    	//lsvProductList.onLoadMoreComplete();
-  		}
+ 	    }
   		else
   		{
   			lsvProductList.setAdapter(null);
@@ -121,10 +189,6 @@ public class HomeActivityFragment extends Fragment
   			lsvProductList.setAdapter(null);
   			Toast.makeText(getActivity(), "No Record Found !", 5000).show();
   		}
-
-  		
-  		
- 
   	} 	
   	public void setResponseFromRequest1(int requestNumber) 
   	{		
@@ -161,10 +225,10 @@ public class HomeActivityFragment extends Fragment
 	{
         ViewGroup root = (ViewGroup) inflater.inflate(R.layout.home_activity, null);
         getActivity().findViewById(R.id.btnBackHome).setVisibility(View.GONE);
+        preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         tf= Typeface.createFromAsset(getActivity().getAssets(),"fonts/GOTHIC.TTF");
-        
+        progressDialog=new ProgressDialog(getActivity());
         lsvProductList=(LoadMoreListView)root.findViewById(R.id.product_list);
- 	     
  		btnFacebook=(ImageView)root.findViewById(R.id.btnFB);
  		btnTwitter=(ImageView)root.findViewById(R.id.btnTwitter);
  		btnPinterest=(PinItButton)root.findViewById(R.id.btnPinterest);
@@ -172,7 +236,6 @@ public class HomeActivityFragment extends Fragment
  		btnGooglePlus=(ImageView)root.findViewById(R.id.btnGplus);
  		btnCancel=(Button)root.findViewById(R.id.btnCancel);
  		txtSharLable=(TextView)root.findViewById(R.id.txt_share_lable);
- 		
  	    shareDialog=(LinearLayout)root.findViewById(R.id.dialogShare);
  	    shareDialog.setVisibility(View.GONE);
  	    btnCancel.setTypeface(tf);
@@ -188,7 +251,6 @@ public class HomeActivityFragment extends Fragment
 					String url = Constants.HOME_PRODUCT_URL+"&id="+Constants.LOGIN_USERID+"&page="+(PAGE++);
 					Log.d("Product_List= ",url.toString());
 					webAPIHelper.execute(url);
-				
 			}
 		});
  	    lsvProductList.setOnScrollListener(new OnScrollListener() 
@@ -227,7 +289,6 @@ public class HomeActivityFragment extends Fragment
 	                ((ViewGroup.MarginLayoutParams) linOwnerHeader.getLayoutParams()).topMargin = topMargin;
 	                }
 	                listItem.requestLayout();
-
 	            }
 	        }
 	     });
@@ -237,7 +298,6 @@ public class HomeActivityFragment extends Fragment
   		{
   			adapter=new HomeProductBaseAdapter(HomeActivityFragment.this, shareDialog);
   			adapter.notifyDataSetChanged();
-  			
  	    	lsvProductList.setAdapter(adapter);
   		}
   		else
@@ -245,15 +305,14 @@ public class HomeActivityFragment extends Fragment
   			lsvProductList.setAdapter(null);
   		}
 	    
-	   
-	    
 	    CancelSharDialog();
 	    FacebookSharing();
 	    TwitterSharing();
 	    PinterestSharing();
 	    TumblerSharing();
 	    GooglePlusSharing();
-	    
+	    initFacebook();
+	    initTumblr();
         return root;
     }
     
@@ -340,12 +399,46 @@ public class HomeActivityFragment extends Fragment
 				alert();
 			}
 	}
+	else if (Constants.IS_PRODUCT_ADDED) 
+	{
+		if(isOnline()==true)
+		{
+			try
+			{
+				Constants.IS_PRODUCT_ADDED=false;
+				WebAPIHelper webAPIHelper = new WebAPIHelper(Constants.product_list,HomeActivityFragment.this ,"Please Wait....");
+				String url = Constants.HOME_PRODUCT_URL+"&id="+Constants.LOGIN_USERID;	
+				Log.d("Product_List= ",url.toString());
+				webAPIHelper.execute(url);    	
+			}
+			catch(Exception e)
+			{
+				
+			}				
+		}
+		else
+		{
+			alert();
+		}
+	}
+		
 	else if(adapter!=null)
 	{
 		adapter.notifyDataSetChanged();
 		lsvProductList.refreshDrawableState();
 	}
 }
+   public void initTumblr()
+   {
+	   
+	   if(progressDialog!=null)
+		   progressDialog.setMessage("Loading...");
+       consumer = new CommonsHttpOAuthConsumer(CONSUMER_KEY,CONSUMER_SECRET);
+       provider = new CommonsHttpOAuthProvider(REQUEST_TOKEN_URL,ACCESS_TOKEN_URL,AUTH_URL);
+		token = preferences.getString(TUMBLR_ACCESS_TOKEN, "");
+		secret = preferences.getString(TUMBLR_TOKEN_SECRET, "");
+       
+   }
    public void alert()
    {
 	   AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -376,19 +469,263 @@ public class HomeActivityFragment extends Fragment
 			}
 		});
    }
-   
+   @SuppressWarnings("deprecation")
+	private void initFacebook()
+	{
+		facebook=new Facebook(APP_ID);
+		asyncRunner=new AsyncFacebookRunner(facebook);
+	}
    public void FacebookSharing()
    {
 		btnFacebook.setOnClickListener(new View.OnClickListener() 
 		{
+			@SuppressWarnings("deprecation")
 			@Override
 			public void onClick(View arg0) 
 			{
-					Toast.makeText(getActivity(), "Facebook", 5000).show();
+				String access_token = preferences.getString("access_token", null);
+			    long expires = preferences.getLong("access_expires", 0);
+			    if (access_token != null) {
+			        facebook.setAccessToken(access_token);
+			        
+			    }
+			 
+			    if (expires != 0) {
+			        facebook.setAccessExpires(expires);
+			    }
+				if(!facebook.isSessionValid())
+				{
+					facebook.authorize(getActivity(), permissions, Facebook.FORCE_DIALOG_AUTH, new Facebook.DialogListener() {
+					
+						@Override
+						public void onFacebookError(FacebookError e) {
+							// TODO Auto-generated method stub
+							Toast.makeText(getActivity(), "FB Error:"+e.getMessage(), Toast.LENGTH_SHORT).show();
+						}
+						
+						@Override
+						public void onError(DialogError e) {
+							// TODO Auto-generated method stub
+							Toast.makeText(getActivity(), "Dailog Error:"+e.getMessage(), Toast.LENGTH_SHORT).show();
+						}
+						
+						@Override
+						public void onComplete(Bundle values) {
+							// TODO Auto-generated method stub
+							//Toast.makeText(getApplicationContext(), "Success", Toast.LENGTH_SHORT).show();
+							SharedPreferences.Editor editor = preferences.edit();
+	                        editor.putString("access_token",facebook.getAccessToken());
+	                        editor.putLong("access_expires",facebook.getAccessExpires());
+	                        editor.commit();
+							createNewFacebookAlbum();
+						}
+						
+						@Override
+						public void onCancel() {
+							// TODO Auto-generated method stub
+							Toast.makeText(getActivity(), "Cancel", Toast.LENGTH_SHORT).show();
+						}
+					});
+				}
+				else
+				{
+					createNewFacebookAlbum();
+				}
 			}
 		});
    }
-   
+   @SuppressWarnings("deprecation")
+public void createNewFacebookAlbum()
+   {
+	   final Bundle params = new Bundle();
+	   
+	   /*progressDialog.setMessage("Creating album");
+	    progressDialog.show();*/
+	   Toast.makeText(getActivity(), "Uploading photo", Toast.LENGTH_SHORT).show();
+	   asyncRunner.request("me/albums", params, "GET", new RequestListener() {
+		
+		@Override
+		public void onMalformedURLException(MalformedURLException e, Object state) {
+			// TODO Auto-generated method stub
+			e.printStackTrace();
+		}
+		
+		@Override
+		public void onIOException(IOException e, Object state) {
+			// TODO Auto-generated method stub
+			e.printStackTrace();
+		}
+		
+		@Override
+		public void onFileNotFoundException(FileNotFoundException e, Object state) {
+			// TODO Auto-generated method stub
+			e.printStackTrace();
+		}
+		
+		@Override
+		public void onFacebookError(FacebookError e, Object state) {
+			// TODO Auto-generated method stub
+			e.printStackTrace();
+		}
+		
+		@Override
+		public void onComplete(String response, Object state) {
+			// TODO Auto-generated method stub
+			progressDialog.dismiss();
+			try {
+				boolean flag=false;
+				JSONObject jsonObject=Util.parseJson(response);
+				JSONArray jsonArray=(JSONArray)jsonObject.getJSONArray("data");
+				String albumName="",albumID="";
+				for(int i=0;i<jsonArray.length();i++)
+				{
+					JSONObject object=jsonArray.getJSONObject(i);
+					Log.d("HomeActivity", "ID:"+object.getString("id"));
+					Log.d("HomeActivity", "Name:"+object.getString("name"));
+					albumName=object.getString("name");
+					albumID=object.getString("id");
+					if(albumName.equals(ALBUM_NAME))
+					{
+						
+						flag=true;
+						break;
+					}
+				}
+				if(flag==true)
+				{
+					uploadPhoto(albumID);
+				}
+				else
+				{
+					createNewAlbum();
+				}
+				
+			} catch (FacebookError e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}, null);
+	
+   }
+   @SuppressWarnings("deprecation")
+public void createNewAlbum()
+   {
+	   final Bundle params = new Bundle();
+	   params.putString("name", ALBUM_NAME);
+	   params.putString("message", "Wardroba store product sharing album");
+	  /* getActivity().runOnUiThread(new Runnable() {
+		
+		@Override
+		public void run() {
+			// TODO Auto-generated method stub
+			progressDialog.setMessage("Creating album...");
+			   progressDialog.show();
+		}
+	});*/
+	   
+	   asyncRunner.request("me/albums", params,"POST",new RequestListener() {
+		
+		@Override
+		public void onMalformedURLException(MalformedURLException e, Object state) {
+			// TODO Auto-generated method stub
+			e.printStackTrace();
+		}
+		
+		@Override
+		public void onIOException(IOException e, Object state) {
+			// TODO Auto-generated method stub
+			e.printStackTrace();
+		}
+		
+		@Override
+		public void onFileNotFoundException(FileNotFoundException e, Object state) {
+			// TODO Auto-generated method stub
+			e.printStackTrace();
+		}
+		
+		@Override
+		public void onFacebookError(FacebookError e, Object state) {
+			// TODO Auto-generated method stub
+			e.printStackTrace();
+		}
+		
+		@Override
+		public void onComplete(String response, Object state) {
+			// TODO Auto-generated method stub
+			progressDialog.dismiss();
+			Log.d("HomeActivity", "Create new album ---> Response:"+response);
+			try {
+				String albumID=Util.parseJson(response).getString("id");
+				if(albumID!=null)
+					uploadPhoto(albumID);
+				else
+					Log.d("HomeActivity", "Photo upload fail");
+			} catch (FacebookError e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+	},null);
+   }
+   @SuppressWarnings("deprecation")
+   public void uploadPhoto(String albumID)
+   {
+	   Bundle params = new Bundle();
+	   params.putString("url", Sharing_URL);
+	   params.putString("message", Sharing_Tag);
+	  
+	   /*getActivity().runOnUiThread(new Runnable() {
+		
+		@Override
+		public void run() {
+			// TODO Auto-generated method stub
+			 progressDialog.setMessage("Uploading photo to album");
+			    progressDialog.show();
+		}
+	});*/
+	  
+	   asyncRunner.request(albumID+"/photos", params, "POST", new RequestListener() {
+		
+		@Override
+		public void onMalformedURLException(MalformedURLException e, Object state) {
+			// TODO Auto-generated method stub
+			e.printStackTrace();
+		}
+		
+		@Override
+		public void onIOException(IOException e, Object state) {
+			// TODO Auto-generated method stub
+			e.printStackTrace();
+		}
+		
+		@Override
+		public void onFileNotFoundException(FileNotFoundException e, Object state) {
+			// TODO Auto-generated method stub
+			e.printStackTrace();
+		}
+		
+		@Override
+		public void onFacebookError(FacebookError e, Object state) {
+			// TODO Auto-generated method stub
+			e.printStackTrace();
+		}
+		
+		@Override
+		public void onComplete(String response, Object state) {
+			// TODO Auto-generated method stub
+			progressDialog.dismiss();
+			Log.d("HomeActivity", "Photo upload successfully response:---->"+response);
+		}
+	}, null);
+   }
    public void TwitterSharing()
    {
 		btnTwitter.setOnClickListener(new View.OnClickListener() 
@@ -425,6 +762,14 @@ public class HomeActivityFragment extends Fragment
 			public void onClick(View arg0) 
 			{
 				Toast.makeText(getActivity(), "Tumbler", 5000).show();
+				if(token.equals("") && secret.equals(""))
+				{
+					loginToTumblr();
+				}
+				else
+				{
+					new TumblrPostAsync().execute();
+				}
 			}
 		});
    }
@@ -436,13 +781,321 @@ public class HomeActivityFragment extends Fragment
 			public void onClick(View arg0) 
 			{
 				Toast.makeText(getActivity(), "GooglePlus", 5000).show();
-			}
+				Intent shareIntent = new PlusShare.Builder(getActivity())
+					
+		          .setText(Sharing_Tag)
+		          .setType("image/*")
+		          .setContentUrl(Uri.parse(Sharing_URL))
+		          
+		          .getIntent();
+				
+		      startActivityForResult(shareIntent, 0);
+		}
 		});
    }
    
    
    
+   public void loginToTumblr()
+   {
+   	consumer = new CommonsHttpOAuthConsumer(CONSUMER_KEY,CONSUMER_SECRET);
+       provider = new CommonsHttpOAuthProvider(REQUEST_TOKEN_URL,ACCESS_TOKEN_URL,AUTH_URL);
+		 new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				try {
+					
+					authUrl = provider.retrieveRequestToken(consumer, OAUTH_CALLBACK_URL);
+				} catch (OAuthMessageSignerException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (OAuthNotAuthorizedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (OAuthExpectationFailedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (OAuthCommunicationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				getActivity().runOnUiThread(new Runnable() {
+					
+					@Override
+					public void run() {
+						// TODO Auto-generated method stub
+						Log.d(TAG, "Login url:"+authUrl);
+						showLoginDialog(authUrl);
+					}
+				});
+				 
+				 //startActivityForResult(new Intent(Intent.ACTION_VIEW, Uri.parse(authUrl)), 1);
+			}
+		}).start();
+   }
+   @SuppressLint("SetJavaScriptEnabled")
+	public void showLoginDialog(String url)
+   {
+   	
+			
+		
+				// TODO Auto-generated method stub
+				 tumblrDialog=new Dialog(getActivity());
+				 tumblrDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+				 tumblrDialog.getWindow().setBackgroundDrawableResource(R.drawable.border);
+				 tumblrDialog.setCancelable(false);
+				 float scale = getActivity().getResources().getDisplayMetrics().density;
+				 LayoutParams layoutParams=new LayoutParams((int)(scale*300+0.5f), (int)(scale*420+0.5f));
+				 
+				 tumblrDialog.setTitle("Tumbler");
+				 //LayoutParams layoutParams=new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
+				 LayoutInflater inflater = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+				 View v = inflater.inflate(R.layout.dialog, null);
+				// v.setLayoutParams(layoutParams);
+				tumblrDialog.setContentView(v);
+				
+		    	WebView webView=(WebView)tumblrDialog.findViewById(R.id.webView);
+		    	webView.setWebViewClient(new TumblrWebClient());
+		    	webView.getSettings().setJavaScriptEnabled(true);
+		    	webView.setLayoutParams(layoutParams);
+		    	webView.loadUrl(url);
+		    	tumblrDialog.show();
+			
+   }
    
+   private class TumblrWebClient extends WebViewClient
+   {
+   	@Override
+   	public boolean shouldOverrideUrlLoading(WebView view, String url) {
+   		// TODO Auto-generated method stub
+   		
+   		if (url.startsWith(OAUTH_CALLBACK_URL)) 
+   		{
+               tumblrLoginListener.onComplete(url);
+               tumblrDialog.dismiss();
+               return true;
+           } else if (url.startsWith("authorize")) {
+               return true;
+           }
+           return super.shouldOverrideUrlLoading(view, url);
+   	}
+   	@Override
+   	public void onPageStarted(WebView view, String url, Bitmap favicon) {
+   		// TODO Auto-generated method stub
+   		super.onPageStarted(view, url, favicon);
+   		if(!progressDialog.isShowing())
+   			progressDialog.show();
+   	}
+   	@Override
+   	public void onPageFinished(WebView view, String url) {
+   		// TODO Auto-generated method stub
+   		super.onPageFinished(view, url);
+   		Log.e(TAG, "On page finish");
+   		if(progressDialog.isShowing())
+   			progressDialog.dismiss();
+   	}
+   	@Override
+   	public void onReceivedError(WebView view, int errorCode,
+   			String description, String failingUrl) {
+   		// TODO Auto-generated method stub
+   		super.onReceivedError(view, errorCode, description, failingUrl);
+   		
+   		Toast.makeText(getActivity(), "Error:"+description, Toast.LENGTH_SHORT).show();
+   	}
+   }
+   TumblrLoginListener tumblrLoginListener=new TumblrLoginListener() {
+		
+		@Override
+		public void onError(String error) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+		@Override
+		public void onComplete(String url) {
+			// TODO Auto-generated method stub
+			processToken(url);
+			//new TumblrPostAsync().execute();
+		}
+	};
+	 public void processToken(String callbackUrl) {
+	        
+	        final String verifier = getVerifier(callbackUrl);
+
+	        new Thread() {
+	            @Override
+	            public void run() {
+	                
+
+	                try {
+	                    provider.retrieveAccessToken(consumer,
+	                            verifier);
+	                    
+	                    
+	                       token=consumer.getToken();
+	                       secret=consumer.getTokenSecret();
+	                       Log.e(TAG, "Token:"+token);
+	                       Log.e(TAG, "secret:"+secret);
+	                       Editor edit=preferences.edit();
+	                       edit.putString(TUMBLR_ACCESS_TOKEN, token);
+	                       edit.putString(TUMBLR_TOKEN_SECRET, secret);
+	                       edit.commit();
+	                       getActivity().runOnUiThread(new Runnable() {
+							
+							@Override
+							public void run() {
+								// TODO Auto-generated method stub
+								new TumblrPostAsync().execute();
+							}
+						});
+	                       
+	                } 
+	                catch (Exception e) 
+	                {
+	                    e.printStackTrace();
+	                }
+
+	                
+	            }
+	        }.start();
+	    }
+	 
+	 private String getVerifier(String callbackUrl) {
+	        String verifier = "";
+
+	        try {
+	            callbackUrl = callbackUrl.replace(OAUTH_CALLBACK_SCHEME, "http");
+
+	            URL url = new URL(callbackUrl);
+	            String query = url.getQuery();
+
+	            String array[] = query.split("&");
+
+	            for (String parameter : array) {
+	                String v[] = parameter.split("=");
+
+	                if (URLDecoder.decode(v[0]).equals(
+	                        oauth.signpost.OAuth.OAUTH_VERIFIER)) {
+	                    verifier = URLDecoder.decode(v[1]);
+	                    break;
+	                }
+	            }
+	        } catch (MalformedURLException e) {
+	            e.printStackTrace();
+	        }
+
+	        return verifier;
+	    }
+	 
+	class TumblrPostAsync extends AsyncTask<String, Void, String>
+	{
+
+		@Override
+		protected void onPreExecute() {
+			// TODO Auto-generated method stub
+			super.onPreExecute();
+			progressDialog.setMessage("Photo posting to Tumblr...");
+			progressDialog.show();
+		}
+		@Override
+		protected String doInBackground(String... arg0) {
+			// TODO Auto-generated method stub
+			 
+            try 
+            {
+           	 consumer.setTokenWithSecret(token, secret);
+           	 HttpGet httpGet=new HttpGet(TUMBLR_USER_INFO_URI);
+           	 consumer.sign(httpGet);
+           	 DefaultHttpClient client = new DefaultHttpClient();
+      		   	 HttpResponse resp = null;
+      		   	 resp = client.execute(httpGet);
+      		   	 String response=EntityUtils.toString(resp.getEntity());
+      		   	 Log.d(TAG,"response"+response);
+      		   	 JSONObject jsonObject=new JSONObject(response);
+      		   	 JSONObject jsonReponse=jsonObject.getJSONObject("response");
+      		   	 JSONObject userJson=jsonReponse.getJSONObject("user");
+      		   	 String username=userJson.getString("name");
+      		   	 Log.d(TAG,"Username:"+username);
+      		   	 JSONArray blogs=userJson.getJSONArray("blogs");
+      		   	 String blogName = null,blogUrl,blogTitle;
+      		   	 if(blogs.length()>0)
+    			 {
+    				JSONObject blogObject=(JSONObject)blogs.get(0);
+    				blogName=blogObject.getString("name");
+    				blogUrl=blogObject.getString("url");
+    				blogTitle=blogObject.getString("title");
+    				Log.d(TAG,"Blog name:"+blogName);
+    				Log.d(TAG,"Blog url:"+blogUrl);
+    				Log.d(TAG,"Blog Title:"+blogTitle);
+    			 }
+    			
+    			
+    			HttpPost hpost = new HttpPost(TUMBLR_POST_PHOTO_URI + blogName + ".tumblr.com/post");
+    			Log.d(TAG, "Post to blog:"+TUMBLR_POST_PHOTO_URI + blogName + ".tumblr.com/post");
+    			
+    			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+    			nameValuePairs.add(new BasicNameValuePair(URLEncoder.encode("type", "UTF-8"),URLEncoder.encode("photo", "UTF-8")));
+    			Log.e("Tumblr", "Image shareing file path" + Sharing_URL);
+    			nameValuePairs.add(new BasicNameValuePair("caption", Html.toHtml(new SpannableString(Sharing_Tag))));
+    			
+    			nameValuePairs.add(new BasicNameValuePair("source", Sharing_URL.trim()));
+    			hpost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+    			
+      			consumer.sign(hpost);
+      			
+      			resp=client.execute(hpost);
+      			
+      			String postResponse=EntityUtils.toString(resp.getEntity());
+      			Log.d(TAG, "Photo post response:"+postResponse);
+    			
+			 } 
+            catch (OAuthMessageSignerException e) 
+            {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			 } 
+            catch (OAuthExpectationFailedException e) 
+            {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			 }
+            catch (OAuthCommunicationException e) 
+            {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			 }
+            catch (ClientProtocolException e) 
+            {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			 }
+            catch (IOException e) 
+            {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			 } 
+            catch (JSONException e) 
+            {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			 }
+            
+            
+    		  
+    			
+			return null;
+		}
+		
+		@Override
+		protected void onPostExecute(String result) {
+			// TODO Auto-generated method stub
+			super.onPostExecute(result);
+			progressDialog.dismiss();
+			
+		}
+	}
    
    
    class HomeProductBaseAdapter extends BaseAdapter 
@@ -454,12 +1107,8 @@ public class HomeActivityFragment extends Fragment
    	public GroupItem item ;
    	Typeface tf;
    	HomeActivityFragment mContext;
-   	
-   	
    	String CommentId;
    	WardrobaItem wardrobaItem;
-   	
-
     HomeProductBaseAdapter(HomeActivityFragment context , LinearLayout dialog1)
    	{
    		this.mContext=context;
@@ -467,14 +1116,7 @@ public class HomeActivityFragment extends Fragment
    		mInflater = LayoutInflater.from(mContext.getActivity());
    		imageLoader=new ImageLoader(mContext.getActivity());
    		imageLoader.clearCache();
-   		
    		tf= Typeface.createFromAsset(mContext.getActivity().getAssets(),"fonts/GOTHIC.TTF");
-   		 
-   		
-   		
-//   	    animFadeIn=AnimationUtils.loadAnimation(activity, R.anim.fade_in);
-//   	    animFadeOut=AnimationUtils.loadAnimation(activity, R.anim.fade_out);	
-   	    
    	}
    	public int getCount()
    	{
@@ -561,58 +1203,33 @@ public class HomeActivityFragment extends Fragment
    					imageLoader.DisplayImage(wardrobaItem.getPUserImage().toString().trim(),item.imgUserPhoto,progressBarUserPhoto);
    				 //new ImageDownloaderTask(item.imgUserPhoto,progressBarUserPhoto).execute(wardrobaItem.getPUserImage());
    				}
-   				
-
-			
-     			 			
-   			
-   			
-   			
    			
    			txtLikeCount.setText(String.valueOf(wardrobaItem.getPLikeCount()));
    			txtCommentCount.setText(String.valueOf(wardrobaItem.getPCommentCount()));
    			String tag1="",price="",discount="",tags="",shortDiscription = "";
-   			/*if(wardrobaItem!=null)
+   			if(wardrobaItem!=null)
    			{
-   			tag1=wardrobaItem.getPTag1().toString().trim()+" ";
-   			price=wardrobaItem.getPPrice().toString().trim()+" ";
-			tags=" "+wardrobaItem.getPTag().toString().trim();
-   			discount=wardrobaItem.getPDiscountedPrice().toString().trim();
-   			shortDiscription=tag1+price+discount+tags;
-   			StrikethroughSpan strikethroughSpan=new StrikethroughSpan();
-   			int len2=tag1.length()+price.length();
-   			Spannable priceSpan=new SpannableString(shortDiscription);
-   			if(discount.length()>0)
-   			{
-					priceSpan.setSpan(strikethroughSpan, len2, len2+discount.length(), Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
-   					txtShortDiscription.setText(priceSpan);
-   			}
-   			else
-   			{
-   				txtShortDiscription.setText(shortDiscription);
-   			}
+	   			tag1=wardrobaItem.getPTag1().toString().trim()+" ";
+	   			price=wardrobaItem.getPPrice().toString().trim()+" ";
+				tags=" "+wardrobaItem.getPTag().toString().trim();
+	   			discount=wardrobaItem.getPDiscountedPrice().toString().trim();
+	   			shortDiscription=tag1+price+discount+tags;
+	   			StrikethroughSpan strikethroughSpan=new StrikethroughSpan();
+	   			int len2=tag1.length()+price.length();
+	   			Spannable priceSpan=new SpannableString(shortDiscription);
+	   			if(discount.length()>0)
+	   			{
+						priceSpan.setSpan(strikethroughSpan, len2, len2+discount.length(), Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+	   					txtShortDiscription.setText(priceSpan);
+	   			}
+	   			else
+	   			{
+	   				txtShortDiscription.setText(shortDiscription);
+	   			}
    			   			
-   			}*/
-   			if(wardrobaItem.getPTag1()!=null)
-   			{
-   			tag1=wardrobaItem.getPTag1().toString().trim()+" ";
-   			price=wardrobaItem.getPPrice().toString().trim()+" ";
-			tags=" "+wardrobaItem.getPTag().toString().trim();
-   			discount=wardrobaItem.getPDiscountedPrice().toString().trim();
-   			shortDiscription=tag1+price+discount+tags;
-   			StrikethroughSpan strikethroughSpan=new StrikethroughSpan();
-   			int len2=tag1.length()+price.length();
-   			Spannable priceSpan=new SpannableString(shortDiscription);
-   			if(discount.length()>0)
-   			{
-					priceSpan.setSpan(strikethroughSpan, len2, len2+discount.length(), Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
-   					txtShortDiscription.setText(priceSpan);
    			}
-   			else
-   			{
-   				txtShortDiscription.setText(shortDiscription);
-   			}
-   			}
+   			
+   			
    			
    			String Status=wardrobaItem.getPLikeStatus().toString().trim();
    			if(Status.equals("LIKE"))
@@ -780,8 +1397,8 @@ public class HomeActivityFragment extends Fragment
    			{
    				public void onClick(View v) 
    				{
-   					Sharing_Tag=String.valueOf(wardrobaItem.getPImageUrl());
-   					Sharing_URL=String.valueOf(wardrobaItem.getPTag());
+   					Sharing_URL=String.valueOf(wardrobaItem.getPImageUrl());
+   					Sharing_Tag=String.valueOf(txtShortDiscription.getText());
    					
    					SharDialog.setVisibility(View.VISIBLE);
    					Animation anim=AnimationUtils.loadAnimation(mContext.getActivity(), R.anim.slide_up_anim);
@@ -816,96 +1433,7 @@ public class HomeActivityFragment extends Fragment
    		return vi;	
    	}	
    	
-   	class ImageDownloaderTask extends AsyncTask<String, Void, Bitmap> {
-   	    private final WeakReference<ImageView> imageViewReference;
-   	    ProgressBar mProgressBar;
-   	    public ImageDownloaderTask(ImageView imageView,ProgressBar progressBar) {
-   	    	this.mProgressBar=progressBar;
-   	        imageViewReference = new WeakReference(imageView);
-   	    }
-   	 
-   	    @Override
-   	    // Actual download method, run in the task thread
-   	    protected Bitmap doInBackground(String... params) {
-   	        // params comes from the execute() call: params[0] is the url.
-   	        return downloadBitmap(params[0]);
-   	    }
-   	 
-   	    @Override
-   	    // Once the image is downloaded, associates it to the imageView
-   	    protected void onPostExecute(Bitmap bitmap) {
-   	        if (isCancelled()) {
-   	            bitmap = null;
-   	        }
-   	 
-   	        if (imageViewReference != null) {
-   	            ImageView imageView = imageViewReference.get();
-   	            if (imageView != null) {
-   	 
-   	                if (bitmap != null) {
-   	                    imageView.setImageBitmap(bitmap);
-   	                    mProgressBar.setVisibility(View.GONE);
-   	                } else {
-   	                   mProgressBar.setVisibility(View.VISIBLE);
-   	                }
-   	            }
-   	 
-   	        }
-   	    }
-   	 
-   	}
-   	
-   	 Bitmap downloadBitmap(String url) {
-        final AndroidHttpClient client = AndroidHttpClient.newInstance("Android");
-        final HttpGet getRequest = new HttpGet(url);
-        try {
-            HttpResponse response = client.execute(getRequest);
-            final int statusCode = response.getStatusLine().getStatusCode();
-            if (statusCode != HttpStatus.SC_OK) {
-                Log.w("ImageDownloader", "Error " + statusCode
-                        + " while retrieving bitmap from " + url);
-                return null;
-            }
- 
-            final HttpEntity entity = response.getEntity();
-            if (entity != null) {
-                InputStream inputStream = null;
-                try {
-                    inputStream = entity.getContent();
-                    final Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-                    return bitmap;
-                } finally {
-                    if (inputStream != null) {
-                        inputStream.close();
-                    }
-                    entity.consumeContent();
-                }
-            }
-        } catch (Exception e) {
-            // Could provide a more explicit error message for IOException or
-            // IllegalStateException
-            getRequest.abort();
-            Log.w("ImageDownloader", "Error while retrieving bitmap from " + url);
-        } finally {
-            if (client != null) {
-                client.close();
-            }
-        }
-        return null;
-    }
-//   	private static class ViewHolder 
-//   	{
-//   		TextView header;
-//   		int previousTop = 0;
-//   	}
-
-   	
-       
-   	
-   	
-
-
-   	
+   	   	
         
    }
 }

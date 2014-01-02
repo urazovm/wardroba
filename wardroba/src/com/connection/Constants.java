@@ -92,6 +92,7 @@ public class Constants implements Serializable
 
     public static int SELECTED_COMMENT;
  	public static boolean IS_PROFILE_CHANGED=false;
+ 	public static boolean IS_PRODUCT_ADDED=false;
 	
 
 }

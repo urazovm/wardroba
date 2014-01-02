@@ -119,7 +119,17 @@
             android:name="com.example.wardroba.CamaraSaveFragment"
             android:screenOrientation="portrait">
         </activity>
-           
+        <activity android:name="com.tumblr.api.UploadImageActivity"></activity>
+        <service android:name="com.tumblr.api.TumblrService" android:label="TumblrService">
+            <intent-filter>
+				<action android:name="com.tacticalnuclearstrike.tttumblr.POST_TEXT" />
+				<action android:name="com.tacticalnuclearstrike.tttumblr.POST_PHOTO" />
+				<action android:name="com.tacticalnuclearstrike.tttumblr.POST_VIDEO" />
+				<action android:name="com.tacticalnuclearstrike.tttumblr.POST_CONVERSATION" />
+				<action android:name="com.tacticalnuclearstrike.tttumblr.POST_LINK" />
+				<action android:name="com.tacticalnuclearstrike.tttumblr.POST_QUOTE" />
+            </intent-filter>
+        </service>
    	</application>
 
 </manifest>

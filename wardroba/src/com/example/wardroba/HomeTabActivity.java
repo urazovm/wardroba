@@ -1,5 +1,7 @@
 package com.example.wardroba;
 
+import com.connection.Constants;
+
 import android.app.TabActivity;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -12,6 +14,7 @@ import android.widget.Toast;
 
 public class HomeTabActivity  extends TabActivity{
 	Button firstButton,secondButton,thirdButton,fourthButton;
+	TabHost tabHost;
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,7 +28,7 @@ public class HomeTabActivity  extends TabActivity{
         
 
         Resources res = getResources(); // Resource object to get Drawables
-        final TabHost tabHost = getTabHost();  // The activity TabHost
+         tabHost = getTabHost();  // The activity TabHost
         TabHost.TabSpec spec;  // Resusable TabSpec for each tab
         Intent intent;  // Reusable Intent for each tab
 
@@ -110,5 +113,13 @@ public class HomeTabActivity  extends TabActivity{
 		// TODO Auto-generated method stub
 		super.onResume();
 		Toast.makeText(getApplicationContext(), "on home resume", Toast.LENGTH_SHORT).show();
+		if(Constants.IS_PRODUCT_ADDED)
+		{
+			tabHost.setCurrentTab(0);
+            firstButton.setBackgroundResource(R.drawable.menu_icon_1_h);
+            secondButton.setBackgroundResource(R.drawable.menu_icon_2);              
+            thirdButton.setBackgroundResource(R.drawable.menu_icon_3);
+            fourthButton.setBackgroundResource(R.drawable.menu_icon_4);
+		}
 	}
 }

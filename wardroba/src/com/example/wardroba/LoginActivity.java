@@ -221,6 +221,7 @@ public class LoginActivity extends Activity
 	{
 		progressDialog.setMessage("Please wait...");
 		progressDialog.show();
+		
 		asyncRunner.request("me", new RequestListener() {
 			
 			@Override
