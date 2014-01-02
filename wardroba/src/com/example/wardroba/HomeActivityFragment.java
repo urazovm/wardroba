@@ -3,6 +3,8 @@ package com.example.wardroba;
 
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
+import java.net.URL;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 
 import org.apache.http.HttpEntity;
@@ -10,7 +12,11 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpGet;
 
+import twitter4j.StatusUpdate;
+
 import com.ImageLoader.ImageLoader;
+import com.android.sot.twitter.TwitterApp;
+import com.android.sot.twitter.TwitterApp.TwDialogListener;
 import com.connection.Constants;
 import com.connection.LoadingListHelper;
 import com.connection.WebAPIHelper;
@@ -19,21 +25,24 @@ import com.costum.android.widget.LoadMoreListView;
 import com.costum.android.widget.LoadMoreListView.OnLoadMoreListener;
 import com.example.wardroba.SmartImageView.onMyDoubleClickListener;
 import com.pinterest.pinit.PinItButton;
-
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.net.http.AndroidHttpClient;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.text.Html;
@@ -41,6 +50,7 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.StrikethroughSpan;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -72,12 +82,23 @@ public class HomeActivityFragment extends Fragment
 	HomeProductBaseAdapter adapter=null;
 
 	private int PAGE=1;
-	
-
 	String Sharing_Tag,Sharing_URL;
 	String PINTEREST_CLIENT_ID = "1433818";
 
-  	public void setResponseFromRequest(int requestNumber) 
+	//TWITTER
+
+	static final String TWITTER_CONSUMER_KEY = "NJC4QxSTuMxIbPYsTj5xoA";
+	static final String TWITTER_SECRET_KEY = "BsYApRSdctPi8EckamqRr3uHh5ikjDRwFRgWimI62I";
+	public static String shareLink = "http://www.google.com";
+	Handler mHandler;
+	TwitterApp mTwitter;
+	private ProgressDialog progressdialog;
+	StringBuffer buffer;
+	String MSG;
+	private ProgressBar mProgress;
+	
+	///////////////////////////////////////////////
+    public void setResponseFromRequest(int requestNumber) 
   	{		  		 		
   		if(Constants.all_items.size()>0)
   		{
@@ -87,7 +108,6 @@ public class HomeActivityFragment extends Fragment
  	    	lsvProductList.setAdapter(adapter);
  	    	lsvProductList.invalidateViews();
  	    	 
- 	    	//lsvProductList.onLoadMoreComplete();
   		}
   		else
   		{
@@ -106,7 +126,6 @@ public class HomeActivityFragment extends Fragment
   				adapter.notifyDataSetChanged();
   				lsvProductList.requestLayout();
   				lsvProductList.onLoadMoreComplete();
-  				
   			}
   			else
   			{
@@ -172,7 +191,8 @@ public class HomeActivityFragment extends Fragment
  		btnGooglePlus=(ImageView)root.findViewById(R.id.btnGplus);
  		btnCancel=(Button)root.findViewById(R.id.btnCancel);
  		txtSharLable=(TextView)root.findViewById(R.id.txt_share_lable);
- 		
+ 		mProgress = (ProgressBar)root.findViewById(R.id.progress_bar);
+ 		mProgress.setVisibility(View.GONE);
  	    shareDialog=(LinearLayout)root.findViewById(R.id.dialogShare);
  	    shareDialog.setVisibility(View.GONE);
  	    btnCancel.setTypeface(tf);
@@ -181,14 +201,12 @@ public class HomeActivityFragment extends Fragment
  	    lsvProductList.setOnLoadMoreListener(new OnLoadMoreListener() 
  	    {	
 			@Override
-
-			public void onLoadMore() {
-				// TODO Auto-generated method stub
-					LoadingListHelper webAPIHelper = new LoadingListHelper(Constants.product_list,HomeActivityFragment.this ,"Please Wait....");
-					String url = Constants.HOME_PRODUCT_URL+"&id="+Constants.LOGIN_USERID+"&page="+(PAGE++);
-					Log.d("Product_List= ",url.toString());
-					webAPIHelper.execute(url);
-				
+			public void onLoadMore() 
+			{
+				LoadingListHelper webAPIHelper = new LoadingListHelper(Constants.product_list,HomeActivityFragment.this ,"Please Wait....");
+				String url = Constants.HOME_PRODUCT_URL+"&id="+Constants.LOGIN_USERID+"&page="+(PAGE++);
+				Log.d("Product_List= ",url.toString());
+				webAPIHelper.execute(url);
 			}
 		});
  	    lsvProductList.setOnScrollListener(new OnScrollListener() 
@@ -245,7 +263,12 @@ public class HomeActivityFragment extends Fragment
   			lsvProductList.setAdapter(null);
   		}
 	    
-	   
+
+        ///////////////////////////////////// FOR TWITTER ////////////////////////////////////////////
+
+		mHandler = new Handler();
+		mTwitter = new TwitterApp(getActivity(), TWITTER_CONSUMER_KEY,TWITTER_SECRET_KEY);
+		mTwitter.setListener(mTwLoginDialogListener);
 	    
 	    CancelSharDialog();
 	    FacebookSharing();
@@ -256,8 +279,6 @@ public class HomeActivityFragment extends Fragment
 	    
         return root;
     }
-    
-  	
  
     public void onCreate(Bundle savedInstanceState) 
     {
@@ -318,6 +339,11 @@ public class HomeActivityFragment extends Fragment
    public void onResume() 
    {
 	super.onResume();
+	//Twitter
+	mHandler = new Handler();
+	mTwitter = new TwitterApp(getActivity(), TWITTER_CONSUMER_KEY,TWITTER_SECRET_KEY);
+	mTwitter.setListener(mTwLoginDialogListener);
+	
 	if(Constants.IS_PROFILE_CHANGED)
 	{
 		 if(isOnline()==true)
@@ -396,7 +422,17 @@ public class HomeActivityFragment extends Fragment
 			@Override
 			public void onClick(View arg0) 
 			{
-				Toast.makeText(getActivity(), "Twitter", 5000).show();
+				shareDialog.setVisibility(View.GONE);
+				Animation anim=AnimationUtils.loadAnimation(getActivity(), R.anim.slide_down_anim);
+				anim.setFillBefore(true);
+				shareDialog.startAnimation(anim);
+
+				if (mTwitter.hasAccessToken())
+					postMsgOnTwitter(Sharing_Tag);
+				else
+				{
+					mTwitter.authorize();
+				}
 			}
 		});
    }
@@ -440,13 +476,140 @@ public class HomeActivityFragment extends Fragment
 		});
    }
    
+   //Twitter
+   private TwDialogListener mTwLoginDialogListener = new TwDialogListener() {
+		@Override
+		public void onComplete(String value) 
+		{
+			postMsgOnTwitter(Sharing_Tag);
+		}
+
+		@Override
+		public void onError(String value) {
+			showToast("Twitter login failed");
+			mTwitter.resetAccessToken();
+		}
+	};
    
-   
-   
-   
-   
-   class HomeProductBaseAdapter extends BaseAdapter 
+	private void postMsgOnTwitter(final String msg) 
+	{
+		showProgressDialog("Sending tweet..");
+
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				
+				try 
+				{
+					
+					StatusUpdate status = new StatusUpdate(msg);
+					
+					URL url=new URL(Sharing_URL);
+					InputStream is=url.openStream();
+					
+					status.setMedia(Uri.decode(Sharing_Tag), is);
+					
+					mTwitter.updateStatus(status);
+					
+					showToast("Posted successfully.");
+					mProgress.setVisibility(View.GONE);
+					//hideProgressDialog();
+					
+				} catch (Exception e) 
+				{
+					//showToast("Oops!You have already twitted that.");
+					mProgress.setVisibility(View.GONE);
+					//hideProgressDialog();
+					e.printStackTrace();
+				}
+			}
+		}).start();
+	}
+
+	public void showToast(final String msg) 
+	{
+		mHandler.post(new Runnable() 
+		{
+			@Override
+			public void run() 
+			{
+				Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
+			}
+		});
+	}
+	/**
+	 * This will shows a progress dialog with loading text, this is useful to
+	 * call when some other functionality is taking place.
+	 **/
+	public void showProgressDialog(String msg) 
+	{
+		mProgress.setVisibility(View.VISIBLE);
+		//runOnUiThread(new RunShowLoader(msg, false));
+	}
+
+
+	/**
+	 * Implementing Runnable for runOnUiThread(), This will show a progress
+	 * dialog
+	 */
+	class RunShowLoader implements Runnable 
+	{
+		private String strMsg;
+		private boolean isCancalable;
+
+		public RunShowLoader(String strMsg, boolean isCancalable) 
+		{
+			this.strMsg = strMsg;
+			this.isCancalable = isCancalable;
+		}
+
+		@Override
+		public void run() 
+		{
+			try 
+			{
+				if (progressdialog == null|| (progressdialog != null && !progressdialog.isShowing())) 
+				{
+					progressdialog = ProgressDialog.show(getActivity(),"", strMsg);
+					progressdialog.setCancelable(isCancalable);
+				}
+			} catch (Exception e) 
+			{
+				progressdialog = null;
+				e.printStackTrace();
+			}
+		}
+	}
+
+	/** For hiding progress dialog **/
+	public void hideProgressDialog() 
+	{
+		//Toast.makeText(getActivity(), MSG, 5000).show();
+		mProgress.setVisibility(View.GONE);
+//		runOnUiThread(new Runnable() 
+//		{
+//			@Override
+//			public void run() {
+//				try {
+//					if (progressdialog != null && progressdialog.isShowing()) 
+//					{
+//						progressdialog.dismiss();
+//					}
+//					progressdialog = null;
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		});
+	}
+	
+	
+//////////////////////////////////////////////////	
+
+
+	class HomeProductBaseAdapter extends BaseAdapter 
    {
+		
    	LayoutInflater mInflater;
    	
    	LinearLayout SharDialog;
@@ -455,10 +618,8 @@ public class HomeActivityFragment extends Fragment
    	Typeface tf;
    	HomeActivityFragment mContext;
    	
-   	
    	String CommentId;
    	WardrobaItem wardrobaItem;
-   	
 
     HomeProductBaseAdapter(HomeActivityFragment context , LinearLayout dialog1)
    	{
@@ -469,11 +630,6 @@ public class HomeActivityFragment extends Fragment
    		imageLoader.clearCache();
    		
    		tf= Typeface.createFromAsset(mContext.getActivity().getAssets(),"fonts/GOTHIC.TTF");
-   		 
-   		
-   		
-//   	    animFadeIn=AnimationUtils.loadAnimation(activity, R.anim.fade_in);
-//   	    animFadeOut=AnimationUtils.loadAnimation(activity, R.anim.fade_out);	
    	    
    	}
    	public int getCount()
@@ -483,7 +639,6 @@ public class HomeActivityFragment extends Fragment
 
    	public Object getItem(int position)  
    	{
-   		// TODO Auto-generated method stub
    		return null;
    	}
    	public long getItemId(int position) 
@@ -500,7 +655,6 @@ public class HomeActivityFragment extends Fragment
    	
    	public View getView(final int position, View convertView, ViewGroup parent) 
    	{
-   		 	
    		 	
    		 	View vi=convertView;
    			
@@ -561,38 +715,11 @@ public class HomeActivityFragment extends Fragment
    					imageLoader.DisplayImage(wardrobaItem.getPUserImage().toString().trim(),item.imgUserPhoto,progressBarUserPhoto);
    				 //new ImageDownloaderTask(item.imgUserPhoto,progressBarUserPhoto).execute(wardrobaItem.getPUserImage());
    				}
-   				
-
-			
-     			 			
-   			
-   			
-   			
-   			
+   				   			
    			txtLikeCount.setText(String.valueOf(wardrobaItem.getPLikeCount()));
    			txtCommentCount.setText(String.valueOf(wardrobaItem.getPCommentCount()));
    			String tag1="",price="",discount="",tags="",shortDiscription = "";
-   			/*if(wardrobaItem!=null)
-   			{
-   			tag1=wardrobaItem.getPTag1().toString().trim()+" ";
-   			price=wardrobaItem.getPPrice().toString().trim()+" ";
-			tags=" "+wardrobaItem.getPTag().toString().trim();
-   			discount=wardrobaItem.getPDiscountedPrice().toString().trim();
-   			shortDiscription=tag1+price+discount+tags;
-   			StrikethroughSpan strikethroughSpan=new StrikethroughSpan();
-   			int len2=tag1.length()+price.length();
-   			Spannable priceSpan=new SpannableString(shortDiscription);
-   			if(discount.length()>0)
-   			{
-					priceSpan.setSpan(strikethroughSpan, len2, len2+discount.length(), Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
-   					txtShortDiscription.setText(priceSpan);
-   			}
-   			else
-   			{
-   				txtShortDiscription.setText(shortDiscription);
-   			}
-   			   			
-   			}*/
+   			
    			if(wardrobaItem.getPTag1()!=null)
    			{
    			tag1=wardrobaItem.getPTag1().toString().trim()+" ";
@@ -623,9 +750,6 @@ public class HomeActivityFragment extends Fragment
    	        	btnLike.setBackgroundResource(R.drawable.like_h);
    	        }
    			
-
-   			
-   			 
    			 imgProductImage.callback=new onMyDoubleClickListener() {
    					
    					@Override
@@ -751,10 +875,6 @@ public class HomeActivityFragment extends Fragment
    								{
    									
    								}	
-   							
-   					
-   					
-   					
    				}
    			});
    		
@@ -780,8 +900,8 @@ public class HomeActivityFragment extends Fragment
    			{
    				public void onClick(View v) 
    				{
-   					Sharing_Tag=String.valueOf(wardrobaItem.getPImageUrl());
-   					Sharing_URL=String.valueOf(wardrobaItem.getPTag());
+   					Sharing_Tag=txtShortDiscription.getText().toString();
+   					Sharing_URL=String.valueOf(wardrobaItem.getPImageUrl().toString().trim());
    					
    					SharDialog.setVisibility(View.VISIBLE);
    					Animation anim=AnimationUtils.loadAnimation(mContext.getActivity(), R.anim.slide_up_anim);
@@ -790,9 +910,6 @@ public class HomeActivityFragment extends Fragment
    				}
    			});
    			imgProductImage.setDilImage(imgLikeDil);
-   			//gestureListener=new GestureListener();
-   			
-   			
    			
                item.linOwnerHeader.setOnClickListener(new View.OnClickListener() 
            	{
@@ -808,7 +925,6 @@ public class HomeActivityFragment extends Fragment
 
     	            // Commit the transaction
     	            transaction.commit();
-       				
        			}
        		});
    			
@@ -893,11 +1009,7 @@ public class HomeActivityFragment extends Fragment
         }
         return null;
     }
-//   	private static class ViewHolder 
-//   	{
-//   		TextView header;
-//   		int previousTop = 0;
-//   	}
+
 
    	
        

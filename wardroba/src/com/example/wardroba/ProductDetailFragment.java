@@ -1,16 +1,26 @@
 package com.example.wardroba;
 
+import java.io.InputStream;
+import java.net.URL;
+
+import twitter4j.StatusUpdate;
+
 import com.ImageLoader.ImageLoader;
+import com.android.sot.twitter.TwitterApp;
+import com.android.sot.twitter.TwitterApp.TwDialogListener;
 import com.connection.Constants;
 import com.connection.WebAPIHelper1;
 import android.app.Activity;
+import android.app.ProgressDialog;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -49,6 +59,20 @@ public class ProductDetailFragment extends Fragment
         None // when no action was detected
     }
 
+	//TWITTER
+
+	static final String TWITTER_CONSUMER_KEY = "NJC4QxSTuMxIbPYsTj5xoA";
+	static final String TWITTER_SECRET_KEY = "BsYApRSdctPi8EckamqRr3uHh5ikjDRwFRgWimI62I";
+	public static String shareLink = "http://www.google.com";
+	Handler mHandler;
+	TwitterApp mTwitter;
+	private ProgressDialog progressdialog;
+	StringBuffer buffer;
+	String MSG;
+	private ProgressBar mProgress;
+	
+	String imageUrl,shortDesc;
+	//////////////////////////////////
 	@SuppressWarnings("unchecked")
   	public void setResponseFromRequest1(int requestNumber) 
   	{	
@@ -129,6 +153,9 @@ public class ProductDetailFragment extends Fragment
 		imgLike=(ImageView)root.findViewById(R.id.img_like);
 		imgComment=(ImageView)root.findViewById(R.id.img_comment);
 		
+		mProgress = (ProgressBar)root.findViewById(R.id.progress_bar);
+ 		mProgress.setVisibility(View.GONE);
+ 		
 		shareDialog=(LinearLayout)root.findViewById(R.id.dialogShare);
 		lay_delete=(LinearLayout)root.findViewById(R.id.lay_delete);
 		lay_delete.setVisibility(View.GONE);
@@ -150,7 +177,12 @@ public class ProductDetailFragment extends Fragment
 		btnCancel.setTypeface(tf);
 		textDescription.setTypeface(tf);
 		txtSharLable.setTypeface(tf);
+		
+        ///////////////////////////////////// FOR TWITTER ////////////////////////////////////////////
 
+		mHandler = new Handler();
+		mTwitter = new TwitterApp(getActivity(), TWITTER_CONSUMER_KEY,TWITTER_SECRET_KEY);
+		mTwitter.setListener(mTwLoginDialogListener);
         		
 		CancelDialog();
 		FacebookSharing();
@@ -185,12 +217,15 @@ public class ProductDetailFragment extends Fragment
 	public void onResume() {
 		// TODO Auto-generated method stub
 		super.onResume();
-		
+		//Twitter
+		mHandler = new Handler();
+		mTwitter = new TwitterApp(getActivity(), TWITTER_CONSUMER_KEY,TWITTER_SECRET_KEY);
+		mTwitter.setListener(mTwLoginDialogListener);
 		updateProductDetail();
 	}
 	private void updateProductDetail()
 	{
-		String imageUrl,shortDesc;
+		
 		int likeCount,commentCount;
 
 		selected_item=Constants.my_items.get(SELECTED_PRODUCT);
@@ -204,6 +239,8 @@ public class ProductDetailFragment extends Fragment
 		txtComment.setText(String.valueOf(commentCount));
 		textDescription.setText(shortDesc.trim());
 		shareDialog.setVisibility(View.GONE);
+
+		
 		String LikeStatus = selected_item.getPLikeStatus().toString().trim();
 		if(LikeStatus.equals("LIKE"))
         {
@@ -212,6 +249,7 @@ public class ProductDetailFragment extends Fragment
         {
         	imgLike.setBackgroundResource(R.drawable.like_h);
         }
+		
 		imgLike.setOnClickListener(new View.OnClickListener() 
 		{	
 			@Override
@@ -254,6 +292,7 @@ public class ProductDetailFragment extends Fragment
 				{
 					
 				}
+				
 			}
 		});
 		imgComment.setOnClickListener(new View.OnClickListener() 
@@ -278,6 +317,9 @@ public class ProductDetailFragment extends Fragment
 				Animation anim=AnimationUtils.loadAnimation(getActivity(), R.anim.slide_up_anim);
 				anim.setFillAfter(true);
 				shareDialog.startAnimation(anim);
+				
+				
+				
 			}
 		});
 	
@@ -416,7 +458,18 @@ public class ProductDetailFragment extends Fragment
 			@Override
 			public void onClick(View arg0) 
 			{
-				Toast.makeText(getActivity(), "Twitter", 5000).show();
+				
+				shareDialog.setVisibility(View.GONE);
+				Animation anim=AnimationUtils.loadAnimation(getActivity(), R.anim.slide_down_anim);
+				anim.setFillBefore(true);
+				shareDialog.startAnimation(anim);
+				
+				if (mTwitter.hasAccessToken())
+					postMsgOnTwitter(shortDesc);
+				else
+				{
+					mTwitter.authorize();
+				}
 			}
 		});
    }
@@ -453,10 +506,8 @@ public class ProductDetailFragment extends Fragment
 			}
 		});
    }
-   class SwipeDetector implements View.OnTouchListener {
-
-	    
-
+   class SwipeDetector implements View.OnTouchListener 
+   {
 	    private static final String logTag = "SwipeDetector";
 	    private static final int MIN_DISTANCE = 100;
 	    private float downX, downY, upX, upY;
@@ -522,4 +573,134 @@ public class ProductDetailFragment extends Fragment
 	        return false;
 	    }
 	}
+   
+ //Twitter
+   private TwDialogListener mTwLoginDialogListener = new TwDialogListener() {
+		@Override
+		public void onComplete(String value) 
+		{
+			postMsgOnTwitter(shortDesc);
+		}
+
+		@Override
+		public void onError(String value) {
+			showToast("Twitter login failed");
+			mTwitter.resetAccessToken();
+		}
+	};
+   
+	private void postMsgOnTwitter(final String msg) 
+	{
+		//showProgressDialog("Sending tweet..");
+		mProgress.setVisibility(View.VISIBLE);
+
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				
+				try 
+				{
+					
+					StatusUpdate status = new StatusUpdate(msg);
+					
+					URL url=new URL(imageUrl);
+					InputStream is=url.openStream();
+					
+					status.setMedia(Uri.decode(shortDesc), is);
+					
+					mTwitter.updateStatus(status);
+					
+					showToast("Posted successfully.");
+					mProgress.setVisibility(View.GONE);
+					//hideProgressDialog();
+					
+				} catch (Exception e) 
+				{
+					//showToast("Oops!You have already twitted that.");
+					mProgress.setVisibility(View.GONE);
+					//hideProgressDialog();
+					e.printStackTrace();
+				}
+			}
+		}).start();
+	}
+
+	public void showToast(final String msg) 
+	{
+		mHandler.post(new Runnable() 
+		{
+			@Override
+			public void run() 
+			{
+				Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
+			}
+		});
+	}
+	/**
+	 * This will shows a progress dialog with loading text, this is useful to
+	 * call when some other functionality is taking place.
+	 **/
+	public void showProgressDialog(String msg) 
+	{
+		mProgress.setVisibility(View.VISIBLE);
+		//runOnUiThread(new RunShowLoader(msg, false));
+	}
+
+
+	/**
+	 * Implementing Runnable for runOnUiThread(), This will show a progress
+	 * dialog
+	 */
+	class RunShowLoader implements Runnable 
+	{
+		private String strMsg;
+		private boolean isCancalable;
+
+		public RunShowLoader(String strMsg, boolean isCancalable) 
+		{
+			this.strMsg = strMsg;
+			this.isCancalable = isCancalable;
+		}
+
+		@Override
+		public void run() 
+		{
+			try 
+			{
+				if (progressdialog == null|| (progressdialog != null && !progressdialog.isShowing())) 
+				{
+					progressdialog = ProgressDialog.show(getActivity(),"", strMsg);
+					progressdialog.setCancelable(isCancalable);
+				}
+			} catch (Exception e) 
+			{
+				progressdialog = null;
+				e.printStackTrace();
+			}
+		}
+	}
+
+	/** For hiding progress dialog **/
+	public void hideProgressDialog() 
+	{
+		//Toast.makeText(getActivity(), MSG, 5000).show();
+		mProgress.setVisibility(View.GONE);
+//		runOnUiThread(new Runnable() 
+//		{
+//			@Override
+//			public void run() {
+//				try {
+//					if (progressdialog != null && progressdialog.isShowing()) 
+//					{
+//						progressdialog.dismiss();
+//					}
+//					progressdialog = null;
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		});
+	}
+	
+	
 }
