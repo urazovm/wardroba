@@ -19,8 +19,8 @@
             android:layout_alignParentBottom="true"
             android:layout_marginBottom="195dp"
             android:background="@drawable/register_button"
-            android:text="REGISTER"
-            android:textSize="32dp"
+            android:text="@string/register_button_text"
+            android:textSize="@dimen/sub_header_font_size"
             android:textColor="@color/white" />
 
         <ImageView
@@ -44,7 +44,7 @@
             android:layout_alignRight="@+id/imbt_advance_search"
             android:layout_marginBottom="36dp"
             android:background="@drawable/login_button"
-            android:text="LOG IN"
+            android:text="@string/login_button_text"
             android:textSize="@dimen/sub_header_font_size"
             android:textColor="@color/textcolor2" />
 

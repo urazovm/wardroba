@@ -1,8 +1,11 @@
 package com.example.wardroba;
 
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -40,6 +43,7 @@ import com.android.sot.twitter.TwitterApp;
 import com.android.sot.twitter.TwitterApp.TwDialogListener;
 import com.connection.Constants;
 import com.connection.WebAPIHelper1;
+
 import com.facebook.android.AsyncFacebookRunner;
 import com.facebook.android.DialogError;
 import com.facebook.android.Facebook;
@@ -58,11 +62,16 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.Intent;
 import android.content.SharedPreferences.Editor;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
+import android.graphics.Bitmap.CompressFormat;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -865,9 +874,141 @@ public class ProductDetailFragment extends Fragment
 			{
 				btnCancel.performClick();
 				mProgress.setVisibility(View.VISIBLE);
+				if(isPackageInstalled("com.pinterest", getActivity()))
+				{
+					new ImageSaveTask().execute();
+				}
+				else
+				{
+					Toast.makeText(getActivity(), "Pintrest is not installed on your device.Install first to start sharing.", Toast.LENGTH_SHORT).show();
+		        	Intent i = new Intent(Intent.ACTION_VIEW,Uri.parse(PINTEREST_APP_URL));
+		        	//i.setData(Uri.parse(PINTEREST_APP_URL));
+		        	startActivity(i);
+				}
 			}
 		});
    }
+   class ImageSaveTask extends AsyncTask<String, Void, String>
+	{
+
+		
+		File myFile;
+		@Override
+		protected void onPreExecute() {
+			// TODO Auto-generated method stub
+			super.onPreExecute();
+			
+			
+		}
+		@Override
+		protected String doInBackground(String... params) {
+			// TODO Auto-generated method stub
+			 //myFile=downloadAndSaveImage();
+			
+			 try {
+		            Bitmap bitmap=null;
+		            String folderPath=Environment.getExternalStorageDirectory().toString()+"/wardroba";
+		            File f=new File(folderPath);
+		            f.mkdir();
+		            myFile=new File(f+"/temp.png");
+		            Log.d(TAG, "File create url:"+myFile);
+		            URL imageUrl = new URL(Sharing_URL.trim());
+		            HttpURLConnection conn = (HttpURLConnection)imageUrl.openConnection();
+		           // conn.setConnectTimeout(30000);
+		           // conn.setReadTimeout(30000);
+		           // conn.setInstanceFollowRedirects(true);
+		            InputStream is=conn.getInputStream();
+		            FileOutputStream os = new FileOutputStream(myFile);
+		            //
+		           // conn.disconnect();
+		            bitmap = BitmapFactory.decodeStream(is);
+		            
+		            bitmap =Bitmap.createScaledBitmap(bitmap, bitmap.getWidth()/2, bitmap.getHeight()/2, true);
+		            bitmap.compress(CompressFormat.PNG, 50, os);
+		            
+		            /*os.flush();
+		            os.close();
+		            is.close();*/
+		            //conn.disconnect();
+		            
+		        } 
+			 
+			 	catch(IOException io)
+			 	{
+			 		io.printStackTrace();
+			 	}
+			 	catch (Exception ex)
+		        {
+		        	ex.printStackTrace();
+		           
+		        }
+			 
+			return null;
+		}
+		
+		@Override
+		protected void onPostExecute(String result) {
+			// TODO Auto-generated method stub
+			super.onPostExecute(result);
+			mProgress.setVisibility(View.GONE);
+			if(myFile!=null)
+			{
+				Intent share = new Intent(android.content.Intent.ACTION_SEND);
+	            share.setType("image/*");
+	             share.putExtra(Intent.EXTRA_TEXT, "test");
+	             
+	             share.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + myFile));
+	             share.setPackage("com.pinterest");
+	             
+	             startActivity(share);
+	             
+			}
+		}
+	}
+	
+	public File downloadAndSaveImage()
+	{
+			File file=null;
+		 try {
+	            Bitmap bitmap=null;
+	            String folderPath=Environment.getExternalStorageDirectory().toString()+"/wardroba";
+	            File f=new File(folderPath);
+	            f.mkdir();
+	            file=new File(folderPath+"/temp.png");
+	            Log.d(TAG, "File create url:"+file);
+	            URL imageUrl = new URL(Sharing_URL.trim());
+	            HttpURLConnection conn = (HttpURLConnection)imageUrl.openConnection();
+	            conn.setConnectTimeout(30000);
+	            conn.setReadTimeout(30000);
+	            conn.setInstanceFollowRedirects(true);
+	            InputStream is=conn.getInputStream();
+	            FileOutputStream os = new FileOutputStream(file);
+	            //conn.disconnect();
+	            bitmap = BitmapFactory.decodeStream(is);
+	            bitmap.compress(CompressFormat.PNG, 80, os);
+	            
+	            os.flush();
+	            os.close();
+	            is.close();
+	            //conn.disconnect();
+	            
+	        } 
+		 	catch (Exception ex)
+	        {
+	        	ex.printStackTrace();
+	           
+	        }
+		 return file;
+	}
+	 private boolean isPackageInstalled(String packagename, Context context) {
+		    PackageManager pm = context.getPackageManager();
+		    try {
+		        pm.getPackageInfo(packagename, PackageManager.GET_ACTIVITIES);
+		        return true;
+		    } catch (NameNotFoundException e) {
+		        return false;
+		    }
+		}
    public void TumblerSharing()
    {
 		btnTumbler.setOnClickListener(new View.OnClickListener() 
