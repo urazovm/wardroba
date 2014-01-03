@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#FFFFFF" >
+    <RelativeLayout android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/top_title_bg">
+        <ImageView 
+            android:id="@+id/btnBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+			android:layout_centerVertical="true"
+  	        android:gravity="center_horizontal"
+  	        android:layout_marginLeft="10dp"
+  	        android:src="@drawable/arrow"/> 
+        <TextView 
+            android:id="@+id/txtheader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+  	        android:gravity="center_horizontal"
+  	        android:text="@string/title_mywardrobe"
+  	        android:textColor="@color/white"
+  	        android:textSize="@dimen/top_header_font_size"/>
+    </RelativeLayout>
+    
+	 <FrameLayout 
+    android:id="@+id/fragment_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" />
+</LinearLayout>

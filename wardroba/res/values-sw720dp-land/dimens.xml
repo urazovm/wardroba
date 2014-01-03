@@ -7,4 +7,8 @@
     <dimen name="activity_horizontal_margin">128dp</dimen>
 	<dimen name="logo_margin">270dp</dimen>
 	<dimen name="login_bg_width">502dp</dimen>
+	
+	 <dimen name="top_header_font_size">48dp</dimen>
+    <dimen name="sub_header_font_size">32dp</dimen>
+    <dimen name="body_text_font_size">28dp</dimen>
 </resources>
