@@ -274,14 +274,15 @@ public class HomeActivityFragment extends Fragment
  	    {	
 			@Override
 
-			public void onLoadMore() {
-				// TODO Auto-generated method stub
+			public void onLoadMore() 
+			{
 					LoadingListHelper webAPIHelper = new LoadingListHelper(Constants.product_list,HomeActivityFragment.this ,"Please Wait....");
 					String url = Constants.HOME_PRODUCT_URL+"&id="+Constants.LOGIN_USERID+"&page="+(PAGE++);
 					Log.d("Product_List= ",url.toString());
 					webAPIHelper.execute(url);
 			}
 		});
+ 	    
  	    lsvProductList.setOnScrollListener(new OnScrollListener() 
 		{
 	        int mScrollState = OnScrollListener.SCROLL_STATE_IDLE;
@@ -321,7 +322,6 @@ public class HomeActivityFragment extends Fragment
 	            }
 	        }
 	     });
- 	  
 	    
 	    if(Constants.all_items.size()>0)
   		{

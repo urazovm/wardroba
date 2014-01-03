@@ -17,7 +17,6 @@ public class AboutUsActivity extends Activity
 	 	this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		super.onCreate(savedInstanceState);		
 		setContentView(R.layout.about_us_activity); 
-		
 
 	}
     
