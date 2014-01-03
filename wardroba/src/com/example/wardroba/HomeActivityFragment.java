@@ -175,7 +175,7 @@ public class HomeActivityFragment extends Fragment
 	private ProgressDialog progressdialog;
 	StringBuffer buffer;
 	String MSG;
-	private ProgressBar mProgress;
+	private LinearLayout mProgress;
 	
 	///////////////////////////////////////////////
     public void setResponseFromRequest(int requestNumber) 
@@ -264,7 +264,7 @@ public class HomeActivityFragment extends Fragment
  		btnCancel=(Button)root.findViewById(R.id.btnCancel);
  		txtSharLable=(TextView)root.findViewById(R.id.txt_share_lable);
 
- 		mProgress = (ProgressBar)root.findViewById(R.id.progress_bar);
+ 		mProgress = (LinearLayout)root.findViewById(R.id.progress_bar);
  		mProgress.setVisibility(View.GONE);
 
  	    shareDialog=(LinearLayout)root.findViewById(R.id.dialogShare);

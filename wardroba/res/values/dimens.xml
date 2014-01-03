@@ -5,4 +5,5 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
 	<dimen name="logo_margin">100dp</dimen>
 	<dimen name="login_bg_width">251dp</dimen>
+	<!-- <dimen name="textbox_font_size">16dp</dimen> -->
 </resources>

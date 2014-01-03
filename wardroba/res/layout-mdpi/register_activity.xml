@@ -59,20 +59,23 @@
 			    
 			    android:orientation="vertical" >
 
-				<EditText
-				    android:id="@+id/edt_name"
-				    android:layout_width="fill_parent"
-				    android:layout_height="35dp"
-				    android:layout_weight="1.0"
-				    android:background="#00ffffff"
-				    android:lines="1"
-				    android:singleLine="true"
-				    android:gravity="center"
-				    android:textColor="@color/black"
-				    android:hint="@string/register_name_hint"
-				    android:textColorHint="@color/text_hint_color"
-				    android:padding="3dp"
-				    android:textSize="14dp" />
+		       <EditText
+		           android:id="@+id/edt_name"
+		           android:layout_width="fill_parent"
+		           android:layout_height="35dp"
+		           android:layout_weight="1.0"
+		           android:background="#00ffffff"
+		           android:gravity="center"
+		           android:hint="@string/register_name_hint"
+		           android:lines="1"
+		           android:padding="3dp"
+		           android:singleLine="true"
+		           android:textColor="@color/black"
+		           android:textColorHint="@color/text_hint_color"
+		           android:textSize="@dimen/sub_header_font_size" >
+
+		           <requestFocus />
+		       </EditText>
 
 				<ImageView
 				    
@@ -93,7 +96,7 @@
 				    android:textColor="@color/black"
 				    android:hint="@string/register_surname_hint"
 				    android:padding="3dp"
-				    android:textSize="14dp" />
+				    android:textSize="@dimen/sub_header_font_size" />
 
 				<ImageView
 				    
@@ -114,7 +117,7 @@
 				    android:hint="@string/login_email_hint"
 				    android:inputType="textEmailAddress"
 				    android:padding="3dp"
-				    android:textSize="14dp" />
+				    android:textSize="@dimen/sub_header_font_size" />
 				
 				<ImageView
 				    
@@ -135,7 +138,7 @@
 				    android:hint="@string/login_password_hint"
 				    android:inputType="textPassword"
 				    android:padding="3dp"
-				    android:textSize="14dp" />
+				    android:textSize="@dimen/sub_header_font_size" />
 
 				</LinearLayout>
 				<Button
@@ -147,7 +150,7 @@
 				    android:text="@string/register_button_text"
 				    android:layout_gravity="center_horizontal"
 				    android:textColor="@color/white"
-				    android:textSize="16dp" />
+				    android:textSize="@dimen/sub_header_font_size" />
 
 		<!--  	<Button
 				    android:id="@+id/btn_register_facebook"
@@ -176,7 +179,7 @@
 						    android:background="@drawable/facebook_button"
 						    android:text="@string/fblogin_button_text"
 						    android:layout_centerHorizontal="true"
-						    android:textSize="16dp"
+						    android:textSize="@dimen/sub_header_font_size"
 						    android:textColor="@color/white"/>
 					
 				</RelativeLayout>

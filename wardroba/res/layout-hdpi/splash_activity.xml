@@ -13,9 +13,7 @@
 	      <ImageView
 	          android:id="@+id/imbt_advance_search"
 			  android:layout_width="wrap_content"
-			  android:layout_height="wrap_content"							 		  
-			  android:textStyle="bold"
-			  android:text="Terms"
+			  android:layout_height="wrap_content"	
 			  android:paddingLeft="2dp"
 			  android:paddingRight="2dp"
 			  android:layout_centerHorizontal="true"/> 

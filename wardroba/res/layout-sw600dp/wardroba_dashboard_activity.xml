@@ -20,7 +20,7 @@
             android:layout_marginBottom="20dp"
             android:background="@drawable/login_button"
             android:textColor="@color/textcolor2"
-            android:textSize="24dp"
+            android:textSize="@dimen/sub_header_font_size"
             android:text="LOG IN" />
 
         <ImageView
@@ -45,7 +45,7 @@
             android:background="@drawable/register_button"
             android:text="REGISTER"
             android:textColor="@color/white"
-            android:textSize="24dp" />
+            android:textSize="@dimen/sub_header_font_size" />
 
     </RelativeLayout> 
  

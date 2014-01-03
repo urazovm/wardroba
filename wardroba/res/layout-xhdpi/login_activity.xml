@@ -65,7 +65,7 @@
 				    	    android:background="#00ffffff"
 						    android:inputType="textEmailAddress"
 						    android:gravity="center"
-						    android:textSize="16dp"
+						    android:textSize="@dimen/sub_header_font_size"
 						    android:padding="5dp"
 						    android:textColorHint="@color/text_hint_color"
 						    android:textColor="@color/black"/>
@@ -88,7 +88,7 @@
 						    android:padding="5dp"
 						    android:textColorHint="@color/text_hint_color"
 						    android:textColor="@color/black"
-						    android:textSize="16dp" />
+						    android:textSize="@dimen/sub_header_font_size" />
 	
 						</LinearLayout>
 						
@@ -99,7 +99,7 @@
 						    android:layout_marginTop="5dp"
 						    android:background="@drawable/login_button"
 						    android:textColor="@color/grey"
-						    android:textSize="16dp"
+						    android:textSize="@dimen/sub_header_font_size"
 						    android:text="@string/login_button_text" />
 						
 						<!--  <Button
@@ -126,7 +126,7 @@
 						    android:background="@drawable/facebook_button"
 						    android:text="@string/fblogin_button_text"
 						    android:layout_centerHorizontal="true"
-						    android:textSize="16dp"
+						    android:textSize="@dimen/sub_header_font_size"
 						    android:textColor="@color/white"/>
 						</RelativeLayout>
 

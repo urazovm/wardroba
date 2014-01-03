@@ -61,7 +61,7 @@
 				    	    android:background="#00ffffff"
 						    android:inputType="textEmailAddress"
 						    android:gravity="center"
-						    android:textSize="24dp"
+						    android:textSize="@dimen/sub_header_font_size"
 						    android:layout_weight="1.0"
 						    android:padding="10dp"
 						    android:hint="@string/login_email_hint"
@@ -86,18 +86,18 @@
 						    android:inputType="textPassword"
 						    android:textColorHint="@color/text_hint_color"
 						    android:textColor="@color/black"
-						    android:textSize="24dp" />
+						    android:textSize="@dimen/sub_header_font_size" />
 	
 						</LinearLayout>
 						
 						<Button
 						    android:id="@+id/btn_login"
-						    android:layout_width="wrap_content"
+						    android:layout_width="@dimen/login_bg_width"
 						    android:layout_height="wrap_content"
 						    android:layout_marginTop="15dp"
 						    android:background="@drawable/login_button"
 						    android:textColor="@color/grey"
-						    android:textSize="24dp"
+						    android:textSize="@dimen/sub_header_font_size"
 						    android:text="@string/login_button_text" />
 						
 						<!--  <Button
@@ -119,12 +119,12 @@
 
 						<Button
 						    android:id="@+id/login_fb"
-						    android:layout_width="wrap_content"
+						    android:layout_width="@dimen/login_bg_width"
 						    android:layout_height="wrap_content"
 						    android:background="@drawable/facebook_button"
 						    android:text="@string/fblogin_button_text"
 						    android:textColor="@color/white"
-						    android:textSize="24dp"
+						    android:textSize="@dimen/sub_header_font_size"
 						    android:layout_centerHorizontal="true"/>
 						</RelativeLayout>
 

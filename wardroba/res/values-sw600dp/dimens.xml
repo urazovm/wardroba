@@ -7,4 +7,8 @@
     
     <dimen name="logo_margin">220dp</dimen>
 	<dimen name="login_bg_width">482dp</dimen>
+	
+    <dimen name="top_header_font_size">48dp</dimen>
+    <dimen name="sub_header_font_size">32dp</dimen>
+    <dimen name="body_text_font_size">28dp</dimen>
 </resources>
