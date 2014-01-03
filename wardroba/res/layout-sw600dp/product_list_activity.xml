@@ -1,0 +1,46 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+     >
+	
+    <LinearLayout android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginBottom="5dp">
+        <ImageView 
+            android:id="@+id/imgSearch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/search_icon"/>
+        <EditText 
+            android:id="@+id/txtKeyward"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:background="#FFFFFF"
+            android:textSize="@dimen/sub_header_font_size"
+            android:hint="Search for items and hashtags"
+            android:paddingLeft="5dp"
+            android:singleLine="true"
+            android:textColorHint="@color/text_hint_color"
+            />
+    </LinearLayout>
+<GridView android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/product_grid"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:listSelector="@android:color/transparent"
+        android:layout_marginBottom="5dp"
+        android:columnWidth="100dp"
+        android:verticalSpacing="2dp"
+        android:horizontalSpacing="2dp"
+        android:stretchMode="spacingWidth"
+        android:padding="5dp"
+        android:background="@drawable/grid_border"
+        android:numColumns="3">
+</GridView>
+</LinearLayout>
