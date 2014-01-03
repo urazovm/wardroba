@@ -2,10 +2,14 @@ package com.example.wardroba;
 
 
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -35,6 +39,7 @@ import org.json.JSONObject;
 import twitter4j.StatusUpdate;
 
 import com.ImageLoader.ImageLoader;
+import com.ImageLoader.Utils;
 import com.android.sot.twitter.TwitterApp;
 import com.android.sot.twitter.TwitterApp.TwDialogListener;
 import com.connection.Constants;
@@ -51,6 +56,7 @@ import com.facebook.android.Facebook;
 import com.facebook.android.FacebookError;
 import com.facebook.android.Util;
 import com.google.android.gms.plus.PlusShare;
+import com.pinterest.pinit.PinIt;
 import com.pinterest.pinit.PinItButton;
 
 import android.annotation.SuppressLint;
@@ -63,14 +69,19 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
+import android.graphics.Bitmap.CompressFormat;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 
@@ -109,8 +120,8 @@ public class HomeActivityFragment extends Fragment
 	LinearLayout linOwnerHeader;
 	Typeface tf;
 	LinearLayout shareDialog;
-	ImageView btnFacebook,btnTwitter,btnTumbler,btnGooglePlus;
-	PinItButton btnPinterest;
+	ImageView btnFacebook,btnTwitter,btnTumbler,btnGooglePlus,btnPinterest;
+	
 	Button btnCancel;
 	HomeProductBaseAdapter adapter=null;
 
@@ -143,7 +154,7 @@ public class HomeActivityFragment extends Fragment
 	public static String TUMBLR_TOKEN_SECRET="tumblr_token_secret";
 	private String TUMBLR_USER_INFO_URI="http://api.tumblr.com/v2/user/info";
 	private String TUMBLR_POST_PHOTO_URI="http://api.tumblr.com/v2/blog/";
-	
+	private static String PINTEREST_APP_URL="market://details?id=com.pinterest";
 	String authUrl,token,secret;
 	CommonsHttpOAuthProvider provider;
 	CommonsHttpOAuthConsumer consumer;
@@ -151,8 +162,6 @@ public class HomeActivityFragment extends Fragment
 	Dialog tumblrDialog;
 
   	///
-  	
-
 	String Sharing_Tag,Sharing_URL;
 	String PINTEREST_CLIENT_ID = "1433818";
 
@@ -177,12 +186,7 @@ public class HomeActivityFragment extends Fragment
   			adapter.notifyDataSetChanged();
   			lsvProductList.setAdapter(adapter);
  	    	lsvProductList.invalidateViews();
-
- 	    }
-
- 	    	 
-
-
+  		}
   		else
   		{
   			lsvProductList.setAdapter(null);
@@ -235,10 +239,8 @@ public class HomeActivityFragment extends Fragment
   					int id=temp.getPIdCloth();
   					if(id==cloth_id)
   						break;
-  				
   					count++;	
   				}
-  				
   			}
   			Constants.my_items.get(count).setPLikeStatus(status);
   			Constants.my_items.get(count).setPLikeCount(like_count);
@@ -256,7 +258,7 @@ public class HomeActivityFragment extends Fragment
         lsvProductList=(LoadMoreListView)root.findViewById(R.id.product_list);
  		btnFacebook=(ImageView)root.findViewById(R.id.btnFB);
  		btnTwitter=(ImageView)root.findViewById(R.id.btnTwitter);
- 		btnPinterest=(PinItButton)root.findViewById(R.id.btnPinterest);
+ 		btnPinterest=(ImageView)root.findViewById(R.id.btnPinterest);
  		btnTumbler=(ImageView)root.findViewById(R.id.btnTumbler);
  		btnGooglePlus=(ImageView)root.findViewById(R.id.btnGplus);
  		btnCancel=(Button)root.findViewById(R.id.btnCancel);
@@ -375,9 +377,7 @@ public class HomeActivityFragment extends Fragment
 		{
 			alert();
 		}	    
-	    
-	    
-    }
+	}
     @Override
     public void onAttach(Activity activity) 
     {
@@ -471,10 +471,10 @@ public class HomeActivityFragment extends Fragment
    public void initTumblr()
    {
 	   
-	   if(progressDialog!=null)
-		   progressDialog.setMessage("Loading...");
-       consumer = new CommonsHttpOAuthConsumer(CONSUMER_KEY,CONSUMER_SECRET);
-       provider = new CommonsHttpOAuthProvider(REQUEST_TOKEN_URL,ACCESS_TOKEN_URL,AUTH_URL);
+	    if(progressDialog!=null)
+		    progressDialog.setMessage("Loading...");
+        consumer = new CommonsHttpOAuthConsumer(CONSUMER_KEY,CONSUMER_SECRET);
+        provider = new CommonsHttpOAuthProvider(REQUEST_TOKEN_URL,ACCESS_TOKEN_URL,AUTH_URL);
 		token = preferences.getString(TUMBLR_ACCESS_TOKEN, "");
 		secret = preferences.getString(TUMBLR_TOKEN_SECRET, "");
        
@@ -523,14 +523,17 @@ public class HomeActivityFragment extends Fragment
 			@Override
 			public void onClick(View arg0) 
 			{
+				btnCancel.performClick();
 				String access_token = preferences.getString("access_token", null);
+				mProgress.setVisibility(View.VISIBLE);
 			    long expires = preferences.getLong("access_expires", 0);
-			    if (access_token != null) {
+			    if (access_token != null) 
+			    {
 			        facebook.setAccessToken(access_token);
-			        
 			    }
 			 
-			    if (expires != 0) {
+			    if (expires != 0) 
+			    {
 			        facebook.setAccessExpires(expires);
 			    }
 				if(!facebook.isSessionValid())
@@ -575,7 +578,7 @@ public class HomeActivityFragment extends Fragment
 		});
    }
    @SuppressWarnings("deprecation")
-public void createNewFacebookAlbum()
+   public void createNewFacebookAlbum()
    {
 	   final Bundle params = new Bundle();
 	   
@@ -611,7 +614,7 @@ public void createNewFacebookAlbum()
 		@Override
 		public void onComplete(String response, Object state) {
 			// TODO Auto-generated method stub
-			progressDialog.dismiss();
+			//progressDialog.dismiss();
 			try {
 				boolean flag=false;
 				JSONObject jsonObject=Util.parseJson(response);
@@ -696,7 +699,7 @@ public void createNewAlbum()
 		@Override
 		public void onComplete(String response, Object state) {
 			// TODO Auto-generated method stub
-			progressDialog.dismiss();
+			//progressDialog.dismiss();
 			Log.d("HomeActivity", "Create new album ---> Response:"+response);
 			try {
 				String albumID=Util.parseJson(response).getString("id");
@@ -761,7 +764,18 @@ public void createNewAlbum()
 		@Override
 		public void onComplete(String response, Object state) {
 			// TODO Auto-generated method stub
-			progressDialog.dismiss();
+			//progressDialog.dismiss();
+			
+			getActivity().runOnUiThread(new Runnable() {
+				
+				@Override
+				public void run() {
+					// TODO Auto-generated method stub
+					mProgress.setVisibility(View.GONE);
+					Toast.makeText(getActivity(), "Photo posted", Toast.LENGTH_SHORT).show();
+				}
+			});
+			
 			Log.d("HomeActivity", "Photo upload successfully response:---->"+response);
 		}
 	}, null);
@@ -773,11 +787,8 @@ public void createNewAlbum()
 			@Override
 			public void onClick(View arg0) 
 			{
-				shareDialog.setVisibility(View.GONE);
-				Animation anim=AnimationUtils.loadAnimation(getActivity(), R.anim.slide_down_anim);
-				anim.setFillBefore(true);
-				shareDialog.startAnimation(anim);
-
+				btnCancel.performClick();
+				mProgress.setVisibility(View.VISIBLE);
 				if (mTwitter.hasAccessToken())
 					postMsgOnTwitter(Sharing_Tag);
 				else
@@ -795,15 +806,144 @@ public void createNewAlbum()
 			@Override
 			public void onClick(View arg0) 
 			{
-				Toast.makeText(getActivity(), "Pinterest", 5000).show();
-		 		btnPinterest.setPartnerId(PINTEREST_CLIENT_ID); // required
-		 		btnPinterest.setDebugMode(true); // optional
-				btnPinterest.setImageUrl(Sharing_URL);
-				btnPinterest.setUrl("http://dev.wardroba.com/"); // optional
-				btnPinterest.setDescription(Sharing_Tag);
+				//Toast.makeText(getActivity(), "Pinterest", 5000).show();
+				btnCancel.performClick();
+				mProgress.setVisibility(View.VISIBLE);
+				if(isPackageInstalled("com.pinterest", getActivity()))
+				{
+					new ImageSaveTask().execute();
+				}
+				else
+				{
+					Toast.makeText(getActivity(), "Pintrest is not installed on your device.Install first to start sharing.", Toast.LENGTH_SHORT).show();
+		        	Intent i = new Intent(Intent.ACTION_VIEW,Uri.parse(PINTEREST_APP_URL));
+		        	//i.setData(Uri.parse(PINTEREST_APP_URL));
+		        	startActivity(i);
+				}
 			}
 		});
    }
+	class ImageSaveTask extends AsyncTask<String, Void, String>
+	{
+
+		
+		File myFile;
+		@Override
+		protected void onPreExecute() {
+			// TODO Auto-generated method stub
+			super.onPreExecute();
+			
+			
+		}
+		@Override
+		protected String doInBackground(String... params) {
+			// TODO Auto-generated method stub
+			 //myFile=downloadAndSaveImage();
+			
+			 try {
+		            Bitmap bitmap=null;
+		            String folderPath=Environment.getExternalStorageDirectory().toString()+"/wardroba";
+		            File f=new File(folderPath);
+		            f.mkdir();
+		            myFile=new File(f+"/temp.png");
+		            Log.d(TAG, "File create url:"+myFile);
+		            URL imageUrl = new URL(Sharing_URL.trim());
+		            HttpURLConnection conn = (HttpURLConnection)imageUrl.openConnection();
+		           // conn.setConnectTimeout(30000);
+		           // conn.setReadTimeout(30000);
+		           // conn.setInstanceFollowRedirects(true);
+		            InputStream is=conn.getInputStream();
+		            FileOutputStream os = new FileOutputStream(myFile);
+		            //
+		           // conn.disconnect();
+		            bitmap = BitmapFactory.decodeStream(is);
+		            
+		            bitmap =Bitmap.createScaledBitmap(bitmap, bitmap.getWidth()/2, bitmap.getHeight()/2, true);
+		            bitmap.compress(CompressFormat.PNG, 50, os);
+		            
+		            /*os.flush();
+		            os.close();
+		            is.close();*/
+		            //conn.disconnect();
+		            
+		        } 
+			 
+			 	catch(IOException io)
+			 	{
+			 		io.printStackTrace();
+			 	}
+			 	catch (Exception ex)
+		        {
+		        	ex.printStackTrace();
+		           
+		        }
+			 
+			return null;
+		}
+		
+		@Override
+		protected void onPostExecute(String result) {
+			// TODO Auto-generated method stub
+			super.onPostExecute(result);
+			mProgress.setVisibility(View.GONE);
+			if(myFile!=null)
+			{
+				Intent share = new Intent(android.content.Intent.ACTION_SEND);
+	            share.setType("image/*");
+	             share.putExtra(Intent.EXTRA_TEXT, "test");
+	             
+	             share.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + myFile));
+	             share.setPackage("com.pinterest");
+	             
+	             startActivity(share);
+	             
+			}
+		}
+	}
+	
+	public File downloadAndSaveImage()
+	{
+			File file=null;
+		 try {
+	            Bitmap bitmap=null;
+	            String folderPath=Environment.getExternalStorageDirectory().toString()+"/wardroba";
+	            File f=new File(folderPath);
+	            f.mkdir();
+	            file=new File(folderPath+"/temp.png");
+	            Log.d(TAG, "File create url:"+file);
+	            URL imageUrl = new URL(Sharing_URL.trim());
+	            HttpURLConnection conn = (HttpURLConnection)imageUrl.openConnection();
+	            conn.setConnectTimeout(30000);
+	            conn.setReadTimeout(30000);
+	            conn.setInstanceFollowRedirects(true);
+	            InputStream is=conn.getInputStream();
+	            FileOutputStream os = new FileOutputStream(file);
+	            //conn.disconnect();
+	            bitmap = BitmapFactory.decodeStream(is);
+	            bitmap.compress(CompressFormat.PNG, 80, os);
+	            
+	            os.flush();
+	            os.close();
+	            is.close();
+	            //conn.disconnect();
+	            
+	        } 
+		 	catch (Exception ex)
+	        {
+	        	ex.printStackTrace();
+	           
+	        }
+		 return file;
+	}
+	 private boolean isPackageInstalled(String packagename, Context context) {
+		    PackageManager pm = context.getPackageManager();
+		    try {
+		        pm.getPackageInfo(packagename, PackageManager.GET_ACTIVITIES);
+		        return true;
+		    } catch (NameNotFoundException e) {
+		        return false;
+		    }
+		}
    public void TumblerSharing()
    {
 		btnTumbler.setOnClickListener(new View.OnClickListener() 
@@ -811,7 +951,9 @@ public void createNewAlbum()
 			@Override
 			public void onClick(View arg0) 
 			{
-				Toast.makeText(getActivity(), "Tumbler", 5000).show();
+				btnCancel.performClick();
+				//Toast.makeText(getActivity(), "Tumbler", 5000).show();
+				mProgress.setVisibility(View.VISIBLE);
 				if(token.equals("") && secret.equals(""))
 				{
 					loginToTumblr();
@@ -830,7 +972,8 @@ public void createNewAlbum()
 			@Override
 			public void onClick(View arg0) 
 			{
-				Toast.makeText(getActivity(), "GooglePlus", 5000).show();
+				btnCancel.performClick();
+				//Toast.makeText(getActivity(), "GooglePlus", 5000).show();
 				Intent shareIntent = new PlusShare.Builder(getActivity())
 					
 		          .setText(Sharing_Tag)
@@ -920,13 +1063,14 @@ public void createNewAlbum()
 				 View v = inflater.inflate(R.layout.dialog, null);
 				// v.setLayoutParams(layoutParams);
 				tumblrDialog.setContentView(v);
-				
+			
 		    	WebView webView=(WebView)tumblrDialog.findViewById(R.id.webView);
 		    	webView.setWebViewClient(new TumblrWebClient());
 		    	webView.getSettings().setJavaScriptEnabled(true);
 		    	webView.setLayoutParams(layoutParams);
 		    	webView.loadUrl(url);
 		    	tumblrDialog.show();
+		    	
 			
    }
    
@@ -1061,8 +1205,9 @@ public void createNewAlbum()
 		protected void onPreExecute() {
 			// TODO Auto-generated method stub
 			super.onPreExecute();
-			progressDialog.setMessage("Photo posting to Tumblr...");
-			progressDialog.show();
+			Toast.makeText(getActivity(), "Photo posting", Toast.LENGTH_SHORT).show();
+			/*progressDialog.setMessage("Photo posting to Tumblr...");
+			progressDialog.show();*/
 		}
 		@Override
 		protected String doInBackground(String... arg0) {
@@ -1157,7 +1302,16 @@ public void createNewAlbum()
 		protected void onPostExecute(String result) {
 			// TODO Auto-generated method stub
 			super.onPostExecute(result);
-			progressDialog.dismiss();
+			//progressDialog.dismiss();
+			getActivity().runOnUiThread(new Runnable() {
+				
+				@Override
+				public void run() {
+					// TODO Auto-generated method stub
+					mProgress.setVisibility(View.GONE);
+					Toast.makeText(getActivity(), "Photo posted", Toast.LENGTH_SHORT).show();
+				}
+			});
 			
 		}
 	}
@@ -1184,14 +1338,31 @@ public void createNewAlbum()
 					
 					mTwitter.updateStatus(status);
 					
-					showToast("Posted successfully.");
-					mProgress.setVisibility(View.GONE);
+					
+					getActivity().runOnUiThread(new Runnable() {
+						
+						@Override
+						public void run() {
+							// TODO Auto-generated method stub
+							showToast("Posted successfully.");
+							mProgress.setVisibility(View.GONE);
+						}
+					});
 					//hideProgressDialog();
 					
 				} catch (Exception e) 
 				{
-					//showToast("Oops!You have already twitted that.");
-					mProgress.setVisibility(View.GONE);
+					getActivity().runOnUiThread(new Runnable() {
+						
+						@Override
+						public void run() {
+							// TODO Auto-generated method stub
+							showToast("Oops!You have already twitted that.");
+							mProgress.setVisibility(View.GONE);
+						}
+					});
+					
+					
 					//hideProgressDialog();
 					e.printStackTrace();
 				}

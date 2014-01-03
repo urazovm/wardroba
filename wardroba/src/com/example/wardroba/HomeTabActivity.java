@@ -112,7 +112,7 @@ public class HomeTabActivity  extends TabActivity{
 	protected void onResume() {
 		// TODO Auto-generated method stub
 		super.onResume();
-		Toast.makeText(getApplicationContext(), "on home resume", Toast.LENGTH_SHORT).show();
+		//Toast.makeText(getApplicationContext(), "on home resume", Toast.LENGTH_SHORT).show();
 		if(Constants.IS_PRODUCT_ADDED)
 		{
 			tabHost.setCurrentTab(0);

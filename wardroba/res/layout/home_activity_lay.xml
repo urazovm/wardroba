@@ -138,7 +138,7 @@
 	
 	<LinearLayout 
     	android:id="@+id/header"
-    	android:background="#88FFFFFF"
+    	android:background="#BBFFFFFF"
     	android:layout_width="fill_parent"
 	    android:layout_height="50dp"
 	    android:orientation="horizontal"

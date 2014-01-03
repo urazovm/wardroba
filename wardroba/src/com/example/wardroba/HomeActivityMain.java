@@ -71,6 +71,6 @@ public class HomeActivityMain extends FragmentActivity implements OnProductSelec
 	protected void onResume() {
 		// TODO Auto-generated method stub
 		super.onResume();
-		Toast.makeText(getApplicationContext(), "on home fragment activity resume", Toast.LENGTH_SHORT).show();
+		//Toast.makeText(getApplicationContext(), "on home fragment activity resume", Toast.LENGTH_SHORT).show();
 	}
 }

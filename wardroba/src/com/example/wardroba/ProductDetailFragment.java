@@ -4,13 +4,33 @@ package com.example.wardroba;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 
+import oauth.signpost.commonshttp.CommonsHttpOAuthConsumer;
+import oauth.signpost.commonshttp.CommonsHttpOAuthProvider;
+import oauth.signpost.exception.OAuthCommunicationException;
+import oauth.signpost.exception.OAuthExpectationFailedException;
+import oauth.signpost.exception.OAuthMessageSignerException;
+import oauth.signpost.exception.OAuthNotAuthorizedException;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import twitter4j.StatusUpdate;
 
@@ -27,18 +47,26 @@ import com.facebook.android.FacebookError;
 import com.facebook.android.Util;
 import com.facebook.android.AsyncFacebookRunner.RequestListener;
 import com.google.android.gms.plus.PlusShare;
+
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.Intent;
+import android.content.SharedPreferences.Editor;
+import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.StrikethroughSpan;
@@ -47,15 +75,19 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.TranslateAnimation;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.LinearLayout.LayoutParams;
 
 public class ProductDetailFragment extends Fragment
 {
@@ -78,6 +110,31 @@ public class ProductDetailFragment extends Fragment
 	  	private static String ALBUM_NAME="wardroba";
 	  	ProgressDialog progressDialog;
 	  	///  **************************
+	  	
+	  	// Tumblr sharing....
+	  	private static final String TAG = "TumblrDemo";
+	  	private static final String REQUEST_TOKEN_URL = "https://www.tumblr.com/oauth/request_token";
+	    private static final String ACCESS_TOKEN_URL = "https://www.tumblr.com/oauth/access_token";
+	    private static final String AUTH_URL = "https://www.tumblr.com/oauth/authorize";
+
+	    // Taken from Tumblr app registration
+	    public static final String CONSUMER_KEY = "sjxqXmPAI4UEDylObEXPMSlE8jIeEZlyFPaa4yTq8hoMdYomPT";
+		public static final String CONSUMER_SECRET = "Ba1cyBnsdf5wzB6UEDXNrSK6rQYfVtn8L86YJYT1x65Hl98hrL";
+
+	    public static final String	OAUTH_CALLBACK_SCHEME	= "oauthflow-tumblr";
+		public static final String	OAUTH_CALLBACK_HOST		= "callback";
+		public static final String	OAUTH_CALLBACK_URL		= OAUTH_CALLBACK_SCHEME + "://" + OAUTH_CALLBACK_HOST;
+		
+		public static String TUMBLR_ACCESS_TOKEN="tumblr_access_token";
+		public static String TUMBLR_TOKEN_SECRET="tumblr_token_secret";
+		private String TUMBLR_USER_INFO_URI="http://api.tumblr.com/v2/user/info";
+		private String TUMBLR_POST_PHOTO_URI="http://api.tumblr.com/v2/blog/";
+		private static String PINTEREST_APP_URL="market://details?id=com.pinterest";
+		String authUrl,token,secret;
+		CommonsHttpOAuthProvider provider;
+		CommonsHttpOAuthConsumer consumer;
+		
+		Dialog tumblrDialog;
 	SwipeDetector swipeDetector;
 	String Sharing_Tag,Sharing_URL;
 	public static enum Action {
@@ -222,7 +279,7 @@ public class ProductDetailFragment extends Fragment
 		GooglePlusSharing();
 		ProductDelete();
 		initFacebook();
-		
+		initTumblr();
 		return root;
 	}
 	@Override
@@ -255,6 +312,17 @@ public class ProductDetailFragment extends Fragment
 		mTwitter.setListener(mTwLoginDialogListener);
 		updateProductDetail();
 	}
+	public void initTumblr()
+	   {
+		   
+		    if(progressDialog!=null)
+			    progressDialog.setMessage("Loading...");
+	        consumer = new CommonsHttpOAuthConsumer(CONSUMER_KEY,CONSUMER_SECRET);
+	        provider = new CommonsHttpOAuthProvider(REQUEST_TOKEN_URL,ACCESS_TOKEN_URL,AUTH_URL);
+			token = preferences.getString(TUMBLR_ACCESS_TOKEN, "");
+			secret = preferences.getString(TUMBLR_TOKEN_SECRET, "");
+	       
+	   }
 	private void updateProductDetail()
 	{
 		
@@ -506,7 +574,9 @@ public class ProductDetailFragment extends Fragment
 			@Override
 			public void onClick(View arg0) 
 			{
-					Toast.makeText(getActivity(), "Facebook", 5000).show();
+					//Toast.makeText(getActivity(), "Facebook", 5000).show();
+					btnCancel.performClick();
+					mProgress.setVisibility(View.VISIBLE);
 					String access_token = preferences.getString("access_token", null);
 				    long expires = preferences.getLong("access_expires", 0);
 				    if (access_token != null) {
@@ -595,7 +665,7 @@ public class ProductDetailFragment extends Fragment
    		@Override
    		public void onComplete(String response, Object state) {
    			// TODO Auto-generated method stub
-   			progressDialog.dismiss();
+   			//progressDialog.dismiss();
    			try {
    				boolean flag=false;
    				JSONObject jsonObject=Util.parseJson(response);
@@ -680,7 +750,7 @@ public class ProductDetailFragment extends Fragment
    		@Override
    		public void onComplete(String response, Object state) {
    			// TODO Auto-generated method stub
-   			progressDialog.dismiss();
+   			//progressDialog.dismiss();
    			Log.d("HomeActivity", "Create new album ---> Response:"+response);
    			try {
    				String albumID=Util.parseJson(response).getString("id");
@@ -698,7 +768,7 @@ public class ProductDetailFragment extends Fragment
    			
    		}
    	},null);
-      }
+   }
       @SuppressWarnings("deprecation")
       public void uploadPhoto(String albumID)
       {
@@ -745,7 +815,9 @@ public class ProductDetailFragment extends Fragment
    		@Override
    		public void onComplete(String response, Object state) {
    			// TODO Auto-generated method stub
-   			progressDialog.dismiss();
+   			//progressDialog.dismiss();
+   			mProgress.setVisibility(View.GONE);
+   			Toast.makeText(getActivity(), "Photo posted", Toast.LENGTH_SHORT).show();
    			Log.d("HomeActivity", "Photo upload successfully response:---->"+response);
    		}
    	}, null);
@@ -757,11 +829,8 @@ public class ProductDetailFragment extends Fragment
 			@Override
 			public void onClick(View arg0) 
 			{
-				
-				shareDialog.setVisibility(View.GONE);
-				Animation anim=AnimationUtils.loadAnimation(getActivity(), R.anim.slide_down_anim);
-				anim.setFillBefore(true);
-				shareDialog.startAnimation(anim);
+				btnCancel.performClick();
+				mProgress.setVisibility(View.VISIBLE);
 				
 				if (mTwitter.hasAccessToken())
 					postMsgOnTwitter(shortDesc);
@@ -779,7 +848,8 @@ public class ProductDetailFragment extends Fragment
 			@Override
 			public void onClick(View arg0) 
 			{
-				Toast.makeText(getActivity(), "Pinterest", 5000).show();
+				btnCancel.performClick();
+				mProgress.setVisibility(View.VISIBLE);
 			}
 		});
    }
@@ -790,10 +860,322 @@ public class ProductDetailFragment extends Fragment
 			@Override
 			public void onClick(View arg0) 
 			{
-				Toast.makeText(getActivity(), "Tumbler", 5000).show();
+				//Toast.makeText(getActivity(), "Tumbler", 5000).show();
+				btnCancel.performClick();
+				mProgress.setVisibility(View.VISIBLE);
+				if(token.equals("") && secret.equals(""))
+				{
+					loginToTumblr();
+				}
+				else
+				{
+					new TumblrPostAsync().execute();
+				}
 			}
 		});
    }
+   
+   public void loginToTumblr()
+   {
+   	consumer = new CommonsHttpOAuthConsumer(CONSUMER_KEY,CONSUMER_SECRET);
+       provider = new CommonsHttpOAuthProvider(REQUEST_TOKEN_URL,ACCESS_TOKEN_URL,AUTH_URL);
+		 new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				try {
+					
+					authUrl = provider.retrieveRequestToken(consumer, OAUTH_CALLBACK_URL);
+				} catch (OAuthMessageSignerException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (OAuthNotAuthorizedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (OAuthExpectationFailedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (OAuthCommunicationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				getActivity().runOnUiThread(new Runnable() {
+					
+					@Override
+					public void run() {
+						// TODO Auto-generated method stub
+						Log.d(TAG, "Login url:"+authUrl);
+						showLoginDialog(authUrl);
+					}
+				});
+				 
+				 //startActivityForResult(new Intent(Intent.ACTION_VIEW, Uri.parse(authUrl)), 1);
+			}
+		}).start();
+   }
+   @SuppressLint("SetJavaScriptEnabled")
+	public void showLoginDialog(String url)
+   {
+   	
+			
+		
+				// TODO Auto-generated method stub
+				 tumblrDialog=new Dialog(getActivity());
+				 tumblrDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+				 tumblrDialog.getWindow().setBackgroundDrawableResource(R.drawable.border);
+				 tumblrDialog.setCancelable(false);
+				 float scale = getActivity().getResources().getDisplayMetrics().density;
+				 LayoutParams layoutParams=new LayoutParams((int)(scale*300+0.5f), (int)(scale*420+0.5f));
+				 
+				 tumblrDialog.setTitle("Tumbler");
+				 //LayoutParams layoutParams=new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
+				 LayoutInflater inflater = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+				 View v = inflater.inflate(R.layout.dialog, null);
+				// v.setLayoutParams(layoutParams);
+				tumblrDialog.setContentView(v);
+				
+		    	WebView webView=(WebView)tumblrDialog.findViewById(R.id.webView);
+		    	webView.setWebViewClient(new TumblrWebClient());
+		    	webView.getSettings().setJavaScriptEnabled(true);
+		    	webView.setLayoutParams(layoutParams);
+		    	webView.loadUrl(url);
+		    	tumblrDialog.show();
+			
+   }
+   
+   private class TumblrWebClient extends WebViewClient
+   {
+   	@Override
+   	public boolean shouldOverrideUrlLoading(WebView view, String url) {
+   		// TODO Auto-generated method stub
+   		
+   		if (url.startsWith(OAUTH_CALLBACK_URL)) 
+   		{
+               tumblrLoginListener.onComplete(url);
+               tumblrDialog.dismiss();
+               return true;
+           } else if (url.startsWith("authorize")) {
+               return true;
+           }
+           return super.shouldOverrideUrlLoading(view, url);
+   	}
+   	@Override
+   	public void onPageStarted(WebView view, String url, Bitmap favicon) {
+   		// TODO Auto-generated method stub
+   		super.onPageStarted(view, url, favicon);
+   		if(!progressDialog.isShowing())
+   			progressDialog.show();
+   	}
+   	@Override
+   	public void onPageFinished(WebView view, String url) {
+   		// TODO Auto-generated method stub
+   		super.onPageFinished(view, url);
+   		Log.e(TAG, "On page finish");
+   		if(progressDialog.isShowing())
+   			progressDialog.dismiss();
+   	}
+   	@Override
+   	public void onReceivedError(WebView view, int errorCode,
+   			String description, String failingUrl) {
+   		// TODO Auto-generated method stub
+   		super.onReceivedError(view, errorCode, description, failingUrl);
+   		
+   		Toast.makeText(getActivity(), "Error:"+description, Toast.LENGTH_SHORT).show();
+   	}
+   }
+   TumblrLoginListener tumblrLoginListener=new TumblrLoginListener() {
+		
+		@Override
+		public void onError(String error) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+		@Override
+		public void onComplete(String url) {
+			// TODO Auto-generated method stub
+			processToken(url);
+			//new TumblrPostAsync().execute();
+		}
+	};
+	 public void processToken(String callbackUrl) {
+	        
+	        final String verifier = getVerifier(callbackUrl);
+
+	        new Thread() {
+	            @Override
+	            public void run() {
+	                
+
+	                try {
+	                    provider.retrieveAccessToken(consumer,
+	                            verifier);
+	                    
+	                    
+	                       token=consumer.getToken();
+	                       secret=consumer.getTokenSecret();
+	                       Log.e(TAG, "Token:"+token);
+	                       Log.e(TAG, "secret:"+secret);
+	                       Editor edit=preferences.edit();
+	                       edit.putString(TUMBLR_ACCESS_TOKEN, token);
+	                       edit.putString(TUMBLR_TOKEN_SECRET, secret);
+	                       edit.commit();
+	                       getActivity().runOnUiThread(new Runnable() {
+							
+							@Override
+							public void run() {
+								// TODO Auto-generated method stub
+								new TumblrPostAsync().execute();
+							}
+						});
+	                       
+	                } 
+	                catch (Exception e) 
+	                {
+	                    e.printStackTrace();
+	                }
+
+	                
+	            }
+	        }.start();
+	    }
+	 
+	 private String getVerifier(String callbackUrl) {
+	        String verifier = "";
+
+	        try {
+	            callbackUrl = callbackUrl.replace(OAUTH_CALLBACK_SCHEME, "http");
+
+	            URL url = new URL(callbackUrl);
+	            String query = url.getQuery();
+
+	            String array[] = query.split("&");
+
+	            for (String parameter : array) {
+	                String v[] = parameter.split("=");
+
+	                if (URLDecoder.decode(v[0]).equals(
+	                        oauth.signpost.OAuth.OAUTH_VERIFIER)) {
+	                    verifier = URLDecoder.decode(v[1]);
+	                    break;
+	                }
+	            }
+	        } catch (MalformedURLException e) {
+	            e.printStackTrace();
+	        }
+
+	        return verifier;
+	    }
+	 
+	class TumblrPostAsync extends AsyncTask<String, Void, String>
+	{
+
+		@Override
+		protected void onPreExecute() {
+			// TODO Auto-generated method stub
+			super.onPreExecute();
+			
+		}
+		@Override
+		protected String doInBackground(String... arg0) {
+			// TODO Auto-generated method stub
+			 
+            try 
+            {
+           	 consumer.setTokenWithSecret(token, secret);
+           	 HttpGet httpGet=new HttpGet(TUMBLR_USER_INFO_URI);
+           	 consumer.sign(httpGet);
+           	 DefaultHttpClient client = new DefaultHttpClient();
+      		   	 HttpResponse resp = null;
+      		   	 resp = client.execute(httpGet);
+      		   	 String response=EntityUtils.toString(resp.getEntity());
+      		   	 Log.d(TAG,"response"+response);
+      		   	 JSONObject jsonObject=new JSONObject(response);
+      		   	 JSONObject jsonReponse=jsonObject.getJSONObject("response");
+      		   	 JSONObject userJson=jsonReponse.getJSONObject("user");
+      		   	 String username=userJson.getString("name");
+      		   	 Log.d(TAG,"Username:"+username);
+      		   	 JSONArray blogs=userJson.getJSONArray("blogs");
+      		   	 String blogName = null,blogUrl,blogTitle;
+      		   	 if(blogs.length()>0)
+    			 {
+    				JSONObject blogObject=(JSONObject)blogs.get(0);
+    				blogName=blogObject.getString("name");
+    				blogUrl=blogObject.getString("url");
+    				blogTitle=blogObject.getString("title");
+    				Log.d(TAG,"Blog name:"+blogName);
+    				Log.d(TAG,"Blog url:"+blogUrl);
+    				Log.d(TAG,"Blog Title:"+blogTitle);
+    			 }
+    			
+    			
+    			HttpPost hpost = new HttpPost(TUMBLR_POST_PHOTO_URI + blogName + ".tumblr.com/post");
+    			Log.d(TAG, "Post to blog:"+TUMBLR_POST_PHOTO_URI + blogName + ".tumblr.com/post");
+    			
+    			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+    			nameValuePairs.add(new BasicNameValuePair(URLEncoder.encode("type", "UTF-8"),URLEncoder.encode("photo", "UTF-8")));
+    			Log.e("Tumblr", "Image shareing file path" + Sharing_URL);
+    			nameValuePairs.add(new BasicNameValuePair("caption", Html.toHtml(new SpannableString(Sharing_Tag))));
+    			
+    			nameValuePairs.add(new BasicNameValuePair("source", Sharing_URL.trim()));
+    			hpost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+    			
+      			consumer.sign(hpost);
+      			
+      			resp=client.execute(hpost);
+      			
+      			String postResponse=EntityUtils.toString(resp.getEntity());
+      			Log.d(TAG, "Photo post response:"+postResponse);
+    			
+			 } 
+            catch (OAuthMessageSignerException e) 
+            {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			 } 
+            catch (OAuthExpectationFailedException e) 
+            {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			 }
+            catch (OAuthCommunicationException e) 
+            {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			 }
+            catch (ClientProtocolException e) 
+            {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			 }
+            catch (IOException e) 
+            {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			 } 
+            catch (JSONException e) 
+            {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			 }
+            
+            
+    		  
+    			
+			return null;
+		}
+		
+		@Override
+		protected void onPostExecute(String result) {
+			// TODO Auto-generated method stub
+			super.onPostExecute(result);
+			mProgress.setVisibility(View.GONE);
+			Toast.makeText(getActivity(), "Photo posted", Toast.LENGTH_SHORT).show();
+		}
+	}
+   
+
    public void GooglePlusSharing()
    {
 		btnGooglePlus.setOnClickListener(new View.OnClickListener() 
@@ -801,13 +1183,14 @@ public class ProductDetailFragment extends Fragment
 			@Override
 			public void onClick(View arg0) 
 			{
-				Toast.makeText(getActivity(), "GooglePlus", 5000).show();
+				//Toast.makeText(getActivity(), "GooglePlus", 5000).show();
+				btnCancel.performClick();
 				Intent shareIntent = new PlusShare.Builder(getActivity())
 				
 		          .setText(Sharing_Tag)
 		          .setType("image/*")
-		          .setContentUrl(Uri.parse(Sharing_URL))
-		          
+		          //.setContentUrl(Uri.parse(Sharing_URL))
+		          .setStream(Uri.parse(Sharing_URL))
 		          .getIntent();
 				
 		      startActivityForResult(shareIntent, 0);
@@ -918,19 +1301,35 @@ public class ProductDetailFragment extends Fragment
 					
 					mTwitter.updateStatus(status);
 					
-					showToast("Posted successfully.");
-					mProgress.setVisibility(View.GONE);
+					getActivity().runOnUiThread(new Runnable() {
+						
+						@Override
+						public void run() {
+							// TODO Auto-generated method stub
+							showToast("Posted successfully.");
+							mProgress.setVisibility(View.GONE);
+							
+						}
+					});;
 					//hideProgressDialog();
 					
 				} catch (Exception e) 
 				{
-					//showToast("Oops!You have already twitted that.");
-					mProgress.setVisibility(View.GONE);
+					getActivity().runOnUiThread(new Runnable() {
+						
+						@Override
+						public void run() {
+							// TODO Auto-generated method stub
+							showToast("Oops!You have already twitted that.");
+							mProgress.setVisibility(View.GONE);
+						}
+					});
 					//hideProgressDialog();
 					e.printStackTrace();
 				}
 			}
 		}).start();
+		mProgress.setVisibility(View.GONE);
 	}
 
 	public void showToast(final String msg) 
@@ -993,6 +1392,7 @@ public class ProductDetailFragment extends Fragment
 	{
 		//Toast.makeText(getActivity(), MSG, 5000).show();
 		mProgress.setVisibility(View.GONE);
+		
 //		runOnUiThread(new Runnable() 
 //		{
 //			@Override
