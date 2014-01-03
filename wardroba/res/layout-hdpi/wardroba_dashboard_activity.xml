@@ -40,6 +40,7 @@
             android:layout_alignRight="@+id/imbt_advance_search"
             android:layout_marginBottom="72dp"
             android:background="@drawable/register_button"
+            android:layout_centerHorizontal="true"
             android:text="REGISTER"
             android:textSize="@dimen/sub_header_font_size"
             android:textColor="@color/white" />
