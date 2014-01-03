@@ -155,7 +155,7 @@ public class ProductDetailFragment extends Fragment
 	private ProgressDialog progressdialog;
 	StringBuffer buffer;
 	String MSG;
-	private ProgressBar mProgress;
+	private LinearLayout mProgress;
 	
 	String imageUrl,shortDesc;
 	//////////////////////////////////
@@ -240,7 +240,7 @@ public class ProductDetailFragment extends Fragment
 		imgLike=(ImageView)root.findViewById(R.id.img_like);
 		imgComment=(ImageView)root.findViewById(R.id.img_comment);
 		
-		mProgress = (ProgressBar)root.findViewById(R.id.progress_bar);
+		mProgress = (LinearLayout)root.findViewById(R.id.progress_bar);
  		mProgress.setVisibility(View.GONE);
  		
 		shareDialog=(LinearLayout)root.findViewById(R.id.dialogShare);
@@ -317,8 +317,15 @@ public class ProductDetailFragment extends Fragment
 		   
 		    if(progressDialog!=null)
 			    progressDialog.setMessage("Loading...");
-	        consumer = new CommonsHttpOAuthConsumer(CONSUMER_KEY,CONSUMER_SECRET);
-	        provider = new CommonsHttpOAuthProvider(REQUEST_TOKEN_URL,ACCESS_TOKEN_URL,AUTH_URL);
+		    try {
+		    	consumer = new CommonsHttpOAuthConsumer(CONSUMER_KEY,CONSUMER_SECRET);
+		        provider = new CommonsHttpOAuthProvider(REQUEST_TOKEN_URL,ACCESS_TOKEN_URL,AUTH_URL);
+			} catch (Exception e) {
+				// TODO: handle exception
+				Log.d(TAG, "------------------->Error in init tumblr"+e.getMessage());
+				e.printStackTrace();
+			}
+	        
 			token = preferences.getString(TUMBLR_ACCESS_TOKEN, "");
 			secret = preferences.getString(TUMBLR_TOKEN_SECRET, "");
 	       
@@ -816,8 +823,16 @@ public class ProductDetailFragment extends Fragment
    		public void onComplete(String response, Object state) {
    			// TODO Auto-generated method stub
    			//progressDialog.dismiss();
-   			mProgress.setVisibility(View.GONE);
-   			Toast.makeText(getActivity(), "Photo posted", Toast.LENGTH_SHORT).show();
+   			getActivity().runOnUiThread(new Runnable() {
+				
+				@Override
+				public void run() {
+					// TODO Auto-generated method stub
+					mProgress.setVisibility(View.GONE);
+		   			Toast.makeText(getActivity(), "Photo posted", Toast.LENGTH_SHORT).show();
+				}
+			});
+   			
    			Log.d("HomeActivity", "Photo upload successfully response:---->"+response);
    		}
    	}, null);
@@ -877,15 +892,15 @@ public class ProductDetailFragment extends Fragment
    
    public void loginToTumblr()
    {
-   	consumer = new CommonsHttpOAuthConsumer(CONSUMER_KEY,CONSUMER_SECRET);
-       provider = new CommonsHttpOAuthProvider(REQUEST_TOKEN_URL,ACCESS_TOKEN_URL,AUTH_URL);
+   	
 		 new Thread(new Runnable() {
 			
 			@Override
 			public void run() {
 				// TODO Auto-generated method stub
 				try {
-					
+					consumer = new CommonsHttpOAuthConsumer(CONSUMER_KEY,CONSUMER_SECRET);
+				       provider = new CommonsHttpOAuthProvider(REQUEST_TOKEN_URL,ACCESS_TOKEN_URL,AUTH_URL);
 					authUrl = provider.retrieveRequestToken(consumer, OAUTH_CALLBACK_URL);
 				} catch (OAuthMessageSignerException e) {
 					// TODO Auto-generated catch block
@@ -1189,8 +1204,8 @@ public class ProductDetailFragment extends Fragment
 				
 		          .setText(Sharing_Tag)
 		          .setType("image/*")
-		          //.setContentUrl(Uri.parse(Sharing_URL))
-		          .setStream(Uri.parse(Sharing_URL))
+		          .setContentUrl(Uri.parse(Sharing_URL))
+		          
 		          .getIntent();
 				
 		      startActivityForResult(shareIntent, 0);
@@ -1329,7 +1344,7 @@ public class ProductDetailFragment extends Fragment
 				}
 			}
 		}).start();
-		mProgress.setVisibility(View.GONE);
+		
 	}
 
 	public void showToast(final String msg) 

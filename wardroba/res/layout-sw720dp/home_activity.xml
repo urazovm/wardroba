@@ -40,8 +40,8 @@
 	        android:text="share"
 	        android:gravity="center_horizontal"
 	        android:textColor="@color/grey"
-	        android:textSize="16dp"
-	        android:layout_margin="5dp"/>
+	        android:textSize="32dp"
+	        android:layout_margin="20dp"/>
 	    <LinearLayout android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
 	        android:orientation="horizontal"
@@ -106,15 +106,15 @@
 	    </LinearLayout>
 	    <LinearLayout android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
-	        android:layout_marginBottom="10dp"
-	        android:layout_marginTop="10dp">
+	        android:layout_marginBottom="20dp"
+	        android:layout_marginTop="20dp">
 	        <Button 
 	            android:id="@+id/btnCancel"
 	            android:layout_width="fill_parent"
 	            android:layout_height="wrap_content"
 	            android:text="cancel"
 	            android:textColor="@color/grey"
-	            android:textSize="16dp"
+	            android:textSize="32dp"
 	            android:background="@drawable/border"
 	            android:layout_marginLeft="15dp"
 	            android:layout_marginRight="15dp"/>
@@ -129,14 +129,14 @@
         android:orientation="horizontal"
         android:gravity="center_vertical">
 		<ProgressBar
-        
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        style="@android:style/Widget.ProgressBar.Small"
+        
          />    
          <TextView android:layout_width="wrap_content"
              android:layout_height="wrap_content"
-             android:layout_marginLeft="10dp"
+             android:layout_marginLeft="20dp"
+             android:textSize="32dp"
              android:textColor="@color/textcolor"
              android:text="Loading..."/>
          
